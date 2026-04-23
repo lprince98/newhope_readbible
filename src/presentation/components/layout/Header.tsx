@@ -4,7 +4,19 @@ import { useState } from "react";
 import Link from "next/link";
 import { Sidebar } from "./Sidebar";
 
-export function Header({ title = "새소망교회" }: { title?: string }) {
+interface UserProfile {
+  name: string;
+  teamName: string;
+}
+
+export function Header({ 
+  title = "새소망교회", 
+  profile 
+}: { 
+  title?: string;
+  profile: UserProfile | null;
+}) {
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
@@ -47,7 +59,12 @@ export function Header({ title = "새소망교회" }: { title?: string }) {
         </Link>
       </header>
 
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        onClose={() => setIsSidebarOpen(false)} 
+        profile={profile}
+      />
+
     </>
   );
 }

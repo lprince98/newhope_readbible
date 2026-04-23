@@ -2,46 +2,26 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { createClient } from "@/src/infrastructure/supabase/client";
+import { useEffect } from "react";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  profile: { name: string; teamName: string } | null;
 }
 
-export function Sidebar({ isOpen, onClose }: Props) {
+export function Sidebar({ isOpen, onClose, profile }: Props) {
   const pathname = usePathname();
-  const [profile, setProfile] = useState<{ name: string; teamName: string | null } | null>(null);
-  const supabase = createClient();
 
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = "hidden";
-      fetchProfile();
     } else {
       document.body.style.overflow = "auto";
     }
     return () => { document.body.style.overflow = "auto"; };
   }, [isOpen]);
 
-  async function fetchProfile() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const { data } = await supabase
-        .from("profiles")
-        .select("name, teams(name)")
-        .eq("id", user.id)
-        .single();
-      
-      if (data) {
-        setProfile({
-          name: data.name,
-          teamName: (data.teams as any)?.name ?? "팀 미배정",
-        });
-      }
-    }
-  }
 
   const MENU_ITEMS = [
     { href: "/home",      icon: "home",         label: "홈" },
