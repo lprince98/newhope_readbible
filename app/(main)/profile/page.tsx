@@ -17,13 +17,26 @@ export default async function ProfilePage() {
 
   if (!user) redirect("/login");
 
-  const { data: profile } = await supabase
+  const { data: profile, error } = await supabase
     .from("profiles")
     .select("name, team_id, teams(name)")
     .eq("id", user.id)
     .single();
 
-  const teamName = (profile?.teams as unknown as { name: string } | null)?.name ?? "팀 미배정";
+  if (error) {
+    console.error(">>> [PROFILE] 데이터 조회 오류:", error);
+  }
+
+  // 데이터 구조를 더 안전하게 파싱 (배열 형태일 경우 대비)
+  let teamName = "팀 미배정";
+  if (profile?.teams) {
+    if (Array.isArray(profile.teams)) {
+      teamName = (profile.teams[0] as any)?.name ?? "팀 미배정";
+    } else {
+      teamName = (profile.teams as any)?.name ?? "팀 미배정";
+    }
+  }
+
 
   return (
     <div className="max-w-md mx-auto px-6 py-12 flex flex-col gap-10">
