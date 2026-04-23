@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/src/infrastructure/supabase/server";
 import { ProfileActions } from "@/src/presentation/components/profile/ProfileActions";
@@ -10,32 +11,38 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-
 export default async function ProfilePage() {
+  // 쿠키를 호출하여 동적 렌더링 강제
+  await cookies();
+  
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) redirect("/login");
 
-  const { data: profile, error } = await supabase
+  // 1단계: 프로필 정보 조회
+  const { data: profile } = await supabase
     .from("profiles")
-    .select("name, team_id, teams(name)")
+    .select("name, team_id")
     .eq("id", user.id)
     .single();
 
-  if (error) {
-    console.error(">>> [PROFILE] 데이터 조회 오류:", error);
-  }
-
-  // 데이터 구조를 더 안전하게 파싱 (배열 형태일 경우 대비)
+  // 2단계: 팀 정보가 있다면 팀 테이블에서 직접 이름 조회 (가장 확실함)
   let teamName = "팀 미배정";
-  if (profile?.teams) {
-    if (Array.isArray(profile.teams)) {
-      teamName = (profile.teams[0] as any)?.name ?? "팀 미배정";
-    } else {
-      teamName = (profile.teams as any)?.name ?? "팀 미배정";
+  if (profile?.team_id) {
+    const { data: teamData } = await supabase
+      .from("teams")
+      .select("name")
+      .eq("id", profile.team_id)
+      .single();
+    
+    if (teamData) {
+      teamName = teamData.name;
     }
   }
+
+  // 디버깅용 로그 (서버 콘솔에서 확인 가능)
+  console.log(`>>> [PROFILE DEBUG] User: ${user.id}, TeamID: ${profile?.team_id}, TeamName: ${teamName}`);
 
 
   return (
