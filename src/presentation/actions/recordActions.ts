@@ -25,6 +25,18 @@ export async function addReadingRecord(formData: FormData) {
     return { error: "성경, 시작 장, 종료 장을 모두 입력해주세요." };
   }
 
+  // ── 데이터 정합성 검증 추가 ──────────────────────────────────────────
+  const { getBibleBook } = await import("@/lib/constants/bible-books");
+  const bookInfo = getBibleBook(bookId);
+  
+  if (startChapter > bookInfo.chapters || endChapter > bookInfo.chapters) {
+    return { 
+      error: `${bookInfo.name}은(는) 총 ${bookInfo.chapters}장까지 있습니다. 입력값을 확인해주세요.` 
+    };
+  }
+  // ──────────────────────────────────────────────────────────────────
+
+
   const repo = new SupabaseReadingRecordRepository(supabase);
   const useCase = new AddReadingRecordUseCase(repo);
 
