@@ -53,9 +53,18 @@ export default async function HomePage() {
 
 
   
-  const hour = new Date().getHours();
+  const kstHour = Number(new Intl.DateTimeFormat("ko-KR", {
+    hour: "numeric",
+    hour12: false,
+    timeZone: "Asia/Seoul"
+  }).format(new Date()).replace("시", ""));
+
   const greeting =
-    hour < 12 ? "좋은 아침입니다" : hour < 18 ? "좋은 오후입니다" : "좋은 저녁입니다";
+    kstHour >= 0 && kstHour < 6 ? "평안한 밤 보내고 계신가요?" :
+    kstHour >= 6 && kstHour < 12 ? "오늘도 말씀과 함께 활기찬 하루 되세요!" :
+    kstHour >= 12 && kstHour < 18 ? "말씀으로 새 힘을 얻는 오후입니다." :
+    "오늘 하루도 말씀 안에서 수고 많으셨습니다.";
+
 
   const dailyVerse = getDailyVerse();
 
