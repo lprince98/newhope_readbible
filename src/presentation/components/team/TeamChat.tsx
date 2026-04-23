@@ -40,17 +40,40 @@ export function TeamChat({ teamId, myUserId, myName, initialMessages }: Props) {
         },
         async (payload) => {
           const newMsg = payload.new as { id: string; content: string; created_at: string; user_id: string };
-          // 발신자 이름 가져오기
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("name")
-            .eq("id", newMsg.user_id)
-            .single();
+          
+          // 이미 존재하는 메시지인지 확인 (중복 방지)
+          setMessages((prev) => {
+            if (prev.some(m => m.id === newMsg.id)) return prev;
 
-          setMessages((prev) => [
-            ...prev,
-            { ...newMsg, profiles: profile },
-          ]);
+            // 내 메시지가 실제 DB에서 도착한 경우: 임시 메시지를 실제 메시지로 교체
+            if (newMsg.user_id === myUserId) {
+              const tempIndex = prev.findLastIndex(m => m.id.startsWith("temp-") && m.content === newMsg.content);
+              if (tempIndex !== -1) {
+                const next = [...prev];
+                next[tempIndex] = { ...newMsg, profiles: { name: myName } };
+                return next;
+              }
+            }
+            
+            // 다른 사람의 메시지인 경우: 프로필 가져와서 추가
+            // (이 부분은 아래에서 비동기로 처리하기 위해 일단 null로 추가 후 업데이트하거나, 
+            //  함수 밖에서 처리해야 함. 여기서는 간결성을 위해 즉시 가져오는 로직 유지)
+            return [...prev]; // 아래 fetch 이후에 업데이트됨
+          });
+
+          // 다른 사람의 메시지일 때만 프로필 조회 후 추가
+          if (newMsg.user_id !== myUserId) {
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("name")
+              .eq("id", newMsg.user_id)
+              .single();
+
+            setMessages((prev) => {
+              if (prev.some(m => m.id === newMsg.id)) return prev;
+              return [...prev, { ...newMsg, profiles: profile }];
+            });
+          }
         },
       )
       .subscribe();
@@ -66,12 +89,31 @@ export function TeamChat({ teamId, myUserId, myName, initialMessages }: Props) {
   }, [messages]);
 
   // ── 메시지 전송 ─────────────────────────────────────────────────
-  function handleSend() {
-    if (!input.trim()) return;
-    const text = input;
+  async function handleSend() {
+    if (!input.trim() || isPending) return;
+    
+    const text = input.trim();
     setInput("");
+
+    // 낙관적 업데이트: 서버 응답 전 화면에 미리 표시
+    const tempId = `temp-${Date.now()}`;
+    const tempMsg: Message = {
+      id: tempId,
+      content: text,
+      created_at: new Date().toISOString(),
+      user_id: myUserId,
+      profiles: { name: myName }
+    };
+    
+    setMessages((prev) => [...prev, tempMsg]);
+
     startTransition(async () => {
-      await sendMessage(teamId, text);
+      const result = await sendMessage(teamId, text);
+      if (result?.error) {
+        alert(result.error);
+        // 실패 시 임시 메시지 제거
+        setMessages((prev) => prev.filter(m => m.id !== tempId));
+      }
     });
   }
 
