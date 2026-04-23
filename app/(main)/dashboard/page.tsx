@@ -11,6 +11,9 @@ export const metadata: Metadata = {
   description: "나의 성경 통독 진도 현황을 한눈에 확인하세요.",
 };
 
+export const dynamic = "force-dynamic";
+
+
 export default async function DashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

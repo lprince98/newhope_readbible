@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   description: "팀 이름 수정 및 팀원 초대·관리",
 };
 
+export const dynamic = "force-dynamic";
+
+
 export default async function TeamManagePage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

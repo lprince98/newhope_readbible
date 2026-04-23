@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   description: "사용자 정보를 확인하고 로그아웃합니다.",
 };
 
+export const dynamic = "force-dynamic";
+
+
 export default async function ProfilePage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

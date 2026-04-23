@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   description: "오늘 읽은 성경 분량을 기록하세요.",
 };
 
+export const dynamic = "force-dynamic";
+
+
 export default function RecordPage() {
   const dailyVerse = getDailyVerse();
 

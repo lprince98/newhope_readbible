@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   description: "오늘의 성경 읽기 현황을 확인하세요.",
 };
 
+export const dynamic = "force-dynamic";
+
+
 export default async function HomePage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

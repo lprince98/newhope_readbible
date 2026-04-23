@@ -3,6 +3,9 @@ import { createClient } from "@/src/infrastructure/supabase/server";
 import { CreateTeamForm } from "@/src/presentation/components/team/CreateTeamForm";
 import { JoinTeamList } from "@/src/presentation/components/team/JoinTeamList";
 
+export const dynamic = "force-dynamic";
+
+
 
 /** /team → 내 팀 상세 페이지로 리다이렉트 */
 export default async function TeamRootPage() {

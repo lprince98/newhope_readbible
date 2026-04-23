@@ -8,6 +8,9 @@ export const metadata: Metadata = {
   description: "새소망교회 팀별 성경 통독 랭킹을 확인하세요.",
 };
 
+export const dynamic = "force-dynamic";
+
+
 const RANK_COLORS = [
   "text-[#775a19]",  // 1위
   "text-[#45474d]",  // 2위
