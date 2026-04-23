@@ -29,7 +29,21 @@ export const metadata: Metadata = {
     description: "매일의 성경 통독 여정을 기록하고 팀원들과 함께 응원하세요.",
     images: ["/nhc_readbible_og.png"],
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "새소망통독",
+  },
 };
+
+export const viewport = {
+  themeColor: "#041129",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  userScalable: false,
+};
+
 
 
 export default function RootLayout({
