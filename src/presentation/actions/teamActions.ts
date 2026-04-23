@@ -1,7 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/src/infrastructure/supabase/server";
+
 
 // ── 팀 이름 수정 ─────────────────────────────────────────────────────
 export async function updateTeamName(teamId: string, name: string) {
