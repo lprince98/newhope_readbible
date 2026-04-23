@@ -32,8 +32,12 @@ export async function updateTeamName(teamId: string, name: string) {
   revalidatePath(`/team/${teamId}`);
   revalidatePath("/team/manage");
   revalidatePath("/ranking");
+  revalidatePath("/profile");
+  revalidatePath("/home");
+  revalidatePath("/dashboard");
   return { success: true };
 }
+
 
 // ── 팀원 초대 (이메일) ────────────────────────────────────────────────
 export async function inviteMember(formData: FormData) {
@@ -115,8 +119,12 @@ export async function removeMember(memberId: string) {
   if (error) return { error: error.message };
 
   revalidatePath("/team/manage");
+  revalidatePath("/profile");
+  revalidatePath("/home");
+  revalidatePath("/dashboard");
   return { success: true };
 }
+
 
 // ── 초대 취소 ─────────────────────────────────────────────────────────
 export async function cancelInvitation(invitationId: string) {
@@ -176,8 +184,12 @@ export async function createTeam(name: string) {
 
   revalidatePath("/team");
   revalidatePath("/ranking");
+  revalidatePath("/profile");
+  revalidatePath("/home");
+  revalidatePath("/dashboard");
   return { success: true, teamId: newTeam.id };
 }
+
 
 /** 팀 가입 (기존 팀에 참여) */
 export async function joinTeam(teamId: string) {
@@ -195,8 +207,11 @@ export async function joinTeam(teamId: string) {
 
   revalidatePath("/team");
   revalidatePath("/home");
+  revalidatePath("/profile");
+  revalidatePath("/dashboard");
   redirect(`/team/${teamId}`);
 }
+
 
 
 /** 팀 삭제 (팀 해체) */
@@ -226,8 +241,12 @@ export async function deleteTeam(teamId: string) {
 
   revalidatePath("/ranking");
   revalidatePath("/team");
+  revalidatePath("/profile");
+  revalidatePath("/home");
+  revalidatePath("/dashboard");
   redirect("/home");
 }
+
 
 // ── 채팅 메시지 전송 ──────────────────────────────────────────────────
 
