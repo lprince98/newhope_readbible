@@ -30,13 +30,20 @@ export default async function HomePage() {
     teamId = profile?.team_id;
     dailyGoal = profile?.daily_goal ?? 4;
 
-    const today = new Date();
-    const y = today.getFullYear();
-    const m = String(today.getMonth() + 1).padStart(2, "0");
-    const d = String(today.getDate()).padStart(2, "0");
+    const kstParts = new Intl.DateTimeFormat("ko-KR", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      timeZone: "Asia/Seoul",
+    }).formatToParts(new Date());
+    
+    const y = kstParts.find(p => p.type === "year")?.value;
+    const m = kstParts.find(p => p.type === "month")?.value;
+    const d = kstParts.find(p => p.type === "day")?.value;
     const todayStr = `${y}-${m}-${d}`;
 
     const { data } = await supabase
+
       .from("reading_records")
       .select("start_chapter, end_chapter")
       .eq("user_id", user.id)
