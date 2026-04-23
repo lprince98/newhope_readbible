@@ -18,8 +18,18 @@ export default async function HomePage() {
 
   // 오늘 읽은 장 수 조회
   let todayChapters = 0;
-  const DAILY_GOAL = 4;
+  // 사용자 프로필 및 팀 정보 조회 (하루 목표 포함)
+  let teamId = null;
+  let dailyGoal = 4;
   if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("team_id, daily_goal")
+      .eq("id", user.id)
+      .single();
+    teamId = profile?.team_id;
+    dailyGoal = profile?.daily_goal ?? 4;
+
     const today = new Date();
     const y = today.getFullYear();
     const m = String(today.getMonth() + 1).padStart(2, "0");
@@ -31,6 +41,7 @@ export default async function HomePage() {
       .select("start_chapter, end_chapter")
       .eq("user_id", user.id)
       .eq("read_at", todayStr);
+    
     todayChapters = (data ?? []).reduce(
       (s: number, r: { start_chapter: number; end_chapter: number }) =>
         s + (r.end_chapter - r.start_chapter + 1),
@@ -38,18 +49,9 @@ export default async function HomePage() {
     );
   }
 
-  // 사용자 프로필 및 팀 정보 조회
-  let teamId = null;
-  if (user) {
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("team_id")
-      .eq("id", user.id)
-      .single();
-    teamId = profile?.team_id;
-  }
+  const percent = Math.min(100, Math.round((todayChapters / dailyGoal) * 100));
 
-  const percent = Math.min(100, Math.round((todayChapters / DAILY_GOAL) * 100));
+
   
   const hour = new Date().getHours();
   const greeting =
@@ -130,8 +132,9 @@ export default async function HomePage() {
                 오늘의 목표
               </h3>
               <p className="text-[#45474d]" style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px" }}>
-                {DAILY_GOAL}장 중 {todayChapters}장 읽음
+                {dailyGoal}장 중 {todayChapters}장 읽음
               </p>
+
             </div>
             <span className="text-[#041129]" style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}>
               {percent}%

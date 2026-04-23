@@ -12,8 +12,23 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 
-export default function RecordPage() {
+import { createClient } from "@/src/infrastructure/supabase/server";
+import { DailyGoalEditor } from "@/src/presentation/components/record/DailyGoalEditor";
+
+export default async function RecordPage() {
   const dailyVerse = getDailyVerse();
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  let dailyGoal = 4;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("daily_goal")
+      .eq("id", user.id)
+      .single();
+    dailyGoal = profile?.daily_goal ?? 4;
+  }
 
   return (
 
@@ -31,8 +46,12 @@ export default function RecordPage() {
         </p>
       </div>
 
+      {/* 목표 설정 */}
+      <DailyGoalEditor initialGoal={dailyGoal} />
+
       {/* 기록 폼 */}
       <RecordForm />
+
 
       {/* 최근 기록 목록 */}
       <RecentRecords />

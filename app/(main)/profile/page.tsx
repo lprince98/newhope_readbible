@@ -45,6 +45,7 @@ export default async function ProfilePage() {
   console.log(`>>> [PROFILE DEBUG] User: ${user.id}, TeamID: ${profile?.team_id}, TeamName: ${teamName}`);
 
 
+
   return (
     <div className="max-w-md mx-auto px-6 py-12 flex flex-col gap-10">
       {/* 아바타 & 기본 정보 */}
@@ -79,6 +80,8 @@ export default async function ProfilePage() {
 
       {/* 액션 버튼 (클라이언트 컴포넌트) */}
       <ProfileActions />
+
+
     </div>
   );
 }
