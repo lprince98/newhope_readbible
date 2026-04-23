@@ -3,6 +3,8 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/src/infrastructure/supabase/server";
 import { ProfileActions } from "@/src/presentation/components/profile/ProfileActions";
+import { PasswordChangeSection } from "@/src/presentation/components/profile/PasswordChangeSection";
+
 
 export const metadata: Metadata = {
   title: "프로필 — 새소망 성경 통독",
@@ -78,8 +80,12 @@ export default async function ProfilePage() {
         </div>
       </section>
 
+      {/* 비밀번호 변경 (이메일 서비스 중단 대비 대안) */}
+      <PasswordChangeSection />
+
       {/* 액션 버튼 (클라이언트 컴포넌트) */}
       <ProfileActions />
+
 
 
     </div>

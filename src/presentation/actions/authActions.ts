@@ -48,5 +48,32 @@ export async function withdrawAction() {
   redirect("/login");
 }
 
+/** 비밀번호 재설정 이메일 발송 */
+export async function resetPasswordAction(email: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/update-password`,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+  return { success: true };
+}
+
+/** 비밀번호 최종 업데이트 */
+export async function updatePasswordAction(password: string) {
+  const supabase = await createClient();
+  const { error } = await supabase.auth.updateUser({
+    password: password,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+  return { success: true };
+}
+
+
 
 

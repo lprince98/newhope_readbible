@@ -130,13 +130,15 @@ export default async function LoginPage({
                   로그인 상태 유지
                 </span>
               </label>
-              <a
-                href="#"
+              <Link
+                href="/password-help"
                 className="text-[#775a19] hover:text-[#041129] transition-colors"
                 style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px" }}
               >
                 비밀번호를 잊으셨나요?
-              </a>
+              </Link>
+
+
             </div>
 
             <button
