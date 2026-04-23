@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>로그인 - Saesomang Bible</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Noto+Serif+KR:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-highest": "#e4e2de",
+                      "on-primary": "#ffffff",
+                      "surface-container": "#efeeea",
+                      "secondary-container": "#fed488",
+                      "inverse-on-surface": "#f2f0ed",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-high": "#eae8e4",
+                      "on-surface": "#1b1c1a",
+                      "surface-variant": "#e4e2de",
+                      "on-secondary-fixed-variant": "#5d4201",
+                      "surface-tint": "#525e7a",
+                      "error-container": "#ffdad6",
+                      "error": "#ba1a1a",
+                      "surface-bright": "#fbf9f5",
+                      "primary-container": "#1a263f",
+                      "inverse-primary": "#bac6e7",
+                      "tertiary": "#15110a",
+                      "outline": "#75777e",
+                      "on-secondary-fixed": "#261900",
+                      "surface": "#fbf9f5",
+                      "surface-container-low": "#f5f3ef",
+                      "on-error-container": "#93000a",
+                      "outline-variant": "#c5c6ce",
+                      "tertiary-fixed-dim": "#cfc5b9",
+                      "on-surface-variant": "#45474d",
+                      "on-primary-container": "#818dab",
+                      "on-error": "#ffffff",
+                      "inverse-surface": "#30312e",
+                      "primary-fixed": "#d8e2ff",
+                      "surface-dim": "#dbdad6",
+                      "on-secondary-container": "#785a1a",
+                      "tertiary-fixed": "#ebe1d4",
+                      "primary-fixed-dim": "#bac6e7",
+                      "on-background": "#1b1c1a",
+                      "tertiary-container": "#2b261e",
+                      "secondary-fixed-dim": "#e9c176",
+                      "on-tertiary-fixed": "#1f1b13",
+                      "on-primary-fixed-variant": "#3b4761",
+                      "secondary-fixed": "#ffdea5",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary": "#775a19",
+                      "primary": "#041129",
+                      "on-secondary": "#ffffff",
+                      "background": "#fbf9f5",
+                      "on-tertiary-fixed-variant": "#4c463c",
+                      "on-tertiary-container": "#958d81",
+                      "on-primary-fixed": "#0f1b34"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "2rem",
+                      "gutter": "1rem",
+                      "margin-page": "1.5rem",
+                      "stack-sm": "0.5rem",
+                      "stack-md": "1rem"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "manrope", "sans-serif"
+                      ],
+                      "caption": [
+                              "manrope", "sans-serif"
+                      ],
+                      "headline-lg": [
+                              "manrope", "sans-serif"
+                      ],
+                      "scripture-body": [
+                              "Noto Serif KR", "serif"
+                      ],
+                      "scripture-sub": [
+                              "Noto Serif KR", "serif"
+                      ],
+                      "ui-label": [
+                              "manrope", "sans-serif"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "22px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "caption": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "scripture-body": [
+                              "18px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "scripture-sub": [
+                              "15px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "ui-label": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-screen bg-surface-container-low font-ui-label text-on-background relative overflow-hidden flex items-center justify-center">
+<!-- Ambient Background Image -->
+<div class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 pointer-events-none" data-alt="Soft morning sunlight streaming over an open Bible on a wooden table, warm golden hour tones, soft focus, reverent and peaceful atmosphere, subtle grain texture" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBS6oKrRhaQOJnOh6FeD1rPNL853_WCG_SdAnuFDilZUasIAQTCWbEGRNo4TEh4vmvkoOyBzvSo62LPTnAc9I7WOodTCsn7FocQDXxCZM8_wS40onl3SVO-cmYv_yRckOxzTgKy7nqjQfxU4D_u_qmaIfIch2GoLGqJAN5paIQ-Nla2Z_ARaNo-l66OcMuV5HdfmtxQD-KMHJYhAvAOz1nHfZ4y6whIPzSlPkcqmSvuMEIvt4UGgebwvLIWnuJLsCcPfbukVTZ13Q8');">
+</div>
+<!-- Main Content Canvas (Transactional Screen -> No Nav Shells) -->
+<main class="w-full max-w-md px-margin-page relative z-10">
+<div class="bg-surface rounded-xl shadow-[0_4px_24px_rgba(4,17,41,0.06)] border border-outline-variant/30 p-8 flex flex-col gap-stack-lg">
+<!-- Header Identity -->
+<div class="flex flex-col items-center text-center gap-stack-sm">
+<div class="w-12 h-12 rounded-full bg-secondary-container/30 flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-secondary text-[28px]" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">로그인</h1>
+<p class="font-scripture-sub text-scripture-sub text-on-surface-variant">말씀으로 시작하는 하루</p>
+</div>
+<!-- Login Form -->
+<form action="#" class="flex flex-col gap-stack-md w-full" method="POST">
+<!-- Email Field -->
+<div class="flex flex-col gap-2">
+<label class="font-ui-label text-ui-label text-on-surface ml-1" for="email">이메일</label>
+<input class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-3 font-ui-label text-ui-label text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all placeholder:text-outline/60" id="email" name="email" placeholder="example@email.com" required="" type="email"/>
+</div>
+<!-- Password Field -->
+<div class="flex flex-col gap-2">
+<label class="font-ui-label text-ui-label text-on-surface ml-1" for="password">비밀번호</label>
+<input class="w-full bg-surface-container border border-outline-variant rounded-lg px-4 py-3 font-ui-label text-ui-label text-on-surface focus:outline-none focus:ring-2 focus:ring-secondary/50 focus:border-secondary transition-all placeholder:text-outline/60" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+</div>
+<!-- Options Row -->
+<div class="flex items-center justify-between mt-1 px-1">
+<label class="flex items-center gap-2 cursor-pointer group">
+<input class="w-4 h-4 rounded DEFAULT border-outline-variant text-primary focus:ring-primary/20 bg-surface-container transition-colors cursor-pointer" type="checkbox"/>
+<span class="font-caption text-caption text-on-surface-variant group-hover:text-on-surface transition-colors">로그인 상태 유지</span>
+</label>
+<a class="font-caption text-caption text-secondary hover:text-primary transition-colors" href="#">비밀번호를 잊으셨나요?</a>
+</div>
+<!-- Submit Action -->
+<button class="w-full min-h-[48px] bg-primary text-on-primary font-ui-label text-ui-label py-3 rounded-lg mt-stack-sm hover:bg-primary/90 hover:shadow-[0_2px_8px_rgba(4,17,41,0.15)] active:shadow-none active:scale-[0.98] transition-all flex justify-center items-center" type="submit">
+                    로그인
+                </button>
+</form>
+<!-- Secondary Action -->
+<div class="text-center pt-stack-sm border-t border-outline-variant/30">
+<a class="font-ui-label text-ui-label text-on-surface-variant hover:text-primary transition-colors" href="#">
+                    계정이 없으신가요? <span class="text-secondary font-semibold ml-1">회원가입하기</span>
+</a>
+</div>
+</div>
+</main>
+</body></html>

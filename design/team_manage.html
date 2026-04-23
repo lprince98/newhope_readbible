@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
+<title>팀 생성 및 관리 - Saesomang Church</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Noto+Serif:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#ffffff",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#45474d",
+                        "primary-fixed": "#d8e2ff",
+                        "inverse-on-surface": "#f2f0ed",
+                        "surface-tint": "#525e7a",
+                        "surface-container-highest": "#e4e2de",
+                        "secondary-fixed-dim": "#e9c176",
+                        "on-error-container": "#93000a",
+                        "on-surface": "#1b1c1a",
+                        "on-primary-fixed": "#0f1b34",
+                        "surface-dim": "#dbdad6",
+                        "primary": "#041129",
+                        "surface-container-low": "#f5f3ef",
+                        "error": "#ba1a1a",
+                        "on-secondary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "secondary-container": "#fed488",
+                        "on-tertiary-fixed": "#1f1b13",
+                        "tertiary-container": "#2b261e",
+                        "primary-fixed-dim": "#bac6e7",
+                        "on-tertiary-fixed-variant": "#4c463c",
+                        "surface": "#fbf9f5",
+                        "on-error": "#ffffff",
+                        "primary-container": "#1a263f",
+                        "on-background": "#1b1c1a",
+                        "on-tertiary-container": "#958d81",
+                        "surface-container-high": "#eae8e4",
+                        "on-secondary-fixed-variant": "#5d4201",
+                        "tertiary": "#15110a",
+                        "surface-container": "#efeeea",
+                        "secondary-fixed": "#ffdea5",
+                        "background": "#fbf9f5",
+                        "secondary": "#775a19",
+                        "on-secondary-fixed": "#261900",
+                        "inverse-primary": "#bac6e7",
+                        "surface-bright": "#fbf9f5",
+                        "outline-variant": "#c5c6ce",
+                        "on-secondary-container": "#785a1a",
+                        "on-primary-container": "#818dab",
+                        "tertiary-fixed-dim": "#cfc5b9",
+                        "surface-variant": "#e4e2de",
+                        "outline": "#75777e",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#3b4761",
+                        "inverse-surface": "#30312e",
+                        "tertiary-fixed": "#ebe1d4"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "stack-lg": "2rem",
+                        "stack-sm": "0.5rem",
+                        "stack-md": "1rem",
+                        "gutter": "1rem",
+                        "margin-page": "1.5rem"
+                    },
+                    "fontFamily": {
+                        "scripture-body": ["notoSerif"],
+                        "caption": ["manrope"],
+                        "scripture-sub": ["notoSerif"],
+                        "headline-md": ["manrope"],
+                        "ui-label": ["manrope"],
+                        "headline-lg": ["manrope"]
+                    },
+                    "fontSize": {
+                        "scripture-body": ["18px", {"lineHeight": "32px", "fontWeight": "400"}],
+                        "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                        "scripture-sub": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-md": ["22px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "ui-label": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                        "headline-lg": ["28px", {"lineHeight": "36px", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pb-24 pt-16 font-caption antialiased selection:bg-secondary-container selection:text-on-secondary-container">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex items-center px-6 h-16 bg-[#FDFCFB] dark:bg-slate-950 shadow-[0_4px_12px_rgba(26,38,63,0.05)] border-b border-slate-200/50 dark:border-slate-800">
+<button aria-label="Go back" class="text-[#1A263F] dark:text-slate-100 p-2 -ml-2 rounded-full hover:bg-[#F9F1E0] dark:hover:bg-slate-800 transition-colors active:scale-[0.98] duration-200 ease-in-out">
+<span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
+</button>
+<h1 class="flex-1 text-center font-manrope text-base font-semibold tracking-tight text-[#1A263F] dark:text-white">팀 관리</h1>
+<button aria-label="More options" class="text-[#1A263F] dark:text-slate-100 p-2 -mr-2 rounded-full hover:bg-[#F9F1E0] dark:hover:bg-slate-800 transition-colors active:scale-[0.98] duration-200 ease-in-out">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</header>
+<!-- Main Content -->
+<main class="max-w-md mx-auto px-margin-page pt-stack-md flex flex-col gap-stack-lg">
+<!-- Header -->
+<section class="text-center mt-4">
+<h2 class="font-headline-lg text-headline-lg text-primary">팀 생성 및 관리</h2>
+<p class="font-ui-label text-ui-label text-on-surface-variant mt-2">새로운 그룹을 만들거나 기존 팀원을 관리하세요.</p>
+</section>
+<!-- Team Name Form -->
+<section class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_12px_rgba(4,17,41,0.03)] border border-surface-variant">
+<label class="block font-ui-label text-ui-label text-on-surface mb-2" for="team-name">팀 이름</label>
+<input class="w-full bg-surface-container-low border-none rounded-lg px-4 py-3 font-ui-label text-ui-label text-on-surface focus:ring-2 focus:ring-secondary focus:outline-none transition-shadow placeholder:text-outline-variant" id="team-name" placeholder="예: 은혜로운 모임" type="text" value="은혜로운 모임"/>
+</section>
+<!-- Invite Members Section -->
+<section class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_12px_rgba(4,17,41,0.03)] border border-surface-variant flex flex-col gap-stack-md">
+<div>
+<h3 class="font-headline-md text-[18px] leading-[24px] font-semibold text-primary">팀원 초대</h3>
+<p class="font-caption text-caption text-on-surface-variant mt-1">이메일로 새로운 팀원을 초대합니다.</p>
+</div>
+<div class="flex gap-2">
+<input class="flex-1 bg-surface-container-low border-none rounded-lg px-4 py-3 font-ui-label text-ui-label text-on-surface focus:ring-2 focus:ring-secondary focus:outline-none transition-shadow placeholder:text-outline-variant" placeholder="이메일 주소 입력" type="email"/>
+<button class="bg-primary text-on-primary font-ui-label text-ui-label px-6 py-3 rounded-lg hover:bg-primary-container transition-colors shadow-sm active:scale-95 duration-150">초대</button>
+</div>
+</section>
+<!-- Member List Section -->
+<section class="bg-surface-container-lowest rounded-xl p-6 shadow-[0_4px_12px_rgba(4,17,41,0.03)] border border-surface-variant flex flex-col gap-stack-md">
+<div class="flex justify-between items-center mb-2">
+<h3 class="font-headline-md text-[18px] leading-[24px] font-semibold text-primary">현재 팀원</h3>
+<span class="bg-secondary-fixed text-on-secondary-fixed font-caption text-caption px-3 py-1 rounded-full">3명</span>
+</div>
+<ul class="flex flex-col gap-4">
+<!-- Member 1 (Leader) -->
+<li class="flex items-center justify-between group">
+<div class="flex items-center gap-4">
+<img alt="User Avatar" class="w-12 h-12 rounded-full object-cover border border-surface-variant shadow-sm" data-alt="Portrait of a friendly middle-aged korean man, soft studio lighting, professional but warm look" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvBzhntFWau1UFheIvJh2YvltKEvGxYmyJqGLkoVCdbmC315LcuP3aDOvYAqyz3Rs_a1V7T0vgZ8wgyq-AgbYSesjuNs_0qx2KS9ENdiguEOoGCV5outEie-fO_ydTV_qptW_ENp-0yf_4RjAD7eRfoi8dJlK30wqqt-kou24phLxbXTwH0y5AHg9DhFZVMMMtko5Qb4JUr9DGCt5WbVS27YvVHBqa7QR7KQ2lkemsdbXbs9mGueyf82jYnw4kXl3Zzvz-NaSPTAk"/>
+<div>
+<p class="font-ui-label text-ui-label text-on-surface flex items-center gap-2">
+                                김요한 
+                                <span class="material-symbols-outlined text-[16px] text-secondary" data-icon="star" data-weight="fill" style="font-variation-settings: 'FILL' 1;">star</span>
+</p>
+<p class="font-caption text-caption text-on-surface-variant">leader@example.com</p>
+</div>
+</div>
+</li>
+<!-- Member 2 -->
+<li class="flex items-center justify-between group border-t border-surface-variant pt-4">
+<div class="flex items-center gap-4">
+<img alt="User Avatar" class="w-12 h-12 rounded-full object-cover border border-surface-variant shadow-sm" data-alt="Portrait of a young korean woman smiling, natural outdoor lighting, warm and inviting aesthetic" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLUfrI1TyNTXh5RG9Pw00fjzs-IlJ7xQQ4NnKLN6rYuMR8aBfK1PT3kKXyymAGkY5x1KwVSPU5sDBnQN37-mGKCdCD1RHbsgZKVEejApuK43EFke4f8F4ZiovTgDBow2tzALw85LgHSl5ewyp87khSun1VZzLusi6smMNttmpFM2qi5cJxcZ9ACdeOzA1X3iKbTSNKZLQjRzOQVTsXFu8zAkkve5nphMnV2rKwEiIRjUx4LHvhK6Yn1S00VlEVwKU0av4mwwvdZ94"/>
+<div>
+<p class="font-ui-label text-ui-label text-on-surface">박사라</p>
+<p class="font-caption text-caption text-on-surface-variant">sara.park@example.com</p>
+</div>
+</div>
+<button aria-label="Remove member" class="text-outline hover:text-error transition-colors p-2 rounded-full hover:bg-error-container active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="person_remove">person_remove</span>
+</button>
+</li>
+<!-- Member 3 -->
+<li class="flex items-center justify-between group border-t border-surface-variant pt-4">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center border border-primary-fixed-dim shadow-sm text-on-primary-fixed font-headline-md text-[18px]">
+                            L
+                        </div>
+<div>
+<p class="font-ui-label text-ui-label text-on-surface">이은혜 <span class="text-[12px] text-outline-variant font-normal">(수락 대기중)</span></p>
+<p class="font-caption text-caption text-on-surface-variant">grace.lee@example.com</p>
+</div>
+</div>
+<button aria-label="Cancel invitation" class="text-outline hover:text-error transition-colors p-2 rounded-full hover:bg-error-container active:scale-95 duration-150">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</li>
+</ul>
+</section>
+<!-- Bottom Action -->
+<div class="mt-4 mb-8">
+<button class="w-full bg-primary text-on-primary font-ui-label text-ui-label h-12 rounded-lg flex items-center justify-center gap-2 hover:bg-primary-container transition-colors shadow-[0_4px_12px_rgba(4,17,41,0.1)] active:scale-[0.98] duration-150">
+<span class="material-symbols-outlined text-[20px]" data-icon="check_circle">check_circle</span>
+                변경사항 저장
+            </button>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 h-20 pb-safe bg-[#FDFCFB] dark:bg-slate-900 shadow-[0_-4px_12px_rgba(26,38,63,0.05)] rounded-t-2xl border-t border-slate-200/50 dark:border-slate-800 md:hidden">
+<a class="flex flex-col items-center justify-center text-[#1A263F]/40 dark:text-slate-500 hover:opacity-80 transition-opacity active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="home">home</span>
+<span class="font-manrope text-[11px] font-medium">홈</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#1A263F]/40 dark:text-slate-500 hover:opacity-80 transition-opacity active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="menu_book">menu_book</span>
+<span class="font-manrope text-[11px] font-medium">읽기</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#D4AF37] dark:text-[#F9F1E0] relative after:content-[''] after:w-1 after:h-1 after:bg-[#D4AF37] after:rounded-full after:mt-1 hover:opacity-80 transition-opacity active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="groups">groups</span>
+<span class="font-manrope text-[11px] font-medium">팀</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#1A263F]/40 dark:text-slate-500 hover:opacity-80 transition-opacity active:scale-95 duration-150" href="#">
+<span class="material-symbols-outlined mb-1" data-icon="person">person</span>
+<span class="font-manrope text-[11px] font-medium">프로필</span>
+</a>
+</nav>
+</body></html>

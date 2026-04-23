@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>팀 상세 - 새소망교회</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Noto+Serif:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-background": "#1b1c1a",
+                        "primary-fixed": "#d8e2ff",
+                        "on-primary": "#ffffff",
+                        "surface-variant": "#e4e2de",
+                        "on-tertiary": "#ffffff",
+                        "surface-dim": "#dbdad6",
+                        "inverse-primary": "#bac6e7",
+                        "outline-variant": "#c5c6ce",
+                        "secondary": "#775a19",
+                        "surface-tint": "#525e7a",
+                        "primary-container": "#1a263f",
+                        "surface-container": "#efeeea",
+                        "error": "#ba1a1a",
+                        "secondary-fixed-dim": "#e9c176",
+                        "surface-container-highest": "#e4e2de",
+                        "on-tertiary-fixed": "#1f1b13",
+                        "on-error": "#ffffff",
+                        "inverse-surface": "#30312e",
+                        "on-tertiary-container": "#958d81",
+                        "on-secondary": "#ffffff",
+                        "on-primary-container": "#818dab",
+                        "inverse-on-surface": "#f2f0ed",
+                        "primary": "#041129",
+                        "surface": "#fbf9f5",
+                        "surface-container-high": "#eae8e4",
+                        "on-surface-variant": "#45474d",
+                        "tertiary": "#15110a",
+                        "on-error-container": "#93000a",
+                        "on-primary-fixed-variant": "#3b4761",
+                        "secondary-fixed": "#ffdea5",
+                        "surface-container-low": "#f5f3ef",
+                        "tertiary-container": "#2b261e",
+                        "tertiary-fixed": "#ebe1d4",
+                        "surface-bright": "#fbf9f5",
+                        "error-container": "#ffdad6",
+                        "background": "#fbf9f5",
+                        "primary-fixed-dim": "#bac6e7",
+                        "tertiary-fixed-dim": "#cfc5b9",
+                        "secondary-container": "#fed488",
+                        "surface-container-lowest": "#ffffff",
+                        "on-surface": "#1b1c1a",
+                        "on-secondary-fixed-variant": "#5d4201",
+                        "on-tertiary-fixed-variant": "#4c463c",
+                        "on-primary-fixed": "#0f1b34",
+                        "on-secondary-container": "#785a1a",
+                        "outline": "#75777e",
+                        "on-secondary-fixed": "#261900"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "1rem",
+                        "margin-page": "1.5rem",
+                        "stack-sm": "0.5rem",
+                        "stack-lg": "2rem",
+                        "stack-md": "1rem"
+                    },
+                    "fontFamily": {
+                        "scripture-body": ["Noto Serif", "serif"],
+                        "headline-md": ["Manrope", "sans-serif"],
+                        "scripture-sub": ["Noto Serif", "serif"],
+                        "caption": ["Manrope", "sans-serif"],
+                        "ui-label": ["Manrope", "sans-serif"],
+                        "headline-lg": ["Manrope", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "scripture-body": ["18px", { "lineHeight": "32px", "fontWeight": "400" }],
+                        "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "scripture-sub": ["15px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "caption": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+                        "ui-label": ["14px", { "lineHeight": "20px", "fontWeight": "500" }],
+                        "headline-lg": ["28px", { "lineHeight": "36px", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background min-h-screen pt-16 pb-24 md:pb-0">
+<!-- TopAppBar Shared Component -->
+<header class="bg-white dark:bg-slate-900 docked full-width top-0 border-b border-slate-100 dark:border-slate-800 shadow-[0_4px_12px_rgba(26,38,63,0.05)] fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-16">
+<button class="text-[#1A263F] dark:text-slate-100 active:scale-95 transition-transform duration-200 hover:bg-slate-50 dark:hover:bg-slate-800 p-2 rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="text-lg font-bold text-[#1A263F] dark:text-white font-manrope font-semibold tracking-tight">새소망교회</h1>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Portrait of a young man with glasses smiling gently" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD2kLmg_XDKxwe-34EoCuBZAgZqrXBIXhjW4EpZkqXjwVDOH3j5xK9OYmscP0-QgBQ9itJYjxcdDKKM1_oYNYawF2djAX8W3vJlMZY8YHiGfpJCjkHWINHZ9GPL7vK1hEm_SZyUIp88tw7t0zoMLxnRNn0P0vzywx1XrOmMf4obXy5dznl6JHtZ0PN8Drx_MfgNOud57Jp0A0-liKSDCwc3_zv8pzIO2Z34e8QkjXx3QBfJcSPt3h5eUwaB_OiMyWqU1RKpNbutors"/>
+</div>
+</header>
+<main class="max-w-md mx-auto px-margin-page py-stack-lg flex flex-col gap-stack-lg">
+<!-- Team Header & Progress -->
+<section class="flex flex-col gap-stack-sm animate-fade-in">
+<h2 class="font-headline-lg text-headline-lg text-primary">은혜로운 모임</h2>
+<p class="font-scripture-sub text-scripture-sub text-on-surface-variant">말씀 안에서 함께 성장합니다.</p>
+<div class="bg-surface rounded-xl p-stack-md shadow-[0_4px_24px_rgba(4,17,41,0.04)] mt-stack-sm flex flex-col gap-stack-sm border border-surface-container-highest">
+<div class="flex justify-between items-end">
+<span class="font-ui-label text-ui-label text-on-surface">읽기 계획 진행률</span>
+<span class="font-headline-md text-headline-md text-secondary">68%</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary rounded-full w-[68%] transition-all duration-1000 ease-out"></div>
+</div>
+<p class="font-caption text-caption text-on-surface-variant text-right">목표: 90일 만에 신약 성경 읽기</p>
+</div>
+</section>
+<!-- Activity Feed -->
+<section class="flex flex-col gap-stack-md">
+<h3 class="font-headline-md text-headline-md text-primary">최근 읽기</h3>
+<div class="flex flex-col gap-stack-sm">
+<!-- Feed Item -->
+<div class="bg-surface rounded-xl p-stack-md shadow-[0_2px_12px_rgba(4,17,41,0.02)] flex gap-stack-md items-start border border-surface-container">
+<div class="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-surface-container-high">
+<img class="w-full h-full object-cover" data-alt="Portrait of a young woman smiling brightly outdoors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeN5rsZu9JjxggAxjDe655umYgUobM5hj8MeiPouOmASd9AENvlDLbrdc1cFd7kfAfU4AQ77RA5_vgcFNShwu00V-tnutf7hUag-2KlImsIG-JrOUY1s8SS4jaCHd1FCnJULeAYhSGD2yr_iqQnwVhrhsaFPdis8ACERJ4JNS8nF_ufBQw1g2vm1pM7pQtC5eDxVF0CVERacLoRb8-nrOvVNfmI3wb2ePeiH7MMcIOJq-Pw6jk--4wb_Y1VBIi0-im30C03s4qTkg"/>
+</div>
+<div class="flex flex-col">
+<span class="font-ui-label text-ui-label text-on-surface">Sarah J.</span>
+<p class="font-scripture-body text-scripture-body text-on-surface-variant text-[16px] leading-[24px] mt-1"><strong class="text-primary font-medium">창세기</strong> 3장을 읽었습니다</p>
+<span class="font-caption text-caption text-outline mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">schedule</span> 2시간 전
+                        </span>
+</div>
+</div>
+<!-- Feed Item -->
+<div class="bg-surface rounded-xl p-stack-md shadow-[0_2px_12px_rgba(4,17,41,0.02)] flex gap-stack-md items-start border border-surface-container">
+<div class="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-surface-container-high flex items-center justify-center text-primary-container font-ui-label text-ui-label">
+                        MK
+                    </div>
+<div class="flex flex-col">
+<span class="font-ui-label text-ui-label text-on-surface">Michael K.</span>
+<p class="font-scripture-body text-scripture-body text-on-surface-variant text-[16px] leading-[24px] mt-1"><strong class="text-primary font-medium">시편 23편</strong> 묵상을 완료했습니다.</p>
+<span class="font-caption text-caption text-outline mt-2 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">schedule</span> 5시간 전
+                        </span>
+</div>
+</div>
+</div>
+</section>
+<!-- Cheer Up Section -->
+<section class="flex flex-col gap-stack-md">
+<h3 class="font-headline-md text-headline-md text-primary">응원하기</h3>
+<div class="bg-surface rounded-xl p-stack-md shadow-[0_4px_24px_rgba(4,17,41,0.04)] border border-surface-container-highest flex flex-col h-80">
+<!-- Message Container -->
+<div class="flex-1 overflow-y-auto flex flex-col gap-stack-sm pb-4">
+<!-- Received Message -->
+<div class="flex gap-3 items-end">
+<div class="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Portrait of an older man looking contemplative" src="https://lh3.googleusercontent.com/aida-public/AB6AXuByOM6xWfgiegKEFVjGg_AqFhni6JvXp8JWTZmMRTAxYJHzT0zifzjp2XU-P-DTAOAikNv4i11ye850o1P9o7FAClG5uI46upSUdXGGpRsfYpwhxHxJL7kCw5wJU5FA77SJEMJWItTBWWnFp4DOJc10OIC2KCEqQ3kK_koXKeXzDe2jFAVtxFGwJ-8CbEBZepk4fx6PKiiMVDMeHHETDDhRgOyPCk83TYg8_6VZVGUWb-nqqa1rajzq_Vk3JuIu10kWQV2sROYQSLw"/>
+</div>
+<div class="bg-surface-container-low p-3 rounded-2xl rounded-bl-none max-w-[75%] border border-surface-container">
+<p class="font-ui-label text-ui-label text-on-surface">모두 힘내세요! 출애굽기 여정은 은혜롭습니다. 🙏</p>
+</div>
+</div>
+<!-- Sent Message -->
+<div class="flex gap-3 items-end justify-end mt-2">
+<div class="bg-secondary-container p-3 rounded-2xl rounded-br-none max-w-[75%] shadow-[0_2px_8px_rgba(119,90,25,0.15)]">
+<p class="font-ui-label text-ui-label text-on-secondary-container">아멘! 오늘 1-5장을 막 마쳤어요.</p>
+</div>
+</div>
+<!-- Received Emoji -->
+<div class="flex gap-3 items-end mt-2">
+<div class="w-8 h-8 rounded-full overflow-hidden shrink-0 bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Portrait of a young woman smiling brightly outdoors" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4ipLEcb-aFvjf5FfG6DdSkc5OQiSqTVdFZjmMWW9tFNLN0lfA5WAjRVnz3J9tK088rr0BDXAjJAb4q-PxgIeED3YLoyyKPcG3AyW2lVSZ_141Fx5BDHbbAEnIpG3_fXfC8kZheMCEhLNxwsenGYeAChkwjD6bynVSZhRBmP7NmaTJ4S2EySd30KEgGV4953k9p_JQRLiHJGJESQtGyPp03xpDllB2JGFMvo7-Pm2C1BbsRoFE-PYj3y9OSb_FqIaynMbz0SvO6aw"/>
+</div>
+<div class="bg-transparent p-1 rounded-full text-2xl">
+                            🙌
+                        </div>
+</div>
+</div>
+<!-- Input Area -->
+<div class="mt-auto pt-2 border-t border-surface-container flex items-center gap-2">
+<button class="text-outline hover:text-secondary transition-colors p-2 rounded-full hover:bg-surface-container">
+<span class="material-symbols-outlined">mood</span>
+</button>
+<div class="flex-1 bg-surface-container-low rounded-full px-4 py-2 flex items-center">
+<input class="bg-transparent border-none outline-none font-ui-label text-ui-label w-full text-on-surface placeholder-outline focus:ring-0 p-0" placeholder="메시지 보내기..." type="text"/>
+</div>
+<button class="bg-primary text-on-primary w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-md hover:bg-primary/90 transition-colors">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar Shared Component -->
+<nav class="md:hidden bg-white/90 dark:bg-slate-900/90 backdrop-blur-md docked full-width bottom-0 rounded-t-2xl border-t border-slate-100 dark:border-slate-800 shadow-[0_-4px_12px_rgba(26,38,63,0.05)] fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 pb-6 pt-3">
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 font-manrope text-[11px] font-medium hover:text-[#1A263F] dark:hover:text-amber-300 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mb-1">dashboard</span>
+            진행률
+        </a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 font-manrope text-[11px] font-medium hover:text-[#1A263F] dark:hover:text-amber-300 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mb-1">menu_book</span>
+            기록
+        </a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 font-manrope text-[11px] font-medium hover:text-[#1A263F] dark:hover:text-amber-300 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mb-1">leaderboard</span>
+            순위
+        </a>
+<a class="flex flex-col items-center justify-center text-[#B8860B] dark:text-amber-400 after:content-['\2022'] after:text-[10px] after:mt-[-4px] font-manrope text-[11px] font-medium hover:text-[#1A263F] dark:hover:text-amber-300 active:scale-90 transition-all duration-200" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">groups</span>
+            팀
+        </a>
+</nav>
+</body></html>

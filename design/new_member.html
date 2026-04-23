@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>회원가입 - 새소망 성경</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Noto+Serif:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "surface-container-highest": "#e4e2de",
+                      "on-primary": "#ffffff",
+                      "surface-container": "#efeeea",
+                      "secondary-container": "#fed488",
+                      "inverse-on-surface": "#f2f0ed",
+                      "on-tertiary": "#ffffff",
+                      "surface-container-high": "#eae8e4",
+                      "on-surface": "#1b1c1a",
+                      "surface-variant": "#e4e2de",
+                      "on-secondary-fixed-variant": "#5d4201",
+                      "surface-tint": "#525e7a",
+                      "error-container": "#ffdad6",
+                      "error": "#ba1a1a",
+                      "surface-bright": "#fbf9f5",
+                      "primary-container": "#1a263f",
+                      "inverse-primary": "#bac6e7",
+                      "tertiary": "#15110a",
+                      "outline": "#75777e",
+                      "on-secondary-fixed": "#261900",
+                      "surface": "#fbf9f5",
+                      "surface-container-low": "#f5f3ef",
+                      "on-error-container": "#93000a",
+                      "outline-variant": "#c5c6ce",
+                      "tertiary-fixed-dim": "#cfc5b9",
+                      "on-surface-variant": "#45474d",
+                      "on-primary-container": "#818dab",
+                      "on-error": "#ffffff",
+                      "inverse-surface": "#30312e",
+                      "primary-fixed": "#d8e2ff",
+                      "surface-dim": "#dbdad6",
+                      "on-secondary-container": "#785a1a",
+                      "tertiary-fixed": "#ebe1d4",
+                      "primary-fixed-dim": "#bac6e7",
+                      "on-background": "#1b1c1a",
+                      "tertiary-container": "#2b261e",
+                      "secondary-fixed-dim": "#e9c176",
+                      "on-tertiary-fixed": "#1f1b13",
+                      "on-primary-fixed-variant": "#3b4761",
+                      "secondary-fixed": "#ffdea5",
+                      "surface-container-lowest": "#ffffff",
+                      "secondary": "#775a19",
+                      "primary": "#041129",
+                      "on-secondary": "#ffffff",
+                      "background": "#fbf9f5",
+                      "on-tertiary-fixed-variant": "#4c463c",
+                      "on-tertiary-container": "#958d81",
+                      "on-primary-fixed": "#0f1b34"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "stack-lg": "2rem",
+                      "gutter": "1rem",
+                      "margin-page": "1.5rem",
+                      "stack-sm": "0.5rem",
+                      "stack-md": "1rem"
+              },
+              "fontFamily": {
+                      "headline-md": [
+                              "manrope"
+                      ],
+                      "caption": [
+                              "manrope"
+                      ],
+                      "headline-lg": [
+                              "manrope"
+                      ],
+                      "scripture-body": [
+                              "notoSerif"
+                      ],
+                      "scripture-sub": [
+                              "notoSerif"
+                      ],
+                      "ui-label": [
+                              "manrope"
+                      ]
+              },
+              "fontSize": {
+                      "headline-md": [
+                              "22px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "caption": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "28px",
+                              {
+                                      "lineHeight": "36px",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "scripture-body": [
+                              "18px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "scripture-sub": [
+                              "15px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "ui-label": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+      </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-ui-label antialiased min-h-screen flex flex-col justify-center items-center p-4">
+<!-- Top App Bar (Transactional, minimal for auth flow) -->
+<header class="fixed top-0 left-0 right-0 h-16 w-full flex items-center justify-between px-6 bg-[#FAF9F6] border-none flat no shadows z-50">
+<button class="text-[#1A263F] hover:bg-slate-100 p-2 rounded-full transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined text-xl">arrow_back</span>
+</button>
+<h1 class="font-manrope font-semibold tracking-tight text-lg text-[#1A263F]">새소망 성경</h1>
+<div class="w-10"></div> <!-- Placeholder for balance -->
+</header>
+<main class="w-full max-w-md w-full pt-20 pb-10">
+<!-- Header Section -->
+<div class="text-center mb-stack-lg">
+<div class="w-16 h-16 bg-surface-container-high rounded-full flex items-center justify-center mx-auto mb-stack-sm shadow-[0_4px_12px_rgba(4,17,41,0.05)]">
+<span class="material-symbols-outlined text-secondary text-3xl" style="font-variation-settings: 'FILL' 1;">menu_book</span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-primary mb-2">회원가입</h2>
+<p class="font-scripture-sub text-scripture-sub text-on-surface-variant">새소망 공동체의 일원이 되어보세요</p>
+</div>
+<!-- Form Card -->
+<div class="bg-surface rounded-xl shadow-[0_8px_24px_rgba(4,17,41,0.03)] border border-surface-container-highest p-6 md:p-8">
+<form action="#" class="space-y-stack-md" method="POST">
+<!-- Name Field -->
+<div>
+<label class="block font-ui-label text-ui-label text-on-surface mb-1" for="name">이름</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">person</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:ring-secondary focus:border-secondary transition-colors" id="name" name="name" placeholder="이름 입력" required="" type="text"/>
+</div>
+</div>
+<!-- Email Field -->
+<div>
+<label class="block font-ui-label text-ui-label text-on-surface mb-1" for="email">이메일</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">mail</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:ring-secondary focus:border-secondary transition-colors" id="email" name="email" placeholder="이메일 주소 입력" required="" type="email"/>
+</div>
+</div>
+<!-- Password Field -->
+<div>
+<label class="block font-ui-label text-ui-label text-on-surface mb-1" for="password">비밀번호</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">lock</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:ring-secondary focus:border-secondary transition-colors" id="password" name="password" placeholder="비밀번호 입력" required="" type="password"/>
+</div>
+</div>
+<!-- Select Team -->
+<div>
+<label class="block font-ui-label text-ui-label text-on-surface mb-1" for="team">소속 팀 선택</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-symbols-outlined text-outline">groups</span>
+</div>
+<select class="block w-full pl-10 pr-10 py-3 border border-outline-variant rounded-lg bg-surface-container-lowest text-on-surface focus:ring-secondary focus:border-secondary transition-colors appearance-none" id="team" name="team">
+<option disabled="" selected="" value="">팀을 선택해주세요</option>
+<option value="builders">믿음의 건축자들</option>
+<option value="anchor">소망의 닻</option>
+<option value="grace">은혜로운 모임</option>
+</select>
+<div class="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+<span class="material-symbols-outlined text-outline">expand_more</span>
+</div>
+</div>
+</div>
+<!-- Submit Button -->
+<div class="pt-stack-sm">
+<button class="w-full flex justify-center py-3.5 px-4 border border-transparent rounded-lg shadow-sm font-ui-label text-ui-label text-on-primary bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-secondary transition-all active:scale-[0.98]" type="submit">
+                        가입하기
+                    </button>
+</div>
+</form>
+</div>
+<!-- Footer Link -->
+<div class="mt-stack-lg text-center">
+<a class="font-ui-label text-ui-label text-secondary hover:text-secondary/80 transition-colors" href="#">
+                이미 계정이 있으신가요? 로그인하기
+            </a>
+</div>
+</main>
+<!-- Suppressed BottomNavBar & FAB for transactional page -->
+</body></html>

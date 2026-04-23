@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>New Hope Scripture - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Noto+Serif:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "primary-fixed": "#d8e2ff",
+                    "on-tertiary-container": "#958d81",
+                    "on-primary-fixed": "#0f1b34",
+                    "on-primary": "#ffffff",
+                    "background": "#fbf9f5",
+                    "outline": "#75777e",
+                    "on-secondary-fixed": "#261900",
+                    "on-secondary-container": "#785a1a",
+                    "inverse-on-surface": "#f2f0ed",
+                    "on-primary-container": "#818dab",
+                    "inverse-surface": "#30312e",
+                    "primary-fixed-dim": "#bac6e7",
+                    "on-tertiary-fixed": "#1f1b13",
+                    "primary": "#041129",
+                    "on-secondary": "#ffffff",
+                    "secondary-fixed": "#ffdea5",
+                    "on-tertiary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "on-surface-variant": "#45474d",
+                    "on-surface": "#1b1c1a",
+                    "surface-container": "#efeeea",
+                    "error-container": "#ffdad6",
+                    "tertiary-fixed": "#ebe1d4",
+                    "secondary-container": "#fed488",
+                    "on-error-container": "#93000a",
+                    "primary-container": "#1a263f",
+                    "surface-bright": "#fbf9f5",
+                    "tertiary-container": "#2b261e",
+                    "surface-container-low": "#f5f3ef",
+                    "outline-variant": "#c5c6ce",
+                    "inverse-primary": "#bac6e7",
+                    "on-background": "#1b1c1a",
+                    "surface-dim": "#dbdad6",
+                    "on-tertiary-fixed-variant": "#4c463c",
+                    "secondary-fixed-dim": "#e9c176",
+                    "surface-container-highest": "#e4e2de",
+                    "surface-container-high": "#eae8e4",
+                    "surface-tint": "#525e7a",
+                    "secondary": "#775a19",
+                    "surface-variant": "#e4e2de",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed-dim": "#cfc5b9",
+                    "surface": "#fbf9f5",
+                    "on-secondary-fixed-variant": "#5d4201",
+                    "on-primary-fixed-variant": "#3b4761",
+                    "tertiary": "#15110a",
+                    "surface-container-lowest": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "stack-lg": "2rem",
+                    "stack-md": "1rem",
+                    "gutter": "1rem",
+                    "margin-page": "1.5rem",
+                    "stack-sm": "0.5rem"
+            },
+            "fontFamily": {
+                    "scripture-sub": ["Noto Serif"],
+                    "caption": ["Manrope"],
+                    "headline-md": ["Manrope"],
+                    "ui-label": ["Manrope"],
+                    "scripture-body": ["Noto Serif"],
+                    "headline-lg": ["Manrope"]
+            },
+            "fontSize": {
+                    "scripture-sub": ["15px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "caption": ["12px", {"lineHeight": "16px", "fontWeight": "400"}],
+                    "headline-md": ["22px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "ui-label": ["14px", {"lineHeight": "20px", "fontWeight": "500"}],
+                    "scripture-body": ["18px", {"lineHeight": "32px", "fontWeight": "400"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "fontWeight": "700"}]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-24 font-headline-md selection:bg-secondary-fixed selection:text-on-secondary-fixed">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-[#FDFCFB] dark:bg-[#0F172A] border-b border-slate-100 dark:border-slate-800 shadow-[0_4px_12px_rgba(26,38,63,0.05)]">
+<div class="flex items-center justify-between px-6 h-16 w-full max-w-screen-md mx-auto text-[#1A263F] dark:text-[#F8FAFC]">
+<button aria-label="Menu" class="flex items-center justify-center w-10 h-10 hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200">
+<span class="material-symbols-outlined">menu</span>
+</button>
+<h1 class="text-lg font-bold text-[#1A263F] dark:text-white uppercase tracking-widest font-['Manrope'] font-semibold tracking-tight">새소망 성경</h1>
+<button aria-label="User profile photo" class="flex items-center justify-center w-10 h-10 rounded-full bg-surface-container overflow-hidden hover:opacity-80 transition-opacity active:scale-95 transition-transform duration-200">
+<img alt="User profile photo" class="w-full h-full object-cover" data-alt="Portrait of a smiling person, used as an avatar placeholder, warm natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBQr_4fdAAIVdcz0PD--dUonyjPu4lmoGmDadpnyejoVAK8u5HY9837fx-Ks5Zk2aU4GjKgxyKAt29W5-nM0kJP9OHpd9PQTNE_eKE6yeDaJE3lDLP-BbMASG49H-j-BlMxWD9QP3-IxwhiYDJFX6C6tk7H-mR09dWxvXXXvsgxy64Jg9Zcy4LviDH9gSjxbDYRbgWnJL4zGWSF2Uek5OfywoyEAT0wPmcij0nSumwFhJpeap0t7hmYt6qCc600ebbQiMziTz7HaIk"/>
+</button>
+</div>
+</header>
+<main class="max-w-screen-md mx-auto pt-24 px-margin-page pb-stack-lg flex flex-col gap-stack-lg">
+<!-- Welcome Section -->
+<section class="relative overflow-hidden rounded-xl bg-surface-container-low shadow-[0_4px_12px_rgba(26,38,63,0.05)]">
+<div class="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&amp;fit=crop&amp;q=80')] bg-cover bg-center" data-alt="Soft morning light filtering through forest trees, conveying peace and serenity"></div>
+<div class="relative p-6 z-10">
+<p class="font-caption text-on-surface-variant mb-1">좋은 아침입니다</p>
+<h2 class="font-headline-lg text-primary">환영합니다, 김성도님!</h2>
+</div>
+</section>
+<!-- Daily Verse Card -->
+<section class="bg-surface rounded-xl p-6 shadow-[0_4px_12px_rgba(26,38,63,0.05)] border border-surface-container-highest">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-secondary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-ui-label text-secondary">오늘의 말씀</span>
+</div>
+<blockquote class="font-scripture-body text-on-surface mb-4">
+                "주의 말씀은 내 발에 등이요 내 길에 빛이니이다"
+            </blockquote>
+<p class="font-scripture-sub text-on-surface-variant text-right">시편 119:105</p>
+</section>
+<!-- Progress Summary -->
+<section class="bg-surface-container-low rounded-xl p-6 shadow-[0_4px_12px_rgba(26,38,63,0.05)] flex flex-col gap-4">
+<div class="flex justify-between items-end">
+<div>
+<h3 class="font-ui-label text-on-surface mb-1">오늘의 목표</h3>
+<p class="font-caption text-on-surface-variant">4장 중 2장 읽음</p>
+</div>
+<span class="font-headline-md text-primary">50%</span>
+</div>
+<div class="w-full bg-surface-container-highest h-2 rounded-full overflow-hidden">
+<div class="bg-secondary h-full rounded-full w-1/2"></div>
+</div>
+</section>
+<!-- Quick Actions -->
+<section class="grid grid-cols-2 gap-4">
+<button class="bg-primary text-on-primary rounded-xl p-4 flex flex-col items-center justify-center gap-2 shadow-[0_4px_12px_rgba(26,38,63,0.05)] hover:bg-on-primary-fixed-variant transition-colors active:scale-95 duration-200 h-24">
+<span class="material-symbols-outlined">edit_document</span>
+<span class="font-ui-label">성경 기록하기</span>
+</button>
+<button class="bg-surface-bright text-primary border border-outline-variant rounded-xl p-4 flex flex-col items-center justify-center gap-2 shadow-[0_4px_12px_rgba(26,38,63,0.05)] hover:bg-surface-container-low transition-colors active:scale-95 duration-200 h-24">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-ui-label">팀 랭킹 확인</span>
+</button>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 rounded-t-lg bg-[#FDFCFB] dark:bg-[#0F172A] border-t border-slate-100 dark:border-slate-800 shadow-[0_-4px_12px_rgba(26,38,63,0.05)] pb-safe">
+<div class="flex justify-around items-center px-4 py-3">
+<a class="flex flex-col items-center justify-center text-[#D4AF37] dark:text-[#FDE68A] relative after:content-[''] after:absolute after:-bottom-1 after:w-1 after:h-1 after:bg-[#D4AF37] after:rounded-full font-['Manrope'] text-[11px] font-medium uppercase tracking-tighter hover:text-[#1A263F] dark:hover:text-white transition-colors active:scale-90 duration-150 w-16" href="#">
+<span class="material-symbols-outlined mb-1" style="font-variation-settings: 'FILL' 1;">home</span>
+<span>Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 font-['Manrope'] text-[11px] font-medium uppercase tracking-tighter hover:text-[#1A263F] dark:hover:text-white transition-colors active:scale-90 duration-150 w-16" href="#">
+<span class="material-symbols-outlined mb-1">menu_book</span>
+<span>Read</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 font-['Manrope'] text-[11px] font-medium uppercase tracking-tighter hover:text-[#1A263F] dark:hover:text-white transition-colors active:scale-90 duration-150 w-16" href="#">
+<span class="material-symbols-outlined mb-1">group</span>
+<span>Team</span>
+</a>
+<a class="flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 font-['Manrope'] text-[11px] font-medium uppercase tracking-tighter hover:text-[#1A263F] dark:hover:text-white transition-colors active:scale-90 duration-150 w-16" href="#">
+<span class="material-symbols-outlined mb-1">person</span>
+<span>Profile</span>
+</a>
+</div>
+</nav>
+</body></html>
