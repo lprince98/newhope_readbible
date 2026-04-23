@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/src/infrastructure/supabase/server";
+import { BackButton } from "@/src/presentation/components/common/BackButton";
 
 export const metadata: Metadata = {
   title: "로그인 — 새소망 성경 통독",
@@ -38,7 +39,11 @@ export default async function LoginPage({
 
   return (
     <div className="min-h-dvh bg-[#f5f3ef] flex items-center justify-center relative overflow-hidden">
+      {/* 뒤로 가기 버튼 */}
+      <BackButton />
+
       {/* 배경 그라디언트 */}
+
       <div className="absolute inset-0 opacity-5"
         style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80')", backgroundSize: "cover", backgroundPosition: "center" }}
       />
