@@ -78,20 +78,43 @@ export default async function HomePage() {
   return (
     <div className="max-w-screen-md mx-auto px-6 py-8 flex flex-col gap-6">
       {/* 환영 섹션 */}
-      <section className="relative overflow-hidden rounded-xl bg-[#f5f3ef] shadow-[0_4px_12px_rgba(26,38,63,0.05)]">
-        <div
-          className="absolute inset-0 opacity-10 bg-cover bg-center"
-          style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&q=80')" }}
-        />
-        <div className="relative p-6 z-10">
-          <p className="text-[#45474d] mb-1" style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px" }}>
-            {greeting}
-          </p>
-          <h2 className="text-[#041129]" style={{ fontFamily: "Manrope, sans-serif", fontSize: "28px", fontWeight: 700, lineHeight: "36px" }}>
-            {user ? "환영합니다!" : "로그인하고 시작하세요!"}
-          </h2>
-        </div>
-      </section>
+      {user ? (
+        <section className="relative overflow-hidden rounded-2xl bg-[#041129] text-white shadow-xl">
+          <div
+            className="absolute inset-0 opacity-20 bg-cover bg-center"
+            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&q=80')" }}
+          />
+          <div className="relative p-8 z-10 flex flex-col gap-1">
+            <p className="text-white/60" style={{ fontFamily: "Manrope, sans-serif", fontSize: "13px", fontWeight: 500 }}>
+              {greeting}
+            </p>
+            <h2 style={{ fontFamily: "Manrope, sans-serif", fontSize: "28px", fontWeight: 800 }}>
+              환영합니다!
+            </h2>
+          </div>
+        </section>
+      ) : (
+        <Link 
+          href="/login"
+          className="relative overflow-hidden rounded-2xl bg-[#041129] text-white shadow-xl group transition-transform active:scale-[0.98]"
+        >
+          <div
+            className="absolute inset-0 opacity-30 bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
+            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&q=80')" }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#041129] to-transparent opacity-60" />
+          <div className="relative p-8 z-10 flex flex-col gap-1">
+            <p className="text-white/60" style={{ fontFamily: "Manrope, sans-serif", fontSize: "13px", fontWeight: 500 }}>
+              새소망 성경 통독
+            </p>
+            <h2 className="flex items-center gap-2" style={{ fontFamily: "Manrope, sans-serif", fontSize: "28px", fontWeight: 800 }}>
+              로그인하고 시작하세요
+              <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </h2>
+          </div>
+        </Link>
+      )}
+
 
       {/* 팀 가입 안내 (팀이 없는 경우) */}
       {user && !teamId && (
