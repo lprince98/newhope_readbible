@@ -1,4 +1,4 @@
-"use client";
+"use client"; // build trigger
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { createClient } from "@/src/infrastructure/supabase/client";
