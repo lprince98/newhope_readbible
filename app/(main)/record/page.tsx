@@ -15,20 +15,36 @@ export const dynamic = "force-dynamic";
 import { createClient } from "@/src/infrastructure/supabase/server";
 import { DailyGoalEditor } from "@/src/presentation/components/record/DailyGoalEditor";
 
-export default async function RecordPage() {
+export default async function RecordPage({ searchParams }: { searchParams: Promise<{ id?: string }> }) {
+  const { id: editId } = await searchParams;
   const dailyVerse = getDailyVerse();
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   let dailyGoal = 4;
+  let editRecord = null;
+
   if (user) {
+    // 목표 정보 조회
     const { data: profile } = await supabase
       .from("profiles")
       .select("daily_goal")
       .eq("id", user.id)
       .single();
     dailyGoal = profile?.daily_goal ?? 4;
+
+    // 수정할 기록이 있다면 조회
+    if (editId) {
+      const { data } = await supabase
+        .from("reading_records")
+        .select("*")
+        .eq("id", editId)
+        .eq("user_id", user.id)
+        .single();
+      editRecord = data;
+    }
   }
+
 
   return (
 
@@ -50,7 +66,8 @@ export default async function RecordPage() {
       <DailyGoalEditor initialGoal={dailyGoal} />
 
       {/* 기록 폼 */}
-      <RecordForm />
+      <RecordForm editRecord={editRecord} />
+
 
 
       {/* 최근 기록 목록 */}

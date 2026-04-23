@@ -1,5 +1,6 @@
 import { BIBLE_BOOKS } from "@/lib/constants/bible-books";
 import { createClient } from "@/src/infrastructure/supabase/server";
+import { RecordItemAction } from "./RecordItemAction";
 
 export async function RecentRecords() {
   const supabase = await createClient();
@@ -56,17 +57,22 @@ export async function RecentRecords() {
                   {new Date(record.read_at).toLocaleDateString("ko-KR", { month: "long", day: "numeric" })}
                 </p>
               </div>
-              <div className="flex flex-col items-end">
-                <span className="text-[#041129] font-bold" style={{ fontFamily: "Manrope, sans-serif" }}>
-                  +{count}장
-                </span>
-                {record.memo && (
-                  <span className="text-[#75777e] text-[10px] max-w-[120px] truncate">
-                    {record.memo}
+              <div className="flex items-center gap-3">
+                <div className="flex flex-col items-end">
+                  <span className="text-[#041129] font-bold" style={{ fontFamily: "Manrope, sans-serif" }}>
+                    +{count}장
                   </span>
-                )}
+                  {record.memo && (
+                    <span className="text-[#75777e] text-[10px] max-w-[100px] truncate">
+                      {record.memo}
+                    </span>
+                  )}
+                </div>
+                {/* 수정/삭제 버튼 */}
+                <RecordItemAction recordId={record.id} />
               </div>
             </div>
+
           );
         })}
       </div>

@@ -71,9 +71,59 @@ export async function deleteReadingRecord(id: string) {
   const repo = new SupabaseReadingRecordRepository(supabase);
   try {
     await repo.deleteById(id, user.id);
+    
+    // 모든 관련 페이지 갱신
+    revalidatePath("/");
+    revalidatePath("/home");
     revalidatePath("/dashboard");
+    revalidatePath("/ranking");
+    revalidatePath("/record");
+    revalidatePath("/team");
+
     return { success: true };
   } catch (err) {
     return { error: err instanceof Error ? err.message : "삭제에 실패했습니다." };
   }
 }
+
+/** 기록 수정 액션 */
+export async function updateReadingRecord(id: string, formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "로그인이 필요합니다." };
+
+  const bookId = formData.get("bookId") as BibleBookId;
+  const startChapter = Number(formData.get("startChapter"));
+  const endChapter = Number(formData.get("endChapter"));
+  const memo = (formData.get("memo") as string) || undefined;
+
+  // 정합성 검증
+  const { getBibleBook } = await import("@/lib/constants/bible-books");
+  const bookInfo = getBibleBook(bookId);
+  if (startChapter > bookInfo.chapters || endChapter > bookInfo.chapters) {
+    return { error: `${bookInfo.name}은(는) 총 ${bookInfo.chapters}장까지 있습니다.` };
+  }
+
+  const { error } = await supabase
+    .from("reading_records")
+    .update({
+      book_id: bookId,
+      start_chapter: startChapter,
+      end_chapter: endChapter,
+      memo: memo,
+    })
+    .eq("id", id)
+    .eq("user_id", user.id);
+
+  if (error) return { error: "기록 수정에 실패했습니다." };
+
+  revalidatePath("/");
+  revalidatePath("/home");
+  revalidatePath("/dashboard");
+  revalidatePath("/ranking");
+  revalidatePath("/record");
+  revalidatePath("/team");
+
+  return { success: true };
+}
+

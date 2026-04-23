@@ -1,22 +1,57 @@
 "use client";
 
 import { BIBLE_BOOKS } from "@/lib/constants/bible-books";
-import { addReadingRecord } from "@/src/presentation/actions/recordActions";
-import { useState, useActionState } from "react";
+import { useEffect, useState, useActionState } from "react";
+import { useRouter } from "next/navigation";
+import { addReadingRecord, updateReadingRecord } from "@/src/presentation/actions/recordActions";
+
 
 const initialState = { error: undefined as string | undefined, success: false };
 
-export function RecordForm() {
+interface Props {
+  editRecord?: any;
+}
+
+export function RecordForm({ editRecord }: Props) {
+  const router = useRouter();
   const [state, formAction, isPending] = useActionState(
     async (_prev: typeof initialState, formData: FormData) => {
-      const result = await addReadingRecord(formData);
+      const result = editRecord 
+        ? await updateReadingRecord(editRecord.id, formData)
+        : await addReadingRecord(formData);
+      
+      if (result.success && editRecord) {
+        // 수정 완료 후 URL 파라미터 제거 (기본 모드로 복구)
+        router.push("/record");
+      }
       return result as typeof initialState;
     },
     initialState,
   );
-  const [selectedBook, setSelectedBook] = useState("");
+  
+  const [selectedBook, setSelectedBook] = useState(editRecord?.book_id ?? "");
+  const [startChapter, setStartChapter] = useState(editRecord?.start_chapter?.toString() ?? "");
+  const [endChapter, setEndChapter] = useState(editRecord?.end_chapter?.toString() ?? "");
+  const [memo, setMemo] = useState(editRecord?.memo ?? "");
+
+  // 수정 대상이 바뀌면 폼 값 업데이트
+  useEffect(() => {
+    if (editRecord) {
+      setSelectedBook(editRecord.book_id);
+      setStartChapter(editRecord.start_chapter.toString());
+      setEndChapter(editRecord.end_chapter.toString());
+      setMemo(editRecord.memo ?? "");
+    } else {
+      setSelectedBook("");
+      setStartChapter("");
+      setEndChapter("");
+      setMemo("");
+    }
+  }, [editRecord]);
+
   const maxChapters =
     BIBLE_BOOKS.find((b) => b.id === selectedBook)?.chapters ?? 999;
+
 
   return (
     <form action={formAction} className="grid grid-cols-1 md:grid-cols-12 gap-6">
@@ -81,6 +116,8 @@ export function RecordForm() {
                 max={maxChapters}
                 placeholder="시작"
                 required
+                value={startChapter}
+                onChange={(e) => setStartChapter(e.target.value)}
                 className="w-full bg-[#fbf9f5] text-center text-[#1b1c1a] border border-[#c5c6ce] rounded-lg py-3 focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] outline-none transition-all shadow-inner"
                 style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}
               />
@@ -96,6 +133,8 @@ export function RecordForm() {
                 max={maxChapters}
                 placeholder="종료"
                 required
+                value={endChapter}
+                onChange={(e) => setEndChapter(e.target.value)}
                 className="w-full bg-[#fbf9f5] text-center text-[#1b1c1a] border border-[#c5c6ce] rounded-lg py-3 focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] outline-none transition-all shadow-inner"
                 style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}
               />
@@ -116,6 +155,8 @@ export function RecordForm() {
             name="memo"
             placeholder="이 말씀에서 무엇을 깨달았나요?"
             rows={3}
+            value={memo}
+            onChange={(e) => setMemo(e.target.value)}
             className="w-full bg-[#fbf9f5] text-[#1b1c1a] border border-[#c5c6ce] rounded-lg px-4 py-3 focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] outline-none transition-all resize-y shadow-inner"
             style={{ fontFamily: "Noto Serif KR, serif", fontSize: "15px" }}
           />
@@ -132,22 +173,33 @@ export function RecordForm() {
       {/* 성공 메시지 */}
       {state?.success && (
         <div className="md:col-span-12 bg-[#ffdea5] text-[#261900] rounded-lg px-4 py-3 text-sm">
-          ✓ 읽기 기록이 저장되었습니다!
+          ✓ 읽기 기록이 {editRecord ? "수정" : "저장"}되었습니다!
         </div>
       )}
 
       {/* 저장 버튼 */}
-      <div className="md:col-span-12 mt-4">
+      <div className="md:col-span-12 mt-4 flex flex-col gap-2">
         <button
           type="submit"
           disabled={isPending}
-          className="w-full bg-[#775a19] text-white py-4 px-8 rounded-full flex items-center justify-center gap-2 shadow-[0_8px_20px_rgba(119,90,25,0.25)] hover:shadow-[0_4px_12px_rgba(119,90,25,0.15)] hover:translate-y-[1px] active:shadow-none active:translate-y-[2px] transition-all duration-200 disabled:opacity-60"
+          className={`w-full ${editRecord ? 'bg-[#041129]' : 'bg-[#775a19]'} text-white py-4 px-8 rounded-full flex items-center justify-center gap-2 shadow-lg hover:translate-y-[1px] active:translate-y-[2px] transition-all duration-200 disabled:opacity-60`}
           style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}
         >
-          <span className="material-symbols-outlined">bookmark_add</span>
-          {isPending ? "저장 중..." : "읽기 기록 저장"}
+          <span className="material-symbols-outlined">{editRecord ? "edit_square" : "bookmark_add"}</span>
+          {isPending ? "처리 중..." : editRecord ? "읽기 기록 수정" : "읽기 기록 저장"}
         </button>
+        
+        {editRecord && (
+          <button
+            type="button"
+            onClick={() => router.push("/record")}
+            className="w-full bg-white text-[#75777e] py-3 rounded-full border border-[#c5c6ce] text-sm font-bold"
+          >
+            수정 취소
+          </button>
+        )}
       </div>
+
     </form>
   );
 }
