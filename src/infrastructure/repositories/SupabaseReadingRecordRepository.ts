@@ -112,5 +112,23 @@ export class SupabaseReadingRecordRepository
         totalChapters: r.total_chapters,
       }),
     );
+  async getMemberChapterCounts(teamId: string): Promise<
+    { userId: string; userName: string; totalChapters: number }[]
+  > {
+    const { data, error } = await this.client.rpc("get_member_chapter_counts", {
+      target_team_id: teamId,
+    });
+    if (error) {
+      console.error(">>> [REPO ERROR] getMemberChapterCounts:", error);
+      return [];
+    }
+    return (data ?? []).map(
+      (r: { user_id: string; user_name: string; total_chapters: number }) => ({
+        userId: r.user_id,
+        userName: r.user_name,
+        totalChapters: Number(r.total_chapters),
+      }),
+    );
   }
 }
+

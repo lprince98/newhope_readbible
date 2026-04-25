@@ -4,11 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
-  { href: "/home",    icon: "home",        label: "홈"   },
-  { href: "/record",  icon: "menu_book",   label: "기록"  },
-  { href: "/ranking", icon: "leaderboard", label: "랭킹"  },
-  { href: "/team",    icon: "groups",      label: "팀"   },
+  { href: "/home",      icon: "home",        label: "홈"   },
+  { href: "/record",    icon: "menu_book",   label: "기록"  },
+  { href: "/dashboard", icon: "dashboard",   label: "현황"  },
+  { href: "/ranking",   icon: "leaderboard", label: "랭킹"  },
+  { href: "/team",      icon: "groups",      label: "팀"   },
 ] as const;
+
 
 export function BottomNav() {
   const pathname = usePathname();

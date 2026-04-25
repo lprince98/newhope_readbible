@@ -57,15 +57,11 @@ export default async function TeamDetailPage({
   const TOTAL_BIBLE_CHAPTERS = 1189;
   const progressPct = Math.min(100, Math.round((totalChapters / TOTAL_BIBLE_CHAPTERS) * 100));
 
-  // 팀원 목록
-  const { data: members } = await supabase
-    .from("profiles")
-    .select("id, name")
-    .eq("team_id", teamId)
-    .order("created_at");
+  // 팀원별 진행율 조회
+  const memberProgress = await repo.getMemberChapterCounts(teamId);
 
   // 최근 읽기 기록 (팀원 전체, 최신 20개)
-  const memberIds = (members ?? []).map((m) => m.id);
+  const memberIds = memberProgress.map((m) => m.userId);
   let activities: {
     id: string;
     user_name: string;
@@ -86,7 +82,7 @@ export default async function TeamDetailPage({
 
     activities = (records ?? []).map((r) => ({
       id: r.id,
-      user_name: members?.find((m) => m.id === r.user_id)?.name ?? "알 수 없음",
+      user_name: memberProgress.find((m) => m.userId === r.user_id)?.userName ?? "알 수 없음",
       book_id: r.book_id,
       start_chapter: r.start_chapter,
       end_chapter: r.end_chapter,
@@ -112,7 +108,7 @@ export default async function TeamDetailPage({
   }));
 
   return (
-    <div className="max-w-md mx-auto px-6 py-8 flex flex-col gap-6">
+    <div className="max-w-md mx-auto px-6 py-8 flex flex-col gap-10">
       {/* 팀 헤더 */}
       <section className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
@@ -136,56 +132,91 @@ export default async function TeamDetailPage({
           말씀 안에서 함께 성장합니다.
         </p>
 
-        {/* 진행률 카드 */}
-        <div className="bg-white rounded-xl p-4 shadow-[0_4px_24px_rgba(4,17,41,0.04)] mt-2 flex flex-col gap-2 border border-[#e4e2de]">
-          <div className="flex justify-between items-end">
-            <span className="text-[#1b1c1a]"
-              style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}>
-              성경 통독 진행률
+        {/* 팀 전체 합계 카드 (유지) */}
+        <div className="bg-[#1a263f] rounded-2xl p-6 shadow-lg mt-4 flex flex-col gap-3 text-white">
+          <div className="flex justify-between items-center">
+            <span className="text-white/70 text-sm font-medium" style={{ fontFamily: "Manrope, sans-serif" }}>
+              우리 팀 전체 읽은 분량
             </span>
-            <span className="text-[#775a19]"
-              style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}>
+            <span className="text-white text-2xl font-bold" style={{ fontFamily: "Manrope, sans-serif" }}>
               {progressPct}%
             </span>
           </div>
-          <div className="h-2 w-full bg-[#e4e2de] rounded-full overflow-hidden">
+          <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#775a19] rounded-full transition-all duration-1000"
+              className="h-full bg-[#fed488] rounded-full transition-all duration-1000"
               style={{ width: `${progressPct}%` }}
             />
           </div>
-          <p className="text-[#75777e] text-right"
-            style={{ fontFamily: "Manrope, sans-serif", fontSize: "11px" }}>
-            총 {totalChapters.toLocaleString()}장 / 1,189장
+          <p className="text-white/50 text-xs text-right" style={{ fontFamily: "Manrope, sans-serif" }}>
+            총 {totalChapters.toLocaleString()}장 읽음
           </p>
         </div>
       </section>
 
-      {/* 팀원 목록 */}
-      <section className="flex flex-col gap-3">
-        <h3 className="text-[#041129]"
-          style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}>
-          팀원 {members?.length ?? 0}명
-        </h3>
-        <div className="flex flex-wrap gap-2">
-          {(members ?? []).map((m) => (
-            <div key={m.id}
-              className={`flex items-center gap-2 px-3 py-1.5 rounded-full border ${
-                m.id === user.id
-                  ? "bg-[#fed488]/30 border-[#775a19]/30 text-[#775a19]"
-                  : "bg-[#efeeea] border-[#c5c6ce] text-[#1b1c1a]"
-              }`}
-              style={{ fontFamily: "Manrope, sans-serif", fontSize: "13px", fontWeight: 500 }}
-            >
-              <span className="w-5 h-5 rounded-full bg-[#1a263f] text-white flex items-center justify-center text-[10px] font-bold">
-                {m.name.charAt(0)}
-              </span>
-              {m.name}
-              {m.id === user.id && <span className="text-[10px] text-[#775a19]">나</span>}
-            </div>
-          ))}
+      {/* 팀원별 진행율 (개인별 게이지로 변경) */}
+      <section className="flex flex-col gap-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-[#041129]"
+            style={{ fontFamily: "Manrope, sans-serif", fontSize: "20px", fontWeight: 600 }}>
+            팀원별 현황
+          </h3>
+          <span className="text-[#75777e] text-xs" style={{ fontFamily: "Manrope, sans-serif" }}>
+            {memberProgress.length}명 활동 중
+          </span>
+        </div>
+        
+        <div className="flex flex-col gap-4">
+          {memberProgress.map((m) => {
+            const memberPct = Math.min(100, Math.round((m.totalChapters / 1189) * 100));
+            const isMe = m.userId === user.id;
+
+            return (
+              <div key={m.userId} className={`p-4 rounded-2xl border transition-all ${
+                isMe ? "bg-[#fffbeb] border-[#fed488] shadow-sm" : "bg-white border-[#e4e2de]"
+              }`}>
+                <div className="flex justify-between items-center mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                      isMe ? "bg-[#775a19] text-white" : "bg-[#efeeea] text-[#75777e]"
+                    }`}>
+                      {m.userName.charAt(0)}
+                    </div>
+                    <span className={`font-bold ${isMe ? "text-[#775a19]" : "text-[#041129]"}`}
+                      style={{ fontFamily: "Manrope, sans-serif", fontSize: "15px" }}>
+                      {m.userName} {isMe && "(나)"}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[#775a19] font-bold text-lg" style={{ fontFamily: "Manrope, sans-serif" }}>
+                      {memberPct}%
+                    </span>
+                  </div>
+                </div>
+                
+                <div className="h-1.5 w-full bg-[#efeeea] rounded-full overflow-hidden">
+                  <div
+                    className={`h-full rounded-full transition-all duration-1000 ${
+                      isMe ? "bg-[#775a19]" : "bg-[#1a263f]/60"
+                    }`}
+                    style={{ width: `${memberPct}%` }}
+                  />
+                </div>
+                
+                <div className="flex justify-between items-center mt-2">
+                  <span className="text-[11px] text-[#75777e]" style={{ fontFamily: "Manrope, sans-serif" }}>
+                    완독까지 {1189 - m.totalChapters}장 남음
+                  </span>
+                  <span className="text-[11px] font-medium text-[#45474d]" style={{ fontFamily: "Manrope, sans-serif" }}>
+                    {m.totalChapters} / 1,189장
+                  </span>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </section>
+
 
       {/* 최근 읽기 활동 */}
       <section className="flex flex-col gap-3">
