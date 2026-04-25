@@ -58,10 +58,28 @@ export default async function TeamDetailPage({
   const progressPct = Math.min(100, Math.round((totalChapters / TOTAL_BIBLE_CHAPTERS) * 100));
 
   // 팀원별 진행율 조회
-  const memberProgress = await repo.getMemberChapterCounts(teamId);
+  let memberProgress = await repo.getMemberChapterCounts(teamId);
+
+  // [백업] RPC가 작동하지 않거나 결과가 없는 경우, 프로필 테이블에서 직접 팀원 목록 조회
+  if (memberProgress.length === 0) {
+    const { data: fallbackMembers } = await supabase
+      .from("profiles")
+      .select("id, name")
+      .eq("team_id", teamId)
+      .order("created_at");
+    
+    if (fallbackMembers) {
+      memberProgress = fallbackMembers.map(m => ({
+        userId: m.id,
+        userName: m.name,
+        totalChapters: 0 // 진행율은 0으로 표시되더라도 이름은 나옴
+      }));
+    }
+  }
 
   // 최근 읽기 기록 (팀원 전체, 최신 20개)
   const memberIds = memberProgress.map((m) => m.userId);
+
   let activities: {
     id: string;
     user_name: string;
