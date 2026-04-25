@@ -50,9 +50,13 @@ export async function addReadingRecord(formData: FormData) {
       readAt: new Date(),
     });
 
+    // 모든 관련 페이지 갱신
     revalidatePath("/");
+    revalidatePath("/home");
     revalidatePath("/dashboard");
     revalidatePath("/ranking");
+    revalidatePath("/record");
+    revalidatePath("/team");
 
     return { success: true, record };
   } catch (err) {
@@ -117,6 +121,7 @@ export async function updateReadingRecord(id: string, formData: FormData) {
 
   if (error) return { error: "기록 수정에 실패했습니다." };
 
+  // 모든 관련 페이지 갱신
   revalidatePath("/");
   revalidatePath("/home");
   revalidatePath("/dashboard");
@@ -126,4 +131,5 @@ export async function updateReadingRecord(id: string, formData: FormData) {
 
   return { success: true };
 }
+
 
