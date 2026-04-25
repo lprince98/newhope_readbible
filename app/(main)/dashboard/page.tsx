@@ -36,16 +36,29 @@ export default async function DashboardPage() {
     );
   }
 
-  // 사용자 프로필 및 목표 조회
-  const { data: profile } = await supabase
+  // 사용자 프로필 및 팀 정보 조회
+  const { data: profile, error: profileError } = await supabase
     .from("profiles")
-    .select("name, daily_goal, teams(name)")
+    .select(`
+      name, 
+      daily_goal,
+      teams:team_id (
+        name
+      )
+    `)
     .eq("id", user.id)
     .single();
 
-  const teamName = (profile?.teams as unknown as { name: string } | null)?.name ?? null;
+  if (profileError) {
+    console.error(">>> [DASHBOARD ERROR] profile fetch:", profileError);
+  }
+
+  // 팀 이름 추출 (중첩 객체 구조 대응)
+  const teamData = profile?.teams as unknown as { name: string } | null;
+  const teamName = teamData?.name ?? null;
   const userName = profile?.name ?? "성도";
   const dailyGoal = profile?.daily_goal ? Number(profile.daily_goal) : 4;
+
 
 
   const repo = new SupabaseReadingRecordRepository(supabase);
