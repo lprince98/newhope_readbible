@@ -131,28 +131,8 @@ export default async function TeamDetailPage({
           style={{ fontFamily: "Noto Serif KR, serif", fontSize: "15px" }}>
           말씀 안에서 함께 성장합니다.
         </p>
-
-        {/* 팀 전체 합계 카드 (유지) */}
-        <div className="bg-[#1a263f] rounded-2xl p-6 shadow-lg mt-4 flex flex-col gap-3 text-white">
-          <div className="flex justify-between items-center">
-            <span className="text-white/70 text-sm font-medium" style={{ fontFamily: "Manrope, sans-serif" }}>
-              우리 팀 전체 읽은 분량
-            </span>
-            <span className="text-white text-2xl font-bold" style={{ fontFamily: "Manrope, sans-serif" }}>
-              {progressPct}%
-            </span>
-          </div>
-          <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-[#fed488] rounded-full transition-all duration-1000"
-              style={{ width: `${progressPct}%` }}
-            />
-          </div>
-          <p className="text-white/50 text-xs text-right" style={{ fontFamily: "Manrope, sans-serif" }}>
-            총 {totalChapters.toLocaleString()}장 읽음
-          </p>
-        </div>
       </section>
+
 
       {/* 팀원별 진행율 (개인별 게이지로 변경) */}
       <section className="flex flex-col gap-4">

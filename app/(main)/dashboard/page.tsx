@@ -34,19 +34,21 @@ export default async function DashboardPage() {
     );
   }
 
-  // 팀 이름 조회
+  // 사용자 프로필 및 목표 조회
   const { data: profile } = await supabase
     .from("profiles")
-    .select("name, teams(name)")
+    .select("name, daily_goal, teams(name)")
     .eq("id", user.id)
     .single();
 
   const teamName = (profile?.teams as unknown as { name: string } | null)?.name ?? null;
   const userName = profile?.name ?? "성도";
+  const dailyGoal = profile?.daily_goal ?? 4;
 
   const repo = new SupabaseReadingRecordRepository(supabase);
   const useCase = new GetDashboardUseCase(repo);
-  const dashboard = await useCase.execute(user.id, teamName);
+  const dashboard = await useCase.execute(user.id, teamName, dailyGoal);
+
 
   // 오늘 요일 인덱스 (월=0 ~ 일=6)
   const today = new Date();
