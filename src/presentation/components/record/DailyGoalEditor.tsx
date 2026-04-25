@@ -23,11 +23,14 @@ export function DailyGoalEditor({ initialGoal }: Props) {
       const res = await updateDailyGoal(newGoal);
       if (res.success) {
         setIsEditing(false);
+        // 클라이언트 측에서 즉시 새로고침하여 동기화 유도
+        window.location.reload();
       } else if (res.error) {
         alert(res.error);
       }
     });
   };
+
 
   return (
     <div className="bg-[#f5f3ef] rounded-2xl p-6 border border-[#e4e2de] shadow-sm">
