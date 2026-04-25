@@ -21,9 +21,11 @@ export async function updateDailyGoal(goal: number) {
     return { error: "목표 수정 중 오류가 발생했습니다." };
   }
 
+  revalidatePath("/", "layout");
   revalidatePath("/profile");
   revalidatePath("/home");
   revalidatePath("/dashboard");
+
   
   return { success: true };
 }

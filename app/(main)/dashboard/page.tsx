@@ -43,7 +43,8 @@ export default async function DashboardPage() {
 
   const teamName = (profile?.teams as unknown as { name: string } | null)?.name ?? null;
   const userName = profile?.name ?? "성도";
-  const dailyGoal = profile?.daily_goal ?? 4;
+  const dailyGoal = profile?.daily_goal ? Number(profile.daily_goal) : 4;
+
 
   const repo = new SupabaseReadingRecordRepository(supabase);
   const useCase = new GetDashboardUseCase(repo);
