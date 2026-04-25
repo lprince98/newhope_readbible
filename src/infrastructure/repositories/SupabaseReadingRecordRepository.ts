@@ -112,7 +112,10 @@ export class SupabaseReadingRecordRepository
         totalChapters: r.total_chapters,
       }),
     );
+  }
+
   async getMemberChapterCounts(teamId: string): Promise<
+
     { userId: string; userName: string; totalChapters: number }[]
   > {
     const { data, error } = await this.client.rpc("get_member_chapter_counts", {
