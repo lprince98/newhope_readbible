@@ -11,11 +11,15 @@ interface Team {
   };
 }
 
-export function JoinTeamList({ teams }: { teams: Team[] }) {
+export function JoinTeamList({ teams, isInTeam }: { teams: Team[], isInTeam?: boolean }) {
   const [isPending, startTransition] = useTransition();
 
   const handleJoin = (teamId: string, teamName: string) => {
-    if (!confirm(`'${teamName}' 팀에 가입하시겠습니까?`)) return;
+    const message = isInTeam 
+      ? `소속 팀을 '${teamName}' 팀으로 변경하시겠습니까?\n기존 팀에서는 자동으로 탈퇴 처리됩니다.`
+      : `'${teamName}' 팀에 가입하시겠습니까?`;
+
+    if (!confirm(message)) return;
 
     startTransition(async () => {
       const res = await joinTeam(teamId);
@@ -24,6 +28,7 @@ export function JoinTeamList({ teams }: { teams: Team[] }) {
       }
     });
   };
+
 
   return (
     <div className="w-full max-w-md flex flex-col gap-4">

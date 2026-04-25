@@ -3,6 +3,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/src/infrastructure/supabase/server";
 import { TeamManageForm } from "@/src/presentation/components/team/TeamManageForm";
+import { TeamMemberActions } from "@/src/presentation/components/team/TeamMemberActions";
+
 
 export const metadata: Metadata = {
   title: "팀 관리 — 새소망 성경 통독",
@@ -91,6 +93,10 @@ export default async function TeamManagePage() {
         invitations={invitations}
         isLeader={isLeader}
       />
+
+      {/* 나의 소속 관리 (탈퇴 및 이동) */}
+      <TeamMemberActions />
+
     </div>
   );
 }

@@ -7,8 +7,13 @@ export const dynamic = "force-dynamic";
 
 
 
-/** /team → 내 팀 상세 페이지로 리다이렉트 */
-export default async function TeamRootPage() {
+/** /team → 내 팀 상세 페이지로 리다이렉트 (switch=true 파라미터가 없으면) */
+export default async function TeamRootPage({ 
+  searchParams 
+}: { 
+  searchParams: Promise<{ switch?: string }> 
+}) {
+  const { switch: isSwitching } = await searchParams;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -20,9 +25,10 @@ export default async function TeamRootPage() {
     .eq("id", user.id)
     .single();
 
-  if (profile?.team_id) {
+  if (profile?.team_id && !isSwitching) {
     redirect(`/team/${profile.team_id}`);
   }
+
 
   // 모든 팀 목록 조회
   const { data: teams } = await supabase
@@ -55,7 +61,8 @@ export default async function TeamRootPage() {
 
       <div className="w-full flex flex-col gap-12">
         {/* 기존 팀 목록 */}
-        <JoinTeamList teams={teams ?? []} />
+        <JoinTeamList teams={teams ?? []} isInTeam={!!profile?.team_id} />
+
 
         {/* 구분선 */}
         <div className="relative">

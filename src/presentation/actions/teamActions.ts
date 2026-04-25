@@ -191,12 +191,64 @@ export async function createTeam(name: string) {
 }
 
 
-/** 팀 가입 (기존 팀에 참여) */
+/** 팀 탈퇴 */
+export async function leaveTeam() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "로그인이 필요합니다." };
+
+  // 1. 현재 팀 정보 및 팀장 여부 확인
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("team_id")
+    .eq("id", user.id)
+    .single();
+
+  if (!profile?.team_id) return { error: "소속된 팀이 없습니다." };
+
+  const { data: team } = await supabase
+    .from("teams")
+    .select("leader_id")
+    .eq("id", profile.team_id)
+    .single();
+
+  if (team?.leader_id === user.id) {
+    return { error: "팀장은 팀을 탈퇴할 수 없습니다. 팀을 해체하거나 팀장을 위임한 후 탈퇴해 주세요." };
+  }
+
+  // 2. 팀 탈퇴 처리
+  const { error } = await supabase
+    .from("profiles")
+    .update({ team_id: null })
+    .eq("id", user.id);
+
+  if (error) return { error: "팀 탈퇴 중 오류가 발생했습니다." };
+
+  revalidatePath("/team");
+  revalidatePath("/ranking");
+  revalidatePath("/profile");
+  revalidatePath("/home");
+  revalidatePath("/dashboard");
+  
+  return { success: true };
+}
+
+/** 팀 가입 (기존 팀에 참여 / 팀 변경) */
 export async function joinTeam(teamId: string) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) return { error: "로그인이 필요합니다." };
+
+  // 팀장인 경우 팀 변경 불가 안내
+  const { data: myTeams } = await supabase
+    .from("teams")
+    .select("id")
+    .eq("leader_id", user.id);
+  
+  if (myTeams && myTeams.length > 0) {
+    return { error: "팀장은 팀을 옮길 수 없습니다. 팀 해체 또는 위임 후 시도해 주세요." };
+  }
 
   const { error } = await supabase
     .from("profiles")
@@ -206,11 +258,13 @@ export async function joinTeam(teamId: string) {
   if (error) return { error: "팀 가입 중 오류가 발생했습니다." };
 
   revalidatePath("/team");
+  revalidatePath("/ranking");
   revalidatePath("/home");
   revalidatePath("/profile");
   revalidatePath("/dashboard");
   redirect(`/team/${teamId}`);
 }
+
 
 
 
