@@ -4,16 +4,28 @@ import { useState, useTransition } from "react";
 import { updateDailyGoal } from "@/src/presentation/actions/profileActions";
 
 interface Props {
+  /** 데이터베이스에서 가져온 초기 목표 장 수 */
   initialGoal: number;
 }
 
+/**
+ * 사용자가 자신의 하루 성경 통독 목표를 수정할 수 있는 에디터 컴포넌트
+ */
 export function DailyGoalEditor({ initialGoal }: Props) {
+  // 서버 액션 실행 상태 관리 (트랜지션 사용)
   const [isPending, startTransition] = useTransition();
+  // 편집 모드 여부
   const [isEditing, setIsEditing] = useState(false);
+  // 입력된 목표치 상태
   const [goal, setGoal] = useState(initialGoal.toString());
 
+  /**
+   * 수정된 목표를 데이터베이스에 저장합니다.
+   */
   const handleUpdate = () => {
     const newGoal = parseInt(goal);
+    
+    // 유효성 검사 (숫자가 아니거나 1보다 작은 경우)
     if (isNaN(newGoal) || newGoal < 1) {
       alert("올바른 목표 장수를 입력해주세요 (1장 이상).");
       return;
@@ -21,9 +33,11 @@ export function DailyGoalEditor({ initialGoal }: Props) {
 
     startTransition(async () => {
       const res = await updateDailyGoal(newGoal);
+      
       if (res.success) {
         setIsEditing(false);
-        // 클라이언트 측에서 즉시 새로고침하여 동기화 유도
+        // [중요] 클라이언트 측에서 즉시 새로고침을 실행하여 
+        // 대시보드의 원형 그래프 등에 새로운 목표치가 즉각 반영되도록 합니다.
         window.location.reload();
       } else if (res.error) {
         alert(res.error);
@@ -31,10 +45,10 @@ export function DailyGoalEditor({ initialGoal }: Props) {
     });
   };
 
-
   return (
     <div className="bg-[#f5f3ef] rounded-2xl p-6 border border-[#e4e2de] shadow-sm">
       {isEditing ? (
+        /* 편집 모드 UI */
         <div className="flex flex-col gap-3">
           <label className="text-xs font-bold text-[#75777e] uppercase tracking-wider">
             하루 성경 통독 목표 수정
@@ -52,7 +66,7 @@ export function DailyGoalEditor({ initialGoal }: Props) {
               disabled={isPending}
               className="px-6 bg-[#041129] text-white rounded-xl font-bold active:scale-95 disabled:opacity-50 transition-all"
             >
-              저장
+              {isPending ? "저장 중..." : "저장"}
             </button>
             <button
               onClick={() => setIsEditing(false)}
@@ -63,6 +77,7 @@ export function DailyGoalEditor({ initialGoal }: Props) {
           </div>
         </div>
       ) : (
+        /* 표시 모드 UI */
         <div className="flex justify-between items-center">
           <div>
             <h3 className="text-[#75777e] text-xs font-bold uppercase tracking-wider mb-1">나의 하루 목표</h3>

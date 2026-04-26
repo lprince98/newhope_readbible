@@ -6,6 +6,9 @@ import { TeamChat } from "@/src/presentation/components/team/TeamChat";
 import { ActivityFeed } from "@/src/presentation/components/team/ActivityFeed";
 import { SupabaseReadingRecordRepository } from "@/src/infrastructure/repositories/SupabaseReadingRecordRepository";
 
+/**
+ * 팀 이름을 기반으로 동적 메타데이터를 생성합니다.
+ */
 export async function generateMetadata({
   params,
 }: {
@@ -20,6 +23,7 @@ export async function generateMetadata({
   };
 }
 
+// 실시간 데이터 반영을 위해 동적 렌더링 강제
 export const dynamic = "force-dynamic";
 
 
@@ -33,15 +37,15 @@ export default async function TeamDetailPage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  // 팀 정보
+  // 1. 팀 기본 정보 조회
   const { data: team } = await supabase
     .from("teams")
-    .select("id, name")
+    .select("id, name, leader_id")
     .eq("id", teamId)
     .single();
   if (!team) notFound();
 
-  // 내 프로필
+  // 2. 내 프로필 정보 조회 (내가 이 팀 소속인지 확인용)
   const { data: myProfile } = await supabase
     .from("profiles")
     .select("name, team_id")
@@ -49,18 +53,19 @@ export default async function TeamDetailPage({
     .single();
   const isMyTeam = myProfile?.team_id === teamId;
 
-  // 팀 전체 장 수 집계
+  // 3. 팀 전체 진행 통계 계산 (저장소 활용)
   const repo = new SupabaseReadingRecordRepository(supabase);
   const teamCounts = await repo.getTeamChapterCounts();
   const teamData = teamCounts.find((t) => t.teamId === teamId);
   const totalChapters = teamData?.totalChapters ?? 0;
-  const TOTAL_BIBLE_CHAPTERS = 1189;
-  const progressPct = Math.min(100, Math.round((totalChapters / TOTAL_BIBLE_CHAPTERS) * 100));
-
-  // 팀원별 진행율 조회
+  const TOTAL_BIBLE_CHAPTERS = 1189; // 성경 전체 1,189장
+  
+  // 4. 팀원별 개별 진행 현황 조회 (중요!)
+  // RPC 함수인 'get_member_chapter_counts'를 호출하여 각 멤버의 읽은 장 수를 가져옵니다.
   let memberProgress = await repo.getMemberChapterCounts(teamId);
 
-  // [백업] RPC가 작동하지 않거나 결과가 없는 경우, 프로필 테이블에서 직접 팀원 목록 조회
+  // [백업 로직] RPC 함수가 아직 설치되지 않았거나 오류가 난 경우를 대비해 
+  // 프로필 테이블에서 직접 팀원 목록이라도 가져오도록 설계했습니다.
   if (memberProgress.length === 0) {
     const { data: fallbackMembers } = await supabase
       .from("profiles")
@@ -72,14 +77,13 @@ export default async function TeamDetailPage({
       memberProgress = fallbackMembers.map(m => ({
         userId: m.id,
         userName: m.name,
-        totalChapters: 0 // 진행율은 0으로 표시되더라도 이름은 나옴
+        totalChapters: 0 
       }));
     }
   }
 
-  // 최근 읽기 기록 (팀원 전체, 최신 20개)
+  // 5. 최근 읽기 기록 조회 (팀원 전체 통합 피드)
   const memberIds = memberProgress.map((m) => m.userId);
-
   let activities: {
     id: string;
     user_name: string;
@@ -91,6 +95,7 @@ export default async function TeamDetailPage({
   }[] = [];
 
   if (memberIds.length > 0) {
+    // 팀원들의 기록을 최신순으로 20개 가져옴
     const { data: records } = await supabase
       .from("reading_records")
       .select("id, user_id, book_id, start_chapter, end_chapter, read_at, created_at")
@@ -98,6 +103,7 @@ export default async function TeamDetailPage({
       .order("created_at", { ascending: false })
       .limit(20);
 
+    // 기록에 해당하는 사용자 이름을 매칭
     activities = (records ?? []).map((r) => ({
       id: r.id,
       user_name: memberProgress.find((m) => m.userId === r.user_id)?.userName ?? "알 수 없음",
@@ -109,7 +115,7 @@ export default async function TeamDetailPage({
     }));
   }
 
-  // 채팅 메시지 초기 로드 (최신 50개)
+  // 6. 응원 채팅 메시지 초기 로드 (최신 50개)
   const { data: rawMessages } = await supabase
     .from("team_messages")
     .select("id, content, created_at, user_id, profiles(name)")
@@ -127,17 +133,18 @@ export default async function TeamDetailPage({
 
   return (
     <div className="max-w-md mx-auto px-6 py-8 flex flex-col gap-10">
-      {/* 팀 헤더 */}
+      {/* 팀 상단 정보 섹션 */}
       <section className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <h2 className="text-[#041129]"
             style={{ fontFamily: "Manrope, sans-serif", fontSize: "28px", fontWeight: 700, lineHeight: "36px" }}>
             {team.name}
           </h2>
+          {/* 팀장 또는 팀 멤버인 경우에만 관리 버튼 노출 */}
           {isMyTeam && (
             <Link
               href="/team/manage"
-              className="flex items-center gap-1 text-[#775a19] hover:text-[#041129] transition-colors"
+              className="flex items-center gap-1 text-[#775a19] hover:text-[#041129] transition-colors mb-2"
               style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px", fontWeight: 500 }}
             >
               <span className="material-symbols-outlined text-[18px]">settings</span>
@@ -152,7 +159,7 @@ export default async function TeamDetailPage({
       </section>
 
 
-      {/* 팀원별 진행율 (개인별 게이지로 변경) */}
+      {/* 핵심 섹션: 팀원별 개인별 진행율 게이지 */}
       <section className="flex flex-col gap-4">
         <div className="flex items-center justify-between">
           <h3 className="text-[#041129]"
@@ -166,6 +173,7 @@ export default async function TeamDetailPage({
         
         <div className="flex flex-col gap-4">
           {memberProgress.map((m) => {
+            // 개인별 진척도 계산
             const memberPct = Math.min(100, Math.round((m.totalChapters / 1189) * 100));
             const isMe = m.userId === user.id;
 
@@ -173,6 +181,7 @@ export default async function TeamDetailPage({
               <div key={m.userId} className={`p-4 rounded-2xl border transition-all ${
                 isMe ? "bg-[#fffbeb] border-[#fed488] shadow-sm" : "bg-white border-[#e4e2de]"
               }`}>
+                {/* 팀원 이름 및 퍼센트 */}
                 <div className="flex justify-between items-center mb-2">
                   <div className="flex items-center gap-2">
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
@@ -192,6 +201,7 @@ export default async function TeamDetailPage({
                   </div>
                 </div>
                 
+                {/* 진행율 바 */}
                 <div className="h-1.5 w-full bg-[#efeeea] rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all duration-1000 ${
@@ -201,6 +211,7 @@ export default async function TeamDetailPage({
                   />
                 </div>
                 
+                {/* 남은 분량 수치 */}
                 <div className="flex justify-between items-center mt-2">
                   <span className="text-[11px] text-[#75777e]" style={{ fontFamily: "Manrope, sans-serif" }}>
                     완독까지 {1189 - m.totalChapters}장 남음
@@ -216,7 +227,7 @@ export default async function TeamDetailPage({
       </section>
 
 
-      {/* 최근 읽기 활동 */}
+      {/* 최근 읽기 활동 피드 섹션 */}
       <section className="flex flex-col gap-3">
         <h3 className="text-[#041129]"
           style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}>
@@ -225,7 +236,7 @@ export default async function TeamDetailPage({
         <ActivityFeed activities={activities} />
       </section>
 
-      {/* 응원 채팅 */}
+      {/* 팀원 응원 실시간 채팅 섹션 */}
       <section className="flex flex-col gap-3">
         <h3 className="text-[#041129]"
           style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}>

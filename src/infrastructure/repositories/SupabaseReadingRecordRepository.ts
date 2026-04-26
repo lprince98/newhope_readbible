@@ -1,34 +1,38 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { IReadingRecordRepository, NewReadingRecord } from "@/src/domain/repositories/IReadingRecordRepository";
-import { ReadingRecord } from "@/src/domain/entities/ReadingRecord";
-import type { BibleBookId } from "@/lib/constants/bible-books";
+import type { IReadingRecordRepository } from "@/src/domain/repositories/IReadingRecordRepository";
+import type { ReadingRecord } from "@/src/domain/entities/ReadingRecord";
 
-/** 로컬 날짜를 YYYY-MM-DD 문자열로 변환 (UTC 편차 방지) */
-function toLocalDateStr(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
-}
-
-export class SupabaseReadingRecordRepository
-  implements IReadingRecordRepository
-{
+/**
+ * Supabase를 사용하여 성경 읽기 기록을 관리하는 저장소 구현체
+ */
+export class SupabaseReadingRecordRepository implements IReadingRecordRepository {
   constructor(private client: SupabaseClient) {}
 
-  private mapRow(row: Record<string, unknown>): ReadingRecord {
-    return new ReadingRecord(
-      row.id as string,
-      row.user_id as string,
-      row.book_id as BibleBookId,
-      row.start_chapter as number,
-      row.end_chapter as number,
-      (row.memo as string) ?? null,
-      new Date(row.read_at as string),
-      new Date(row.created_at as string),
-    );
+  /**
+   * 새로운 읽기 기록을 데이터베이스에 저장합니다.
+   */
+  async save(record: ReadingRecord): Promise<ReadingRecord> {
+    const { data, error } = await this.client
+      .from("reading_records")
+      .insert({
+        user_id: record.userId,
+        book_id: record.bookId,
+        start_chapter: record.start_chapter,
+        end_chapter: record.end_chapter,
+        chapter_count: record.chapterCount,
+        memo: record.memo,
+        read_at: record.readAt.toISOString(),
+      })
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    return this.mapToEntity(data);
   }
 
+  /**
+   * 특정 사용자의 모든 읽기 기록을 조회합니다.
+   */
   async findByUserId(userId: string): Promise<ReadingRecord[]> {
     const { data, error } = await this.client
       .from("reading_records")
@@ -37,56 +41,32 @@ export class SupabaseReadingRecordRepository
       .order("read_at", { ascending: false });
 
     if (error) throw new Error(error.message);
-    return (data ?? []).map((r) => this.mapRow(r));
+    return data.map(this.mapToEntity);
   }
 
-  async findByUserIdAndDate(
-    userId: string,
-    date: Date,
-  ): Promise<ReadingRecord[]> {
-    const dateStr = toLocalDateStr(date);
+  /**
+   * 특정 날짜에 기록된 사용자의 읽기 데이터를 조회합니다.
+   */
+  async findByUserIdAndDate(userId: string, date: Date): Promise<ReadingRecord[]> {
+    const start = new Date(date);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(date);
+    end.setHours(23, 59, 59, 999);
+
     const { data, error } = await this.client
       .from("reading_records")
       .select("*")
       .eq("user_id", userId)
-      .eq("read_at", dateStr);
+      .gte("read_at", start.toISOString())
+      .lte("read_at", end.toISOString());
 
     if (error) throw new Error(error.message);
-    return (data ?? []).map((r) => this.mapRow(r));
+    return data.map(this.mapToEntity);
   }
 
-  async findByUserIdAndBook(
-    userId: string,
-    bookId: BibleBookId,
-  ): Promise<ReadingRecord[]> {
-    const { data, error } = await this.client
-      .from("reading_records")
-      .select("*")
-      .eq("user_id", userId)
-      .eq("book_id", bookId);
-
-    if (error) throw new Error(error.message);
-    return (data ?? []).map((r) => this.mapRow(r));
-  }
-
-  async save(record: NewReadingRecord): Promise<ReadingRecord> {
-    const { data, error } = await this.client
-      .from("reading_records")
-      .insert({
-        user_id: record.userId,
-        book_id: record.bookId,
-        start_chapter: record.startChapter,
-        end_chapter: record.endChapter,
-        memo: record.memo,
-        read_at: toLocalDateStr(record.readAt),
-      })
-      .select()
-      .single();
-
-    if (error) throw new Error(error.message);
-    return this.mapRow(data);
-  }
-
+  /**
+   * 기록의 고유 ID로 데이터를 삭제합니다. (보안을 위해 본인 확인 포함)
+   */
   async deleteById(id: string, userId: string): Promise<void> {
     const { error } = await this.client
       .from("reading_records")
@@ -97,41 +77,62 @@ export class SupabaseReadingRecordRepository
     if (error) throw new Error(error.message);
   }
 
-  async getTeamChapterCounts(): Promise<
-    { teamId: string; teamName: string; totalChapters: number }[]
-  > {
-    const { data, error } = await this.client.rpc("get_team_chapter_counts");
+  /**
+   * 모든 팀별 통독 합계를 조회합니다. (랭킹용)
+   */
+  async getTeamChapterCounts(): Promise<{ teamId: string; teamName: string; totalChapters: number }[]> {
+    const { data, error } = await this.client
+      .from("team_reading_summary")
+      .select("*")
+      .order("total_chapters", { ascending: false });
+
     if (error) {
-      // RPC가 없을 경우 빈 배열 반환
+      console.error(">>> [REPO ERROR] getTeamChapterCounts:", error);
       return [];
     }
-    return (data ?? []).map(
-      (r: { team_id: string; team_name: string; total_chapters: number }) => ({
-        teamId: r.team_id,
-        teamName: r.team_name,
-        totalChapters: r.total_chapters,
-      }),
-    );
+
+    return data.map((d) => ({
+      teamId: d.team_id,
+      teamName: d.team_name,
+      totalChapters: d.total_chapters,
+    }));
   }
 
-  async getMemberChapterCounts(teamId: string): Promise<
-
-    { userId: string; userName: string; totalChapters: number }[]
-  > {
+  /**
+   * [신규] 특정 팀 내 개별 팀원들의 통독 진행 현황을 조회합니다.
+   * 데이터베이스에 설치된 'get_member_chapter_counts' RPC 함수를 호출합니다.
+   */
+  async getMemberChapterCounts(teamId: string): Promise<{ userId: string; userName: string; totalChapters: number }[]> {
     const { data, error } = await this.client.rpc("get_member_chapter_counts", {
       target_team_id: teamId,
     });
+
     if (error) {
       console.error(">>> [REPO ERROR] getMemberChapterCounts:", error);
+      // RPC 함수가 없거나 오류가 난 경우 빈 배열을 반환하여 페이지 오류 방지
       return [];
     }
-    return (data ?? []).map(
-      (r: { user_id: string; user_name: string; total_chapters: number }) => ({
-        userId: r.user_id,
-        userName: r.user_name,
-        totalChapters: Number(r.total_chapters),
-      }),
-    );
+
+    return (data ?? []).map((d: any) => ({
+      userId: d.user_id,
+      userName: d.user_name,
+      totalChapters: Number(d.total_chapters),
+    }));
+  }
+
+  /**
+   * 데이터베이스 결과 객체를 도메인 엔티티(ReadingRecord)로 변환합니다.
+   */
+  private mapToEntity(data: any): ReadingRecord {
+    return {
+      id: data.id,
+      userId: data.user_id,
+      bookId: data.book_id,
+      start_chapter: data.start_chapter,
+      end_chapter: data.end_chapter,
+      chapterCount: data.chapter_count,
+      memo: data.memo,
+      readAt: new Date(data.read_at),
+    };
   }
 }
-

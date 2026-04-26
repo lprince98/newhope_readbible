@@ -11,15 +11,20 @@ export const metadata: Metadata = {
   description: "나의 성경 통독 진도 현황을 한눈에 확인하세요.",
 };
 
+/** 
+ * 페이지 렌더링 옵션: 
+ * 항상 최신 데이터를 보여주기 위해 캐시를 사용하지 않고(force-dynamic) 
+ * 갱신 주기를 0초(revalidate = 0)로 설정합니다.
+ */
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
-
 
 
 export default async function DashboardPage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  // 1. 비로그인 처리
   if (!user) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
@@ -36,7 +41,7 @@ export default async function DashboardPage() {
     );
   }
 
-  // 사용자 프로필 및 팀 정보 조회
+  // 2. 사용자 프로필 및 팀 정보 조회 (팀 ID를 통해 팀 이름 조인)
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select(`
@@ -53,26 +58,25 @@ export default async function DashboardPage() {
     console.error(">>> [DASHBOARD ERROR] profile fetch:", profileError);
   }
 
-  // 팀 이름 추출 (중첩 객체 구조 대응)
+  // 3. 팀 이름 및 개인 목표치 추출
   const teamData = profile?.teams as unknown as { name: string } | null;
   const teamName = teamData?.name ?? null;
   const userName = profile?.name ?? "성도";
-  const dailyGoal = profile?.daily_goal ? Number(profile.daily_goal) : 4;
+  const dailyGoal = profile?.daily_goal ? Number(profile.daily_goal) : 4; // 기본 목표는 4장
 
-
-
+  // 4. 대시보드 통계 계산 유스케이스 실행
   const repo = new SupabaseReadingRecordRepository(supabase);
   const useCase = new GetDashboardUseCase(repo);
   const dashboard = await useCase.execute(user.id, teamName, dailyGoal);
 
 
-  // 오늘 요일 인덱스 (월=0 ~ 일=6)
+  // 5. 오늘 요일 인덱스 계산 (차트 표시용, 월=0 ~ 일=6)
   const today = new Date();
   const todayDayIndex = today.getDay() === 0 ? 6 : today.getDay() - 1;
 
   return (
     <div className="px-6 py-8 max-w-7xl mx-auto">
-      {/* 페이지 헤더 */}
+      {/* 페이지 상단: 제목 및 기록하기 버튼 */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
         <div>
           <h2
@@ -95,9 +99,10 @@ export default async function DashboardPage() {
         </Link>
       </div>
 
-      {/* Bento 그리드 */}
+      {/* 메인 대시보드 그리드 (Bento Grid 스타일) */}
       <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-        {/* 원형 진도 */}
+        
+        {/* 왼쪽 섹션: 오늘 나의 읽기 진도 (원형 프로그레스) */}
         <div className="md:col-span-5 lg:col-span-4 bg-white rounded-xl p-6 shadow-[0_4px_12px_rgba(26,38,63,0.05)] relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-[#fed488]/20 rounded-bl-full -mr-16 -mt-16 pointer-events-none" />
           <h3
@@ -113,7 +118,7 @@ export default async function DashboardPage() {
           />
         </div>
 
-        {/* 주간 바 차트 */}
+        {/* 중앙 섹션: 주간 요일별 막대 차트 */}
         <div className="md:col-span-7 lg:col-span-5 bg-white rounded-xl p-6 shadow-[0_4px_12px_rgba(26,38,63,0.05)] flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3
@@ -135,8 +140,9 @@ export default async function DashboardPage() {
           />
         </div>
 
-        {/* 팀 순위 카드 */}
+        {/* 오른쪽 섹션: 팀 순위 및 요약 정보 */}
         <div className="md:col-span-12 lg:col-span-3 flex flex-col gap-4">
+          {/* 팀 순위 카드 */}
           <div className="bg-[#041129] text-white rounded-xl p-6 shadow-[0_4px_12px_rgba(26,38,63,0.05)] flex-1 flex flex-col justify-between relative overflow-hidden">
             <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-2xl" />
             <div className="absolute -left-10 -top-10 w-32 h-32 bg-[#775a19]/20 rounded-full blur-xl" />
@@ -184,7 +190,7 @@ export default async function DashboardPage() {
             </div>
           </div>
 
-          {/* 기록 바로가기 */}
+          {/* 간편 기록 바로가기 */}
           <Link
             href="/record"
             className="bg-white rounded-xl p-4 shadow-[0_4px_12px_rgba(26,38,63,0.05)] border-l-4 border-[#775a19] flex items-center justify-between cursor-pointer hover:bg-[#f5f3ef] transition-colors"
