@@ -142,15 +142,16 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
    * 데이터베이스 결과 객체를 도메인 엔티티(ReadingRecord)로 변환합니다.
    */
   private mapToEntity(data: any): ReadingRecord {
-    return {
-      id: data.id,
-      userId: data.user_id,
-      bookId: data.book_id,
-      start_chapter: data.start_chapter,
-      end_chapter: data.end_chapter,
-      chapterCount: data.chapter_count,
-      memo: data.memo,
-      readAt: new Date(data.read_at),
-    };
+    return new ReadingRecord(
+      data.id,
+      data.user_id,
+      data.book_id,
+      data.start_chapter,
+      data.end_chapter,
+      data.memo,
+      new Date(data.read_at),
+      new Date(data.created_at || new Date())
+    );
   }
 }
+
