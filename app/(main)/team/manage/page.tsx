@@ -8,7 +8,7 @@ import { TeamMemberActions } from "@/src/presentation/components/team/TeamMember
 
 export const metadata: Metadata = {
   title: "팀 관리 — 새소망 성경 통독",
-  description: "팀 이름 수정 및 팀원 초대·관리",
+  description: "팀 이름 수정 및 팀원 관리",
 };
 
 export const dynamic = "force-dynamic";
@@ -54,15 +54,6 @@ export default async function TeamManagePage() {
     isMe: m.id === user.id,
   }));
 
-  // 대기 중인 초대 목록
-  const { data: invitationsRaw } = await supabase
-    .from("team_invitations")
-    .select("id, invited_email")
-    .eq("team_id", teamId)
-    .order("created_at", { ascending: false });
-
-  const invitations = invitationsRaw ?? [];
-
   return (
     <div className="max-w-md mx-auto px-6 pt-8 pb-12 flex flex-col gap-6">
       {/* 페이지 헤더 */}
@@ -80,7 +71,7 @@ export default async function TeamManagePage() {
           </h2>
           <p className="text-[#45474d] mt-1"
             style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px" }}>
-            {isLeader ? "새로운 멤버를 초대하고 팀을 관리하세요." : "팀 정보를 조회합니다."}
+            {isLeader ? "팀 정보를 수정하고 팀원을 관리하세요." : "팀 정보를 조회합니다."}
           </p>
         </div>
       </div>
@@ -90,7 +81,6 @@ export default async function TeamManagePage() {
         teamId={teamId}
         currentName={team.name}
         members={members}
-        invitations={invitations}
         isLeader={isLeader}
       />
 
@@ -100,4 +90,5 @@ export default async function TeamManagePage() {
     </div>
   );
 }
+
 

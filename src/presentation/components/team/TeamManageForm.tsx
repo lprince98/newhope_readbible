@@ -3,24 +3,20 @@
 import { useState, useTransition } from "react";
 import {
   updateTeamName,
-  inviteMember,
   removeMember,
-  cancelInvitation,
   deleteTeam,
 } from "@/src/presentation/actions/teamActions";
 
 interface Member { id: string; name: string; isMe: boolean }
-interface Invitation { id: string; invited_email: string }
 
 interface Props {
   teamId: string;
   currentName: string;
   members: Member[];
-  invitations: Invitation[];
   isLeader?: boolean;
 }
 
-export function TeamManageForm({ teamId, currentName, members, invitations, isLeader = false }: Props) {
+export function TeamManageForm({ teamId, currentName, members, isLeader = false }: Props) {
   const [teamName, setTeamName] = useState(currentName);
   const [msg, setMsg] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -40,16 +36,6 @@ export function TeamManageForm({ teamId, currentName, members, invitations, isLe
     });
   }
 
-  // ── 팀원 초대 ────────────────────────────────────────────────
-  async function handleInvite(formData: FormData) {
-    if (!isLeader) return;
-    startTransition(async () => {
-      const res = await inviteMember(formData);
-      if (res.error) showMsg("error", res.error);
-      else showMsg("success", res.message ?? "초대했습니다.");
-    });
-  }
-
   // ── 팀원 제거 ────────────────────────────────────────────────
   function handleRemove(memberId: string) {
     if (!isLeader) return;
@@ -57,16 +43,6 @@ export function TeamManageForm({ teamId, currentName, members, invitations, isLe
     startTransition(async () => {
       const res = await removeMember(memberId);
       if (res.error) showMsg("error", res.error);
-    });
-  }
-
-  // ── 초대 취소 ────────────────────────────────────────────────
-  function handleCancelInvite(invId: string) {
-    if (!isLeader) return;
-    startTransition(async () => {
-      const res = await cancelInvitation(invId);
-      if (res.error) showMsg("error", res.error);
-      else showMsg("success", "초대를 취소했습니다.");
     });
   }
 
@@ -126,66 +102,6 @@ export function TeamManageForm({ teamId, currentName, members, invitations, isLe
            </button>
           )}
         </div>
-      </section>
-
-      {/* 팀원 초대 섹션 */}
-      <section className={`bg-white rounded-xl p-6 shadow-[0_4px_12px_rgba(4,17,41,0.03)] border border-[#e4e2de] flex flex-col gap-4 ${!isLeader ? "opacity-60 grayscale-[0.5]" : ""}`}>
-        <div>
-          <h3 className="text-[#041129]"
-            style={{ fontFamily: "Manrope, sans-serif", fontSize: "18px", fontWeight: 600 }}>
-            팀원 초대
-          </h3>
-          <p className="text-[#45474d] mt-1"
-            style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px" }}>
-            이메일로 새로운 팀원을 초대합니다. {!isLeader && "(팀장 전용)"}
-          </p>
-        </div>
-        {isLeader && (
-          <form action={handleInvite} className="flex gap-2">
-            <input
-              name="email"
-              type="email"
-              placeholder="이메일 주소 입력"
-              className="flex-1 bg-[#f5f3ef] border border-[#c5c6ce] rounded-lg px-4 py-3 text-[#1b1c1a] outline-none focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] transition-all"
-              style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px" }}
-            />
-            <button type="submit" disabled={isPending}
-              className="bg-[#041129] text-white font-medium px-5 py-3 rounded-lg hover:bg-[#041129]/90 transition-colors shadow-sm active:scale-95 duration-150 disabled:opacity-60"
-              style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px" }}>
-              초대
-            </button>
-          </form>
-        )}
-
-        {/* 대기 중인 초대 */}
-        {invitations.length > 0 && (
-          <div className="flex flex-col gap-2">
-            <p className="text-[#45474d]" style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px" }}>
-              수락 대기 중
-            </p>
-            {invitations.map((inv) => (
-              <div key={inv.id} className="flex items-center justify-between py-2 border-t border-[#f5f3ef]">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-[#efeeea] flex items-center justify-center text-[#45474d] border border-[#c5c6ce]">
-                    <span className="material-symbols-outlined text-[16px]">mail</span>
-                  </div>
-                  <div>
-                    <p className="text-[#1b1c1a]"
-                      style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px" }}>
-                      {inv.invited_email}
-                    </p>
-                  </div>
-                </div>
-                {isLeader && (
-                  <button onClick={() => handleCancelInvite(inv.id)} disabled={isPending}
-                    className="text-[#75777e] hover:text-[#ba1a1a] p-2 rounded-full hover:bg-[#ffdad6] transition-colors active:scale-95">
-                    <span className="material-symbols-outlined text-[20px]">close</span>
-                  </button>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
       </section>
 
       {/* 현재 팀원 섹션 */}
@@ -261,5 +177,3 @@ export function TeamManageForm({ teamId, currentName, members, invitations, isLe
     </div>
   );
 }
-
-
