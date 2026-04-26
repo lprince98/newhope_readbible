@@ -1,7 +1,8 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { IReadingRecordRepository, NewReadingRecord } from "@/src/domain/repositories/IReadingRecordRepository";
-import type { ReadingRecord } from "@/src/domain/entities/ReadingRecord";
+import { ReadingRecord } from "@/src/domain/entities/ReadingRecord";
 import type { BibleBookId } from "@/lib/constants/bible-books";
+
 
 /**
  * Supabase를 사용하여 성경 읽기 기록을 관리하는 저장소 구현체
