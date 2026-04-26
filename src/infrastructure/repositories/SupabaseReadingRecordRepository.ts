@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type { IReadingRecordRepository } from "@/src/domain/repositories/IReadingRecordRepository";
+import type { IReadingRecordRepository, NewReadingRecord } from "@/src/domain/repositories/IReadingRecordRepository";
 import type { ReadingRecord } from "@/src/domain/entities/ReadingRecord";
+import type { BibleBookId } from "@/lib/constants/bible-books";
 
 /**
  * Supabase를 사용하여 성경 읽기 기록을 관리하는 저장소 구현체
@@ -10,16 +11,18 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
 
   /**
    * 새로운 읽기 기록을 데이터베이스에 저장합니다.
+   * @param record 저장할 새로운 기록 정보 (ID 미포함)
    */
-  async save(record: ReadingRecord): Promise<ReadingRecord> {
+  async save(record: NewReadingRecord): Promise<ReadingRecord> {
     const { data, error } = await this.client
       .from("reading_records")
       .insert({
         user_id: record.userId,
         book_id: record.bookId,
-        start_chapter: record.start_chapter,
-        end_chapter: record.end_chapter,
-        chapter_count: record.chapterCount,
+        start_chapter: record.startChapter,
+        end_chapter: record.endChapter,
+        // (종료 - 시작 + 1)로 장 수 계산
+        chapter_count: record.endChapter - record.startChapter + 1,
         memo: record.memo,
         read_at: record.readAt.toISOString(),
       })
@@ -38,6 +41,21 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
       .from("reading_records")
       .select("*")
       .eq("user_id", userId)
+      .order("read_at", { ascending: false });
+
+    if (error) throw new Error(error.message);
+    return data.map(this.mapToEntity);
+  }
+
+  /**
+   * [신규] 특정 사용자가 특정 성경 권을 읽은 기록을 조회합니다.
+   */
+  async findByUserIdAndBook(userId: string, bookId: BibleBookId): Promise<ReadingRecord[]> {
+    const { data, error } = await this.client
+      .from("reading_records")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("book_id", bookId)
       .order("read_at", { ascending: false });
 
     if (error) throw new Error(error.message);
