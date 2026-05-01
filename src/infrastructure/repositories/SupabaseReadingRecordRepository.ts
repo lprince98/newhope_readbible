@@ -22,8 +22,6 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
         book_id: record.bookId,
         start_chapter: record.startChapter,
         end_chapter: record.endChapter,
-        // (종료 - 시작 + 1)로 장 수 계산
-        chapter_count: record.endChapter - record.startChapter + 1,
         memo: record.memo,
         read_at: record.readAt.toISOString(),
       })
