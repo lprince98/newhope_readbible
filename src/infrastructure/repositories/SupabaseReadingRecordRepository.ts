@@ -98,20 +98,17 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
    * 모든 팀별 통독 합계를 조회합니다. (랭킹용)
    */
   async getTeamChapterCounts(): Promise<{ teamId: string; teamName: string; totalChapters: number }[]> {
-    const { data, error } = await this.client
-      .from("team_reading_summary")
-      .select("*")
-      .order("total_chapters", { ascending: false });
+    const { data, error } = await this.client.rpc("get_team_chapter_counts");
 
     if (error) {
       console.error(">>> [REPO ERROR] getTeamChapterCounts:", error);
       return [];
     }
 
-    return data.map((d) => ({
+    return (data || []).map((d: any) => ({
       teamId: d.team_id,
       teamName: d.team_name,
-      totalChapters: d.total_chapters,
+      totalChapters: Number(d.total_chapters),
     }));
   }
 
