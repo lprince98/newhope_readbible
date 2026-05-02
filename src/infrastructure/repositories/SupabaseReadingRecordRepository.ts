@@ -113,6 +113,25 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
   }
 
   /**
+   * [신규] 모든 유저의 개인별 통독 합계를 조회합니다. (Top 10 랭킹용)
+   */
+  async getIndividualRanking(): Promise<{ userId: string; userName: string; teamName: string | null; totalChapters: number }[]> {
+    const { data, error } = await this.client.rpc("get_individual_ranking");
+
+    if (error) {
+      console.error(">>> [REPO ERROR] getIndividualRanking:", error);
+      return [];
+    }
+
+    return (data || []).map((d: any) => ({
+      userId: d.user_id,
+      userName: d.user_name,
+      teamName: d.team_name,
+      totalChapters: Number(d.total_chapters),
+    }));
+  }
+
+  /**
    * [신규] 특정 팀 내 개별 팀원들의 통독 진행 현황을 조회합니다.
    * 데이터베이스에 설치된 'get_member_chapter_counts' RPC 함수를 호출합니다.
    */
