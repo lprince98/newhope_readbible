@@ -115,6 +115,7 @@ export default async function DashboardPage() {
             percent={dashboard.todayPercent}
             todayChapters={dashboard.todayChapters}
             dailyGoal={dashboard.dailyGoal}
+            totalFullReads={dashboard.totalFullReads}
           />
         </div>
 

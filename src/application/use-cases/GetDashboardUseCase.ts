@@ -70,7 +70,11 @@ export class GetDashboardUseCase {
       ? teamCounts.findIndex((t) => t.teamName === teamName) + 1 || null
       : null;
 
-    // 5. 최종 대시보드 데이터 조립
+    // 5. 전체 누적 통독 횟수 계산 (1독 = 1189장)
+    const totalChapters = allRecords.reduce((s, r) => s + r.chapterCount, 0);
+    const totalFullReads = Math.floor(totalChapters / 1189);
+
+    // 6. 최종 대시보드 데이터 조립
     return {
       todayChapters,
       dailyGoal: dailyGoal,
@@ -79,6 +83,7 @@ export class GetDashboardUseCase {
       weeklyChapters,
       teamName,
       teamRank,
+      totalFullReads,
     };
   }
 }

@@ -4,9 +4,10 @@ interface CircularProgressProps {
   percent: number;
   todayChapters: number;
   dailyGoal: number;
+  totalFullReads?: number;
 }
 
-export function CircularProgress({ percent, todayChapters, dailyGoal }: CircularProgressProps) {
+export function CircularProgress({ percent, todayChapters, dailyGoal, totalFullReads }: CircularProgressProps) {
   const radius = 40;
   const circumference = 2 * Math.PI * radius; // ≈ 251.2
   const offset = circumference - (percent / 100) * circumference;
@@ -57,6 +58,15 @@ export function CircularProgress({ percent, todayChapters, dailyGoal }: Circular
         {percent < 100 && <><br />조금만 더 힘내세요!</>}
         {percent >= 100 && <><br />오늘 목표를 달성했습니다! 🎉</>}
       </p>
+
+      {totalFullReads !== undefined && totalFullReads > 0 && (
+        <div className="mt-4 px-4 py-2 bg-[#775a19]/10 rounded-full border border-[#775a19]/20 flex items-center gap-2">
+          <span className="material-symbols-outlined text-[#775a19] text-sm">auto_stories</span>
+          <span className="text-[#775a19] font-bold" style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px" }}>
+            누적 통독: {totalFullReads}회
+          </span>
+        </div>
+      )}
     </div>
   );
 }

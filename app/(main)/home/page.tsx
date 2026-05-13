@@ -21,6 +21,7 @@ export default async function HomePage() {
   // 사용자 프로필 및 팀 정보 조회 (하루 목표 포함)
   let teamId = null;
   let dailyGoal = 4;
+  let fullReadCount = 0;
   if (user) {
     const { data: profile } = await supabase
       .from("profiles")
@@ -42,18 +43,25 @@ export default async function HomePage() {
     const d = kstParts.find(p => p.type === "day")?.value;
     const todayStr = `${y}-${m}-${d}`;
 
-    const { data } = await supabase
-
+    const { data: allRecords } = await supabase
       .from("reading_records")
-      .select("start_chapter, end_chapter")
-      .eq("user_id", user.id)
-      .eq("read_at", todayStr);
+      .select("start_chapter, end_chapter, read_at")
+      .eq("user_id", user.id);
     
-    todayChapters = (data ?? []).reduce(
+    const totalChapters = (allRecords ?? []).reduce(
       (s: number, r: { start_chapter: number; end_chapter: number }) =>
         s + (r.end_chapter - r.start_chapter + 1),
       0,
     );
+    fullReadCount = Math.floor(totalChapters / 1189);
+
+    todayChapters = (allRecords ?? [])
+      .filter(r => r.read_at === todayStr)
+      .reduce(
+        (s: number, r: { start_chapter: number; end_chapter: number }) =>
+          s + (r.end_chapter - r.start_chapter + 1),
+        0,
+      );
   }
 
   const percent = Math.min(100, Math.round((todayChapters / dailyGoal) * 100));
@@ -84,13 +92,21 @@ export default async function HomePage() {
             className="absolute inset-0 opacity-20 bg-cover bg-center"
             style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&q=80')" }}
           />
-          <div className="relative p-8 z-10 flex flex-col gap-1">
-            <p className="text-white/60" style={{ fontFamily: "Manrope, sans-serif", fontSize: "13px", fontWeight: 500 }}>
-              {greeting}
-            </p>
-            <h2 style={{ fontFamily: "Manrope, sans-serif", fontSize: "28px", fontWeight: 800 }}>
-              환영합니다!
-            </h2>
+          <div className="relative p-8 z-10 flex justify-between items-center">
+            <div className="flex flex-col gap-1">
+              <p className="text-white/60" style={{ fontFamily: "Manrope, sans-serif", fontSize: "13px", fontWeight: 500 }}>
+                {greeting}
+              </p>
+              <h2 style={{ fontFamily: "Manrope, sans-serif", fontSize: "28px", fontWeight: 800 }}>
+                환영합니다!
+              </h2>
+            </div>
+            {fullReadCount > 0 && (
+              <div className="bg-[#ffdea5] text-[#775a19] px-4 py-2 rounded-xl flex flex-col items-center shadow-lg transform rotate-3">
+                <span style={{ fontFamily: "Manrope, sans-serif", fontSize: "10px", fontWeight: 700, letterSpacing: "1px" }}>BIBLE READ</span>
+                <span style={{ fontFamily: "Manrope, sans-serif", fontSize: "20px", fontWeight: 900 }}>{fullReadCount}독</span>
+              </div>
+            )}
           </div>
         </section>
       ) : (

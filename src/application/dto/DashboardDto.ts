@@ -12,4 +12,6 @@ export interface DashboardDto {
   teamName: string | null;
   /** 내 팀 순위 */
   teamRank: number | null;
+  /** 누적 통독 횟수 */
+  totalFullReads: number;
 }

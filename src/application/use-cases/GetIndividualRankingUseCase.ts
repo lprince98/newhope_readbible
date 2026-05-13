@@ -5,6 +5,7 @@ export interface IndividualRankingItem {
   userName: string;
   teamName: string | null;
   totalChapters: number;
+  fullReadCount: number;
   rank: number;
   isMe: boolean;
 }
@@ -37,6 +38,7 @@ export class GetIndividualRankingUseCase {
         userName: data.userName,
         teamName: data.teamName,
         totalChapters: data.totalChapters,
+        fullReadCount: data.fullReadCount,
         rank: currentRank,
         isMe: currentUserId !== null && data.userId === currentUserId,
       };
