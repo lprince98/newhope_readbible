@@ -286,7 +286,7 @@ export default async function RankingPage(props: { searchParams?: Promise<{ tab?
                             {item.teamName}
                           </span>
                         )}
-                        {item.fullReadCount > 0 && (
+                        {item.fullReadCount >= 0 && (
                           <span
                             className="bg-[#775a19]/10 text-[#775a19] px-2 py-0.5 rounded-full leading-tight font-bold border border-[#775a19]/20"
                             style={{ fontFamily: "Manrope, sans-serif", fontSize: "10px" }}

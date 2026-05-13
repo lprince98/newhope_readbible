@@ -101,7 +101,7 @@ export default async function HomePage() {
                 환영합니다!
               </h2>
             </div>
-            {fullReadCount > 0 && (
+            {fullReadCount >= 0 && (
               <div className="bg-[#ffdea5] text-[#775a19] px-4 py-2 rounded-xl flex flex-col items-center shadow-lg transform rotate-3">
                 <span style={{ fontFamily: "Manrope, sans-serif", fontSize: "10px", fontWeight: 700, letterSpacing: "1px" }}>BIBLE READ</span>
                 <span style={{ fontFamily: "Manrope, sans-serif", fontSize: "20px", fontWeight: 900 }}>{fullReadCount}독</span>
