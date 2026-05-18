@@ -43,14 +43,6 @@ export function TeamMemberActions() {
           >
             {isPending ? "탈퇴 처리 중..." : "팀 탈퇴하기"}
           </button>
-          
-          <button
-            onClick={() => router.push("/team?switch=true")}
-            className="px-6 py-3 bg-white text-[#45474d] border border-[#c5c6ce] rounded-xl font-bold hover:bg-slate-50 transition-colors"
-          >
-            다른 팀 둘러보기
-          </button>
-
         </div>
         
         <p className="mt-4 text-[11px] text-[#75777e]">
