@@ -6,6 +6,8 @@ export interface IndividualRankingItem {
   teamName: string | null;
   totalChapters: number;
   fullReadCount: number;
+  /** 현재 통독 회차의 진행 장수 (totalChapters % 1189) */
+  currentChapters: number;
   rank: number;
   isMe: boolean;
 }
@@ -39,6 +41,7 @@ export class GetIndividualRankingUseCase {
         teamName: data.teamName,
         totalChapters: data.totalChapters,
         fullReadCount: data.fullReadCount,
+        currentChapters: data.currentChapters,
         rank: currentRank,
         isMe: currentUserId !== null && data.userId === currentUserId,
       };

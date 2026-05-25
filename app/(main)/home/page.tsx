@@ -63,7 +63,6 @@ export default async function HomePage() {
         0,
       );
   }
-
   const percent = Math.min(100, Math.round((todayChapters / dailyGoal) * 100));
 
 

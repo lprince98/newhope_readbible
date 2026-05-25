@@ -116,6 +116,7 @@ export default async function DashboardPage() {
             todayChapters={dashboard.todayChapters}
             dailyGoal={dashboard.dailyGoal}
             totalFullReads={dashboard.totalFullReads}
+            currentCycleChapters={dashboard.currentCycleChapters}
           />
         </div>
 

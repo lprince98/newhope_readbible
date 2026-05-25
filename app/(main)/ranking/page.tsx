@@ -65,7 +65,10 @@ export default async function RankingPage(props: { searchParams?: Promise<{ tab?
   const topTeamChapters = teamRanking[0]?.totalChapters ?? 1;
   const myTeamItem = teamRanking.find((r) => r.isMyTeam);
   
-  const topIndividualChapters = individualRanking[0]?.totalChapters ?? 1;
+  const topIndividualChapters = Math.max(
+    ...individualRanking.map(r => r.currentChapters),
+    1
+  );
   const myIndividualItem = individualRanking.find((r) => r.isMe);
 
   return (
@@ -268,57 +271,56 @@ export default async function RankingPage(props: { searchParams?: Promise<{ tab?
                       {item.rank}
                     </span>
                   </div>
-                  {/* 개인 정보 + 바 */}
-                  <div className="flex-1 flex flex-col gap-1">
-                    <div className="flex justify-between items-end">
-                      <div className="flex items-center gap-2">
+                    <div className="flex-1 flex flex-col gap-1">
+                      <div className="flex justify-between items-end">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`${item.isMe ? "font-bold text-[#1b1c1a]" : "text-[#1b1c1a]"}`}
+                            style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: item.isMe ? 700 : 500 }}
+                          >
+                            {item.userName}
+                          </span>
+                          {item.teamName && (
+                            <span
+                              className="text-[#75777e]"
+                              style={{ fontFamily: "Manrope, sans-serif", fontSize: "11px" }}
+                            >
+                              {item.teamName}
+                            </span>
+                          )}
+                          {item.fullReadCount >= 0 && (
+                            <span
+                              className="bg-[#775a19]/10 text-[#775a19] px-2 py-0.5 rounded-full leading-tight font-bold border border-[#775a19]/20"
+                              style={{ fontFamily: "Manrope, sans-serif", fontSize: "10px" }}
+                            >
+                              {item.fullReadCount}독
+                            </span>
+                          )}
+                          {item.isMe && (
+                            <span
+                              className="bg-[#2a5b9e] text-white px-2 py-0.5 rounded-full leading-tight"
+                              style={{ fontFamily: "Manrope, sans-serif", fontSize: "10px" }}
+                            >
+                              나
+                            </span>
+                          )}
+                        </div>
                         <span
-                          className={`${item.isMe ? "font-bold text-[#1b1c1a]" : "text-[#1b1c1a]"}`}
-                          style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: item.isMe ? 700 : 500 }}
+                          className={item.isMe ? "text-[#2a5b9e] font-medium" : "text-[#45474d]"}
+                          style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px" }}
                         >
-                          {item.userName}
+                          {item.currentChapters} / 1189장
                         </span>
-                        {item.teamName && (
-                          <span
-                            className="text-[#75777e]"
-                            style={{ fontFamily: "Manrope, sans-serif", fontSize: "11px" }}
-                          >
-                            {item.teamName}
-                          </span>
-                        )}
-                        {item.fullReadCount >= 0 && (
-                          <span
-                            className="bg-[#775a19]/10 text-[#775a19] px-2 py-0.5 rounded-full leading-tight font-bold border border-[#775a19]/20"
-                            style={{ fontFamily: "Manrope, sans-serif", fontSize: "10px" }}
-                          >
-                            {item.fullReadCount}독
-                          </span>
-                        )}
-                        {item.isMe && (
-                          <span
-                            className="bg-[#2a5b9e] text-white px-2 py-0.5 rounded-full leading-tight"
-                            style={{ fontFamily: "Manrope, sans-serif", fontSize: "10px" }}
-                          >
-                            나
-                          </span>
-                        )}
                       </div>
-                      <span
-                        className={item.isMe ? "text-[#2a5b9e] font-medium" : "text-[#45474d]"}
-                        style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px" }}
-                      >
-                        {item.totalChapters} 장
-                      </span>
+                      <div className="w-full bg-[#dbdad6] h-1.5 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full rounded-full transition-all duration-700 ${
+                            item.isMe ? "bg-[#2a5b9e]" : "bg-[#1a263f]/60"
+                          }`}
+                          style={{ width: `${Math.round((item.currentChapters / 1189) * 100)}%` }}
+                        />
+                      </div>
                     </div>
-                    <div className="w-full bg-[#dbdad6] h-1.5 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full rounded-full transition-all duration-700 ${
-                          item.isMe ? "bg-[#2a5b9e]" : "bg-[#1a263f]/60"
-                        }`}
-                        style={{ width: `${pct}%` }}
-                      />
-                    </div>
-                  </div>
                 </div>
               );
             })

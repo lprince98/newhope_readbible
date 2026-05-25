@@ -36,7 +36,7 @@ export interface IReadingRecordRepository {
 
   /** 개인별 총 읽은 장 수 집계 (Top 10) */
   getIndividualRanking(): Promise<
-    { userId: string; userName: string; teamName: string | null; totalChapters: number; fullReadCount: number }[]
+    { userId: string; userName: string; teamName: string | null; totalChapters: number; fullReadCount: number; currentChapters: number }[]
   >;
 
   /** 특정 팀 내 개별 팀원들의 통독 진행 현황 조회 */

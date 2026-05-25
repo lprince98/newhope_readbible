@@ -14,4 +14,6 @@ export interface DashboardDto {
   teamRank: number | null;
   /** 누적 통독 횟수 */
   totalFullReads: number;
+  /** 현재 독 진행 장수 (총장수 % 1189) */
+  currentCycleChapters: number;
 }
