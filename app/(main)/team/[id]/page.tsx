@@ -77,7 +77,9 @@ export default async function TeamDetailPage({
       memberProgress = fallbackMembers.map(m => ({
         userId: m.id,
         userName: m.name,
-        totalChapters: 0 
+        totalChapters: 0,
+        fullReadCount: 0,
+        currentChapters: 0
       }));
     }
   }
@@ -173,8 +175,8 @@ export default async function TeamDetailPage({
         
         <div className="flex flex-col gap-4">
           {memberProgress.map((m) => {
-            // 개인별 진척도 계산
-            const memberPct = Math.min(100, Math.round((m.totalChapters / 1189) * 100));
+            // 개인별 진척도 계산 (현재 독 진행 장수 기준)
+            const memberPct = Math.min(100, Math.round((m.currentChapters / 1189) * 100));
             const isMe = m.userId === user.id;
 
             return (
@@ -193,6 +195,14 @@ export default async function TeamDetailPage({
                       style={{ fontFamily: "Manrope, sans-serif", fontSize: "15px" }}>
                       {m.userName} {isMe && "(나)"}
                     </span>
+                    {m.fullReadCount >= 0 && (
+                      <span
+                        className="bg-[#775a19]/10 text-[#775a19] px-2 py-0.5 rounded-full leading-tight font-bold border border-[#775a19]/20"
+                        style={{ fontFamily: "Manrope, sans-serif", fontSize: "10px" }}
+                      >
+                        {m.fullReadCount}독
+                      </span>
+                    )}
                   </div>
                   <div className="text-right">
                     <span className="text-[#775a19] font-bold text-lg" style={{ fontFamily: "Manrope, sans-serif" }}>
@@ -214,11 +224,12 @@ export default async function TeamDetailPage({
                 {/* 남은 분량 수치 */}
                 <div className="flex justify-between items-center mt-2">
                   <span className="text-[11px] text-[#75777e]" style={{ fontFamily: "Manrope, sans-serif" }}>
-                    완독까지 {1189 - m.totalChapters}장 남음
+                    완독까지 {1189 - m.currentChapters}장 남음
                   </span>
-                  <span className="text-[11px] font-medium text-[#45474d]" style={{ fontFamily: "Manrope, sans-serif" }}>
-                    {m.totalChapters} / 1,189장
-                  </span>
+                  <div className="flex items-center gap-1 text-[11px] font-medium text-[#45474d]" style={{ fontFamily: "Manrope, sans-serif" }}>
+                    <span>{m.currentChapters} / 1,189장</span>
+                    <span className="text-[#75777e] text-[10px]">(총 {m.totalChapters}장)</span>
+                  </div>
                 </div>
               </div>
             );

@@ -42,6 +42,14 @@ export interface IReadingRecordRepository {
   /** 특정 팀 내 개별 팀원들의 통독 진행 현황 조회 */
   getMemberChapterCounts(
     teamId: string,
-  ): Promise<{ userId: string; userName: string; totalChapters: number }[]>;
+  ): Promise<
+    {
+      userId: string;
+      userName: string;
+      totalChapters: number;
+      fullReadCount: number;
+      currentChapters: number;
+    }[]
+  >;
 }
 

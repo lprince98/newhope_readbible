@@ -137,7 +137,15 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
    * [신규] 특정 팀 내 개별 팀원들의 통독 진행 현황을 조회합니다.
    * 데이터베이스에 설치된 'get_member_chapter_counts' RPC 함수를 호출합니다.
    */
-  async getMemberChapterCounts(teamId: string): Promise<{ userId: string; userName: string; totalChapters: number }[]> {
+  async getMemberChapterCounts(teamId: string): Promise<
+    {
+      userId: string;
+      userName: string;
+      totalChapters: number;
+      fullReadCount: number;
+      currentChapters: number;
+    }[]
+  > {
     const { data, error } = await this.client.rpc("get_member_chapter_counts", {
       target_team_id: teamId,
     });
@@ -152,6 +160,8 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
       userId: d.user_id,
       userName: d.user_name,
       totalChapters: Number(d.total_chapters),
+      fullReadCount: Number(d.full_read_count || 0),
+      currentChapters: Number(d.current_chapters || 0),
     }));
   }
 
