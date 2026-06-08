@@ -75,7 +75,7 @@ export default async function ProfilePage() {
         <div className="flex justify-between items-center py-2">
           <span className="text-[#75777e] text-sm" style={{ fontFamily: "Manrope, sans-serif" }}>가입일</span>
           <span className="text-[#041129] font-semibold" style={{ fontFamily: "Manrope, sans-serif" }}>
-            {new Date(user.created_at).toLocaleDateString("ko-KR")}
+            {new Date(user.created_at).toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" })}
           </span>
         </div>
       </section>

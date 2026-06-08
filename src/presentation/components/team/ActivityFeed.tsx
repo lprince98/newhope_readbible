@@ -20,7 +20,7 @@ function timeAgo(dateStr: string): string {
   if (diff < 3600) return `${Math.floor(diff / 60)}분 전`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}시간 전`;
   if (diff < 604800) return `${Math.floor(diff / 86400)}일 전`;
-  return new Date(dateStr).toLocaleDateString("ko-KR", { month: "short", day: "numeric" });
+  return new Date(dateStr).toLocaleDateString("ko-KR", { month: "short", day: "numeric", timeZone: "Asia/Seoul" });
 }
 
 export function ActivityFeed({ activities }: Props) {

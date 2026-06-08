@@ -72,7 +72,8 @@ export default async function DashboardPage() {
 
   // 5. 오늘 요일 인덱스 계산 (차트 표시용, 월=0 ~ 일=6)
   const today = new Date();
-  const todayDayIndex = today.getDay() === 0 ? 6 : today.getDay() - 1;
+  const kstToday = new Date(today.toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
+  const todayDayIndex = kstToday.getDay() === 0 ? 6 : kstToday.getDay() - 1;
 
   return (
     <div className="px-6 py-8 max-w-7xl mx-auto">

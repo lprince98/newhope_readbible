@@ -19,7 +19,8 @@ const VERSES = [
  */
 export function getDailyVerse() {
   const today = new Date();
-  const dateStr = `${today.getFullYear()}${today.getMonth()}${today.getDate()}`;
+  const kstToday = new Date(today.toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
+  const dateStr = `${kstToday.getFullYear()}${kstToday.getMonth()}${kstToday.getDate()}`;
   
   // 날짜 문자열을 숫자로 변환하여 인덱스 계산
   const hash = dateStr.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);

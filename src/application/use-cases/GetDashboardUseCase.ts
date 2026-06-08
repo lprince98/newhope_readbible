@@ -31,17 +31,17 @@ export class GetDashboardUseCase {
     dailyGoal: number = 4
   ): Promise<DashboardDto> {
     const today = new Date();
-    const todayStr = parseDateString(today);
+    const kstToday = new Date(today.toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
 
     // 1. 오늘의 읽기 기록 조회 및 합계 계산
     const todayRecords = await this.repo.findByUserIdAndDate(userId, today);
     const todayChapters = todayRecords.reduce((s, r) => s + r.chapterCount, 0);
 
     // 2. 주간 통계를 위한 이번 주 시작일(월요일) 계산
-    const dayOfWeek = today.getDay(); // 0:일, 1:월, ..., 6:토
+    const dayOfWeek = kstToday.getDay(); // 0:일, 1:월, ..., 6:토
     const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // 월요일로 가기 위한 오프셋
-    const weekStart = new Date(today);
-    weekStart.setDate(today.getDate() + mondayOffset);
+    const weekStart = new Date(kstToday);
+    weekStart.setDate(kstToday.getDate() + mondayOffset);
     weekStart.setHours(0, 0, 0, 0);
 
     // 3. 주간 요일별 읽은 장 수 집계 (월~일, 7개 요소)
