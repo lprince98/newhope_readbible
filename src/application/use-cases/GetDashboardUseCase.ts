@@ -1,15 +1,12 @@
 import type { IReadingRecordRepository } from "@/src/domain/repositories/IReadingRecordRepository";
 import type { DashboardDto } from "../dto/DashboardDto";
 
-/** 
- * "YYYY-MM-DD" 문자열을 로컬 날짜로 파싱하여 UTC 편차를 방지하는 유틸리티 함수 
- */
 function parseDateString(dateStr: string | Date): string {
   if (dateStr instanceof Date) {
-    // 날짜 객체를 "YYYY-MM-DD" 형식의 로컬 문자열로 변환
-    const y = dateStr.getFullYear();
-    const m = String(dateStr.getMonth() + 1).padStart(2, "0");
-    const d = String(dateStr.getDate()).padStart(2, "0");
+    // 날짜 객체를 "YYYY-MM-DD" 형식의 UTC 문자열로 변환 (서버 타임존 영향 방지)
+    const y = dateStr.getUTCFullYear();
+    const m = String(dateStr.getUTCMonth() + 1).padStart(2, "0");
+    const d = String(dateStr.getUTCDate()).padStart(2, "0");
     return `${y}-${m}-${d}`;
   }
   // 문자열인 경우 앞 10자리(날짜 부분)만 추출

@@ -4,6 +4,21 @@ import { ReadingRecord } from "@/src/domain/entities/ReadingRecord";
 import type { BibleBookId } from "@/lib/constants/bible-books";
 
 
+function toKstDateString(date: Date): string {
+  const kstParts = new Intl.DateTimeFormat("ko-KR", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    timeZone: "Asia/Seoul",
+  }).formatToParts(date);
+  
+  const y = kstParts.find(p => p.type === "year")?.value;
+  const m = kstParts.find(p => p.type === "month")?.value;
+  const d = kstParts.find(p => p.type === "day")?.value;
+  return `${y}-${m}-${d}`;
+}
+
+
 /**
  * Supabase를 사용하여 성경 읽기 기록을 관리하는 저장소 구현체
  */
@@ -15,6 +30,7 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
    * @param record 저장할 새로운 기록 정보 (ID 미포함)
    */
   async save(record: NewReadingRecord): Promise<ReadingRecord> {
+    const kstDateStr = toKstDateString(record.readAt);
     const { data, error } = await this.client
       .from("reading_records")
       .insert({
@@ -23,7 +39,7 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
         start_chapter: record.startChapter,
         end_chapter: record.endChapter,
         memo: record.memo,
-        read_at: record.readAt.toISOString(),
+        read_at: kstDateStr,
       })
       .select()
       .single();
@@ -65,17 +81,13 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
    * 특정 날짜에 기록된 사용자의 읽기 데이터를 조회합니다.
    */
   async findByUserIdAndDate(userId: string, date: Date): Promise<ReadingRecord[]> {
-    const start = new Date(date);
-    start.setHours(0, 0, 0, 0);
-    const end = new Date(date);
-    end.setHours(23, 59, 59, 999);
+    const kstDateStr = toKstDateString(date);
 
     const { data, error } = await this.client
       .from("reading_records")
       .select("*")
       .eq("user_id", userId)
-      .gte("read_at", start.toISOString())
-      .lte("read_at", end.toISOString());
+      .eq("read_at", kstDateStr);
 
     if (error) throw new Error(error.message);
     return data.map(this.mapToEntity);

@@ -54,7 +54,10 @@ export async function RecentRecords() {
                   </span>
                 </div>
                 <p className="text-[#75777e] text-[11px]" style={{ fontFamily: "Manrope, sans-serif" }}>
-                  {new Date(record.read_at).toLocaleDateString("ko-KR", { month: "long", day: "numeric" })}
+                  {(() => {
+                    const [_, m, d] = record.read_at.split("-");
+                    return `${parseInt(m)}월 ${parseInt(d)}일`;
+                  })()}
                 </p>
               </div>
               <div className="flex items-center gap-3">
