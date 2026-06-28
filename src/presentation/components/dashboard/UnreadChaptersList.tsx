@@ -50,13 +50,13 @@ export function UnreadChaptersList({
               className="text-[#041129] font-bold"
               style={{ fontFamily: "Manrope, sans-serif", fontSize: "16px", fontWeight: 700 }}
             >
-              실수로 누락한 장 확인하기
+              읽어야 할 장 확인하기
             </h4>
             <p className="text-[#45474d] mt-0.5" style={{ fontFamily: "Noto Serif KR, serif", fontSize: "13px" }}>
               {totalUnreadChaptersCount === 0 ? (
                 <span className="text-[#15803d] font-semibold">이번 완독 회차의 모든 장을 읽으셨습니다! 🎉</span>
               ) : (
-                <span>전체 1,189장 중 <strong className="text-[#775a19]">{totalUnreadChaptersCount}장</strong>을 아직 읽지 않았습니다.</span>
+                <span>전체 1,189장 중 <strong className="text-[#775a19]">{totalUnreadChaptersCount}장</strong>을 더 읽어야 합니다.</span>
               )}
             </p>
           </div>
@@ -83,7 +83,7 @@ export function UnreadChaptersList({
             <div className="text-center py-8 flex flex-col items-center gap-2">
               <span className="material-symbols-outlined text-5xl text-[#15803d]">check_circle</span>
               <p className="text-[#1b1c1a] font-bold mt-2" style={{ fontFamily: "Manrope, sans-serif" }}>
-                누락된 성경 장이 없습니다!
+                읽어야 할 성경 장이 없습니다!
               </p>
               <p className="text-[#45474d] text-sm" style={{ fontFamily: "Noto Serif KR, serif" }}>
                 훌륭하게 하나님의 말씀을 읽어 가고 계십니다.
