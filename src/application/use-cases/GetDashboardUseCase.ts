@@ -1,5 +1,6 @@
 import type { IReadingRecordRepository } from "@/src/domain/repositories/IReadingRecordRepository";
 import type { DashboardDto } from "../dto/DashboardDto";
+import { GetUnreadChaptersUseCase } from "./GetUnreadChaptersUseCase";
 
 function parseDateString(dateStr: string | Date): string {
   if (dateStr instanceof Date) {
@@ -73,6 +74,11 @@ export class GetDashboardUseCase {
     // 현재 독 회차의 진행 장수 (리셋 후 장수)
     const currentCycleChapters = totalChapters % 1189;
 
+    // 5.5 미독/누락 장 목록 계산
+    const unreadUseCase = new GetUnreadChaptersUseCase();
+    const unreadBooks = unreadUseCase.execute(allRecords);
+    const totalUnreadChaptersCount = unreadBooks.reduce((sum, b) => sum + b.totalUnreadCount, 0);
+
     // 6. 최종 대시보드 데이터 조립
     return {
       todayChapters,
@@ -84,6 +90,8 @@ export class GetDashboardUseCase {
       teamRank,
       totalFullReads,
       currentCycleChapters,
+      unreadBooks,
+      totalUnreadChaptersCount,
     };
   }
 }

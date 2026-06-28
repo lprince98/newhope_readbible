@@ -5,6 +5,7 @@ import { SupabaseReadingRecordRepository } from "@/src/infrastructure/repositori
 import { GetDashboardUseCase } from "@/src/application/use-cases/GetDashboardUseCase";
 import { CircularProgress } from "@/src/presentation/components/dashboard/CircularProgress";
 import { WeeklyBarChart } from "@/src/presentation/components/dashboard/WeeklyBarChart";
+import { UnreadChaptersList } from "@/src/presentation/components/dashboard/UnreadChaptersList";
 
 export const metadata: Metadata = {
   title: "대시보드 — 새소망 성경 통독",
@@ -217,6 +218,14 @@ export default async function DashboardPage() {
             </div>
           </Link>
         </div>
+      </div>
+
+      {/* 미독/누락된 장 목록 섹션 */}
+      <div className="mt-6">
+        <UnreadChaptersList
+          unreadBooks={dashboard.unreadBooks}
+          totalUnreadChaptersCount={dashboard.totalUnreadChaptersCount}
+        />
       </div>
     </div>
   );

@@ -1,3 +1,16 @@
+export interface UnreadChapterRange {
+  start: number;
+  end: number;
+}
+
+export interface UnreadBookInfo {
+  bookId: string;
+  bookName: string;
+  testament: "old" | "new";
+  unreadChapters: UnreadChapterRange[];
+  totalUnreadCount: number;
+}
+
 /** 대시보드 응답 DTO */
 export interface DashboardDto {
   /** 오늘 읽은 장 수 */
@@ -16,4 +29,8 @@ export interface DashboardDto {
   totalFullReads: number;
   /** 현재 독 진행 장수 (총장수 % 1189) */
   currentCycleChapters: number;
+  /** 미독/누락 성경 리스트 */
+  unreadBooks: UnreadBookInfo[];
+  /** 전체 미독/누락 장 수 */
+  totalUnreadChaptersCount: number;
 }
