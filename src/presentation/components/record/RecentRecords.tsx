@@ -2,7 +2,7 @@ import { BIBLE_BOOKS } from "@/lib/constants/bible-books";
 import { createClient } from "@/src/infrastructure/supabase/server";
 import { RecordItemAction } from "./RecordItemAction";
 
-export async function RecentRecords() {
+export async function RecentRecords({ isClosed = false }: { isClosed?: boolean }) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -72,7 +72,7 @@ export async function RecentRecords() {
                   )}
                 </div>
                 {/* 수정/삭제 버튼 */}
-                <RecordItemAction recordId={record.id} />
+                {!isClosed && <RecordItemAction recordId={record.id} />}
               </div>
             </div>
 
