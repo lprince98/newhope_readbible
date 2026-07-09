@@ -19,7 +19,11 @@ export function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 w-full z-50 bg-white/90 backdrop-blur-md border-t border-slate-100 shadow-[0_-4px_12px_rgba(26,38,63,0.05)] rounded-t-2xl pb-safe">
       <div className="flex justify-around items-center px-4 py-3">
-        {NAV_ITEMS.filter(item => FEATURES.enableTeamFeatures || item.href !== "/team").map(({ href, icon, label }) => {
+        {NAV_ITEMS.filter(item => {
+          if (item.href === "/team" && !FEATURES.enableTeamFeatures) return false;
+          if (item.href === "/ranking" && !FEATURES.enableRanking) return false;
+          return true;
+        }).map(({ href, icon, label }) => {
           const isActive = pathname === href;
           return (
             <Link

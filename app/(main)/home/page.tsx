@@ -205,25 +205,27 @@ export default async function HomePage() {
       )}
 
       {/* 빠른 액션 */}
-      <section className="grid grid-cols-2 gap-4">
+      <section className={`grid ${FEATURES.enableRanking ? "grid-cols-2" : "grid-cols-1"} gap-4`}>
         <Link
           href="/record"
-          className="bg-[#041129] text-white rounded-xl p-4 flex flex-col items-center justify-center gap-2 shadow-[0_4px_12px_rgba(26,38,63,0.05)] hover:bg-[#1a263f] active:scale-95 transition-all duration-200 h-24"
+          className="bg-[#041129] text-white rounded-xl p-5 shadow-[0_4px_12px_rgba(26,38,63,0.05)] border border-slate-100 flex flex-col justify-between h-28 cursor-pointer hover:bg-[#1a263f] transition-colors"
         >
-          <span className="material-symbols-outlined">edit_document</span>
+          <span className="material-symbols-outlined">menu_book</span>
           <span style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}>
             성경 기록하기
           </span>
         </Link>
-        <Link
-          href="/ranking"
-          className="bg-white text-[#041129] border border-[#c5c6ce] rounded-xl p-4 flex flex-col items-center justify-center gap-2 shadow-[0_4px_12px_rgba(26,38,63,0.05)] hover:bg-[#f5f3ef] active:scale-95 transition-all duration-200 h-24"
-        >
-          <span className="material-symbols-outlined">leaderboard</span>
-          <span style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}>
-            {FEATURES.enableTeamFeatures ? "팀 랭킹 확인" : "통독 랭킹 확인"}
-          </span>
-        </Link>
+        {FEATURES.enableRanking && (
+          <Link
+            href="/ranking"
+            className="bg-white text-[#1b1c1a] rounded-xl p-5 shadow-[0_4px_12px_rgba(26,38,63,0.05)] border border-[#c5c6ce]/10 flex flex-col justify-between h-28 cursor-pointer hover:bg-[#f5f3ef] transition-colors"
+          >
+            <span className="material-symbols-outlined">leaderboard</span>
+            <span style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}>
+              {FEATURES.enableTeamFeatures ? "팀 랭킹 확인" : "통독 랭킹 확인"}
+            </span>
+          </Link>
+        )}
       </section>
     </div>
   );

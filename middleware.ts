@@ -39,6 +39,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/home", request.url));
   }
 
+  // 랭킹 기능 비활성화 시 /ranking 경로 우회 원천 차단
+  if (!FEATURES.enableRanking && pathname.startsWith("/ranking")) {
+    return NextResponse.redirect(new URL("/home", request.url));
+  }
+
   // 비로그인 → 보호된 라우트 접근 시 리다이렉트
   if (!user && isProtected) {
     return NextResponse.redirect(new URL("/login", request.url));

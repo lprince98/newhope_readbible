@@ -28,7 +28,7 @@ export function Sidebar({ isOpen, onClose, profile }: Props) {
     { href: "/home",      icon: "home",         label: "홈" },
     { href: "/dashboard", icon: "bar_chart",    label: "나의 현황 (대시보드)" },
     { href: "/record",    icon: "menu_book",    label: "성경 읽기 기록" },
-    { href: "/ranking",   icon: "leaderboard",  label: FEATURES.enableTeamFeatures ? "팀 랭킹" : "통독 랭킹" },
+    ...(FEATURES.enableRanking ? [{ href: "/ranking",   icon: "leaderboard",  label: FEATURES.enableTeamFeatures ? "팀 랭킹" : "통독 랭킹" }] : []),
     ...(FEATURES.enableTeamFeatures ? [{ href: "/team",      icon: "groups",       label: "나의 팀 상세" }] : []),
     { href: "/profile",   icon: "person",       label: "마이 프로필" },
   ];
