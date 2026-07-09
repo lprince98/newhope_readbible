@@ -14,6 +14,7 @@ export const dynamic = "force-dynamic";
 
 import { createClient } from "@/src/infrastructure/supabase/server";
 import { DailyGoalEditor } from "@/src/presentation/components/record/DailyGoalEditor";
+import { FEATURES } from "@/lib/constants/features";
 
 export default async function RecordPage({ searchParams }: { searchParams: Promise<{ id?: string }> }) {
   const { id: editId } = await searchParams;
@@ -23,7 +24,9 @@ export default async function RecordPage({ searchParams }: { searchParams: Promi
 
   let dailyGoal = 4;
   let editRecord = null;
-  const isClosed = new Date() >= new Date("2026-07-01T00:00:00+09:00");
+  const isClosed = FEATURES.uploadDeadline
+    ? new Date() >= new Date(FEATURES.uploadDeadline)
+    : false;
 
   if (user) {
     // 목표 정보 조회

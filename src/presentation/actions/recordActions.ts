@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/src/infrastructure/supabase/server";
+import { FEATURES } from "@/lib/constants/features";
 import { SupabaseReadingRecordRepository } from "@/src/infrastructure/repositories/SupabaseReadingRecordRepository";
 import { AddReadingRecordUseCase } from "@/src/application/use-cases/AddReadingRecordUseCase";
 import type { BibleBookId } from "@/lib/constants/bible-books";
@@ -11,9 +12,8 @@ import type { BibleBookId } from "@/lib/constants/bible-books";
  * @param formData 성경(bookId), 시작 장, 종료 장, 메모 등을 포함한 폼 데이터
  */
 export async function addReadingRecord(formData: FormData) {
-  const DEADLINE = new Date("2026-07-01T00:00:00+09:00");
-  if (new Date() >= DEADLINE) {
-    return { error: "성경 읽기 기록 업로드 및 편집 기간이 마감되었습니다. (7월 1일 자정 마감)" };
+  if (FEATURES.uploadDeadline && new Date() >= new Date(FEATURES.uploadDeadline)) {
+    return { error: "성경 읽기 기록 업로드 및 편집 기간이 마감되었습니다." };
   }
 
   const supabase = await createClient();
@@ -75,9 +75,8 @@ export async function addReadingRecord(formData: FormData) {
  * @param id 삭제할 기록의 고유 ID
  */
 export async function deleteReadingRecord(id: string) {
-  const DEADLINE = new Date("2026-07-01T00:00:00+09:00");
-  if (new Date() >= DEADLINE) {
-    return { error: "성경 읽기 기록 업로드 및 편집 기간이 마감되었습니다. (7월 1일 자정 마감)" };
+  if (FEATURES.uploadDeadline && new Date() >= new Date(FEATURES.uploadDeadline)) {
+    return { error: "성경 읽기 기록 업로드 및 편집 기간이 마감되었습니다." };
   }
 
   const supabase = await createClient();
@@ -109,9 +108,8 @@ export async function deleteReadingRecord(id: string) {
  * @param formData 수정된 폼 데이터
  */
 export async function updateReadingRecord(id: string, formData: FormData) {
-  const DEADLINE = new Date("2026-07-01T00:00:00+09:00");
-  if (new Date() >= DEADLINE) {
-    return { error: "성경 읽기 기록 업로드 및 편집 기간이 마감되었습니다. (7월 1일 자정 마감)" };
+  if (FEATURES.uploadDeadline && new Date() >= new Date(FEATURES.uploadDeadline)) {
+    return { error: "성경 읽기 기록 업로드 및 편집 기간이 마감되었습니다." };
   }
 
   const supabase = await createClient();
