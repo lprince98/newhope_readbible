@@ -291,7 +291,7 @@ export default async function RankingPage(props: { searchParams?: Promise<{ tab?
                           >
                             {item.userName}
                           </span>
-                          {item.teamName && (
+                          {FEATURES.enableTeamFeatures && item.teamName && (
                             <span
                               className="text-[#75777e]"
                               style={{ fontFamily: "Manrope, sans-serif", fontSize: "11px" }}
