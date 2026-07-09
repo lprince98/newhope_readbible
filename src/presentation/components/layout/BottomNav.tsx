@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { FEATURES } from "@/lib/constants/features";
 
 const NAV_ITEMS = [
   { href: "/home",      icon: "home",        label: "홈"   },
@@ -18,7 +19,7 @@ export function BottomNav() {
   return (
     <nav className="fixed bottom-0 left-0 w-full z-50 bg-white/90 backdrop-blur-md border-t border-slate-100 shadow-[0_-4px_12px_rgba(26,38,63,0.05)] rounded-t-2xl pb-safe">
       <div className="flex justify-around items-center px-4 py-3">
-        {NAV_ITEMS.map(({ href, icon, label }) => {
+        {NAV_ITEMS.filter(item => FEATURES.enableTeamFeatures || item.href !== "/team").map(({ href, icon, label }) => {
           const isActive = pathname === href;
           return (
             <Link

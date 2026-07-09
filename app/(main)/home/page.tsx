@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/src/infrastructure/supabase/server";
 import { getDailyVerse } from "@/src/shared/utils/dailyVerse";
+import { FEATURES } from "@/lib/constants/features";
 
 
 export const metadata: Metadata = {
@@ -132,7 +133,7 @@ export default async function HomePage() {
 
 
       {/* 팀 가입 안내 (팀이 없는 경우) */}
-      {user && !teamId && (
+      {FEATURES.enableTeamFeatures && user && !teamId && (
         <section className="bg-[#fffbeb] rounded-xl p-6 border-2 border-[#fcd34d] shadow-sm flex flex-col gap-4 animate-pulse-subtle">
           <div className="flex items-center gap-3">
             <span className="material-symbols-outlined text-[#775a19] text-3xl">group_add</span>
@@ -220,7 +221,7 @@ export default async function HomePage() {
         >
           <span className="material-symbols-outlined">leaderboard</span>
           <span style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}>
-            팀 랭킹 확인
+            {FEATURES.enableTeamFeatures ? "팀 랭킹 확인" : "통독 랭킹 확인"}
           </span>
         </Link>
       </section>

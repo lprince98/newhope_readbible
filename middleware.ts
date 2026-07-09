@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { FEATURES } from "@/lib/constants/features";
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -31,7 +32,12 @@ export async function middleware(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
   const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register");
-  const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/record");
+  const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/record") || pathname.startsWith("/team");
+
+  // 팀 기능 비활성화 시 /team 경로 우회 원천 차단
+  if (!FEATURES.enableTeamFeatures && pathname.startsWith("/team")) {
+    return NextResponse.redirect(new URL("/home", request.url));
+  }
 
   // 비로그인 → 보호된 라우트 접근 시 리다이렉트
   if (!user && isProtected) {

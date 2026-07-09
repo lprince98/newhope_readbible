@@ -4,6 +4,7 @@ import { createClient } from "@/src/infrastructure/supabase/server";
 import { SupabaseReadingRecordRepository } from "@/src/infrastructure/repositories/SupabaseReadingRecordRepository";
 import { GetRankingUseCase } from "@/src/application/use-cases/GetRankingUseCase";
 import { GetIndividualRankingUseCase } from "@/src/application/use-cases/GetIndividualRankingUseCase";
+import { FEATURES } from "@/lib/constants/features";
 
 export const metadata: Metadata = {
   title: "통독 랭킹 — 새소망 성경 통독",
@@ -20,7 +21,9 @@ const RANK_COLORS = [
 
 export default async function RankingPage(props: { searchParams?: Promise<{ tab?: string }> }) {
   const params = await props.searchParams;
-  const currentTab = params?.tab === "individual" ? "individual" : "team";
+  const currentTab = FEATURES.enableTeamFeatures
+    ? (params?.tab === "individual" ? "individual" : "team")
+    : "individual";
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -93,24 +96,26 @@ export default async function RankingPage(props: { searchParams?: Promise<{ tab?
       </div>
 
       {/* 탭 버튼 */}
-      <div className="flex bg-[#efeeea] p-1 rounded-lg">
-        <Link 
-          href="/ranking?tab=team" 
-          className={`flex-1 text-center py-2.5 rounded-md text-[15px] font-semibold transition-all duration-200 ${
-            currentTab === "team" ? "bg-white text-[#1b1c1a] shadow-[0_2px_8px_rgba(4,17,41,0.08)]" : "text-[#75777e] hover:text-[#45474d]"
-          }`}
-        >
-          팀 랭킹
-        </Link>
-        <Link 
-          href="/ranking?tab=individual" 
-          className={`flex-1 text-center py-2.5 rounded-md text-[15px] font-semibold transition-all duration-200 ${
-            currentTab === "individual" ? "bg-white text-[#1b1c1a] shadow-[0_2px_8px_rgba(4,17,41,0.08)]" : "text-[#75777e] hover:text-[#45474d]"
-          }`}
-        >
-          개인 Top 10
-        </Link>
-      </div>
+      {FEATURES.enableTeamFeatures && (
+        <div className="flex bg-[#efeeea] p-1 rounded-lg">
+          <Link 
+            href="/ranking?tab=team" 
+            className={`flex-1 text-center py-2.5 rounded-md text-[15px] font-semibold transition-all duration-200 ${
+              currentTab === "team" ? "bg-white text-[#1b1c1a] shadow-[0_2px_8px_rgba(4,17,41,0.08)]" : "text-[#75777e] hover:text-[#45474d]"
+            }`}
+          >
+            팀 랭킹
+          </Link>
+          <Link 
+            href="/ranking?tab=individual" 
+            className={`flex-1 text-center py-2.5 rounded-md text-[15px] font-semibold transition-all duration-200 ${
+              currentTab === "individual" ? "bg-white text-[#1b1c1a] shadow-[0_2px_8px_rgba(4,17,41,0.08)]" : "text-[#75777e] hover:text-[#45474d]"
+            }`}
+          >
+            개인 Top 10
+          </Link>
+        </div>
+      )}
 
       {/* 내 기여도 카드 */}
       {user && (
@@ -135,7 +140,7 @@ export default async function RankingPage(props: { searchParams?: Promise<{ tab?
               <p className="text-[#45474d]" style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}>
                 오늘 읽은 장 수
               </p>
-              {teamName && (
+              {FEATURES.enableTeamFeatures && teamName && (
                 <p className="text-[#75777e] mt-1" style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px" }}>
                   <span className="font-medium text-[#041129]">{teamName}</span>에 기여 중
                 </p>
@@ -143,7 +148,7 @@ export default async function RankingPage(props: { searchParams?: Promise<{ tab?
             </div>
             
             {/* 현재 선택된 탭에 따라 내 랭킹 정보 변경 */}
-            {currentTab === "team" && myTeamItem ? (
+            {FEATURES.enableTeamFeatures && currentTab === "team" && myTeamItem ? (
               <div className="text-right">
                 <p
                   className="text-[#041129]"
@@ -174,7 +179,7 @@ export default async function RankingPage(props: { searchParams?: Promise<{ tab?
 
       {/* 랭킹 리스트 */}
       <section className="flex flex-col gap-3">
-        {currentTab === "team" ? (
+        {FEATURES.enableTeamFeatures && currentTab === "team" ? (
           /* 팀 랭킹 */
           teamRanking.length === 0 ? (
             <div className="text-center py-12 text-[#75777e]" style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px" }}>

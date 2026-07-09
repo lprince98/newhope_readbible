@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { FEATURES } from "@/lib/constants/features";
 
 interface Props {
   isOpen: boolean;
@@ -27,8 +28,8 @@ export function Sidebar({ isOpen, onClose, profile }: Props) {
     { href: "/home",      icon: "home",         label: "홈" },
     { href: "/dashboard", icon: "bar_chart",    label: "나의 현황 (대시보드)" },
     { href: "/record",    icon: "menu_book",    label: "성경 읽기 기록" },
-    { href: "/ranking",   icon: "leaderboard",  label: "팀 랭킹" },
-    { href: "/team",      icon: "groups",       label: "나의 팀 상세" },
+    { href: "/ranking",   icon: "leaderboard",  label: FEATURES.enableTeamFeatures ? "팀 랭킹" : "통독 랭킹" },
+    ...(FEATURES.enableTeamFeatures ? [{ href: "/team",      icon: "groups",       label: "나의 팀 상세" }] : []),
     { href: "/profile",   icon: "person",       label: "마이 프로필" },
   ];
 
@@ -59,11 +60,13 @@ export function Sidebar({ isOpen, onClose, profile }: Props) {
             </button>
           </div>
           <h2 className="text-lg font-bold" style={{ fontFamily: "Manrope, sans-serif" }}>
-            {profile?.name ?? "사용자"} 성도님
+            {profile?.name ?? "사용자"} &nbsp;성도님
           </h2>
-          <p className="text-sm text-white/60" style={{ fontFamily: "Manrope, sans-serif" }}>
-            {profile?.teamName ?? "소속 팀 정보를 불러오는 중..."}
-          </p>
+          {FEATURES.enableTeamFeatures && (
+            <p className="text-sm text-white/60" style={{ fontFamily: "Manrope, sans-serif" }}>
+              {profile?.teamName ?? "소속 팀 정보를 불러오는 중..."}
+            </p>
+          )}
         </div>
 
         {/* Menu */}
