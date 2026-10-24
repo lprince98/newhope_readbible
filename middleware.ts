@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { FEATURES } from "@/lib/constants/features";
+import { needsNameSetup } from "@/src/shared/utils/auth";
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -47,6 +48,11 @@ export async function middleware(request: NextRequest) {
   // 비로그인 → 보호된 라우트 접근 시 리다이렉트
   if (!user && isProtected) {
     return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // 카카오로 처음 가입해 아직 실명을 입력하지 않았다면 실명 입력 화면으로
+  if (user && needsNameSetup(user) && !pathname.startsWith("/welcome") && !pathname.startsWith("/auth")) {
+    return NextResponse.redirect(new URL("/welcome", request.url));
   }
 
   // 로그인 상태 → 인증 페이지 접근 시 홈으로

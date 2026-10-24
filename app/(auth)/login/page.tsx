@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/src/infrastructure/supabase/server";
 import { BackButton } from "@/src/presentation/components/common/BackButton";
 import { BrandLogo } from "@/src/presentation/components/common/BrandLogo";
+import { KakaoLoginButton } from "@/src/presentation/components/auth/KakaoLoginButton";
 
 export const metadata: Metadata = {
   title: "로그인",
@@ -56,7 +57,7 @@ export default async function LoginPage({
         <div className="card flex flex-col gap-6 p-6 sm:p-8">
           <div className="flex flex-col gap-1">
             <h1 className="page-title">로그인</h1>
-            <p className="text-[14px] text-muted">성경 통독 기록을 이어가세요.</p>
+            <p className="text-[15px] text-muted">카카오 계정으로 간편하게 로그인하세요.</p>
           </div>
 
           {/* 오류 메시지 */}
@@ -67,55 +68,66 @@ export default async function LoginPage({
             </div>
           )}
 
-          {/* 폼 */}
-          <form action={login} className="flex w-full flex-col gap-4">
-            <div>
-              <label className="field-label" htmlFor="email">
-                이메일
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder="example@email.com"
-                required
-                className="field"
-              />
-            </div>
+          {/* 카카오 로그인 (가입도 같은 버튼으로 진행) */}
+          <KakaoLoginButton label="카카오로 로그인" />
 
-            <div>
-              <label className="field-label" htmlFor="password">
-                비밀번호
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                placeholder="••••••••"
-                required
-                className="field"
-              />
-            </div>
+          {/* 이메일 로그인 — 관리자 등 기존 이메일 계정용으로 접어 둠 */}
+          <details className="group rounded-xl border border-line">
+            <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between px-4 text-[14px] font-medium text-muted transition-colors hover:text-ink [&::-webkit-details-marker]:hidden">
+              이메일로 로그인
+              <span className="material-symbols-outlined text-[20px] transition-transform group-open:rotate-180">expand_more</span>
+            </summary>
+            <div className="border-t border-line px-4 pt-4 pb-5">
+            <form action={login} className="flex w-full flex-col gap-4">
+              <div>
+                <label className="field-label" htmlFor="email">
+                  이메일
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="example@email.com"
+                  required
+                  className="field"
+                />
+              </div>
 
-            <div className="flex items-center justify-between gap-2">
-              <label className="flex min-h-11 cursor-pointer items-center gap-2 text-[13px] text-muted transition-colors hover:text-ink">
-                <input type="checkbox" className="h-4 w-4 cursor-pointer rounded accent-brand" />
-                로그인 상태 유지
-              </label>
-              <Link
-                href="/password-help"
-                className="flex min-h-11 items-center text-[13px] font-medium text-brand transition-colors hover:text-brand-deep"
-              >
-                비밀번호를 잊으셨나요?
-              </Link>
-            </div>
+              <div>
+                <label className="field-label" htmlFor="password">
+                  비밀번호
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  placeholder="••••••••"
+                  required
+                  className="field"
+                />
+              </div>
 
-            <button type="submit" className="btn btn-primary mt-1 w-full">
-              로그인
-            </button>
-          </form>
+              <div className="flex items-center justify-between gap-2">
+                <label className="flex min-h-11 cursor-pointer items-center gap-2 text-[13px] text-muted transition-colors hover:text-ink">
+                  <input type="checkbox" className="h-4 w-4 cursor-pointer rounded accent-brand" />
+                  로그인 상태 유지
+                </label>
+                <Link
+                  href="/password-help"
+                  className="flex min-h-11 items-center text-[13px] font-medium text-brand transition-colors hover:text-brand-deep"
+                >
+                  비밀번호를 잊으셨나요?
+                </Link>
+              </div>
+
+              <button type="submit" className="btn btn-primary mt-1 w-full">
+                로그인
+              </button>
+            </form>
+            </div>
+          </details>
 
           {/* 회원가입 링크 */}
           <div className="border-t border-line pt-5 text-center">

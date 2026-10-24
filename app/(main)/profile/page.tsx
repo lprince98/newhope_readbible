@@ -5,6 +5,7 @@ import { createClient } from "@/src/infrastructure/supabase/server";
 import { ProfileActions } from "@/src/presentation/components/profile/ProfileActions";
 import { PasswordChangeSection } from "@/src/presentation/components/profile/PasswordChangeSection";
 import { PageHeader } from "@/src/presentation/components/common/PageHeader";
+import { isSocialUser } from "@/src/shared/utils/auth";
 
 
 export const metadata: Metadata = {
@@ -62,7 +63,7 @@ export default async function ProfilePage() {
           </div>
           <div className="flex min-w-0 flex-col gap-0.5">
             <h3 className="truncate text-[20px] font-bold tracking-tight">{profile?.name}</h3>
-            <p className="truncate text-[14px] text-white/75">{user.email}</p>
+            <p className="truncate text-[14px] text-white/75">{isSocialUser(user) ? "카카오 계정으로 로그인" : user.email}</p>
           </div>
         </div>
       </section>
@@ -89,7 +90,8 @@ export default async function ProfilePage() {
       </section>
 
       {/* 비밀번호 변경 (이메일 서비스 중단 대비 대안) */}
-      <PasswordChangeSection />
+      {/* 카카오 가입자는 비밀번호가 없으므로 숨김 */}
+      {!isSocialUser(user) && <PasswordChangeSection />}
 
       {/* 액션 버튼 (클라이언트 컴포넌트) */}
       <ProfileActions />

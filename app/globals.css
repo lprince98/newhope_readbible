@@ -37,6 +37,11 @@
   --color-gold: #b8862b;
   --color-gold-soft: #fbf3e2;
 
+  /* ── 카카오 로그인 (카카오 디자인 가이드 색상) ───────── */
+  --color-kakao: #fee500;
+  --color-kakao-hover: #f5dc00;
+  --color-kakao-label: rgba(0, 0, 0, 0.85);
+
   /* ── 타이포그래피 ──────────────────────────────────── */
   --font-sans: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
   --font-serif: "Noto Serif KR", serif;
