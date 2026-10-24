@@ -13,10 +13,8 @@ export async function signOutAction() {
 
 /** 회원 탈퇴 */
 export async function withdrawAction() {
-
-  console.log(">>> [SERVER] 회원 탈퇴 액션 시작");
   const supabase = await createClient();
-  
+
   const { data: { user }, error: userError } = await supabase.auth.getUser();
   if (userError) {
     console.error(">>> [SERVER] 사용자 조회 오류:", userError);
@@ -24,56 +22,18 @@ export async function withdrawAction() {
   }
 
   if (!user) {
-    console.warn(">>> [SERVER] 사용자 세션 없음");
     return { error: "로그인이 필요합니다." };
   }
 
-  console.log(">>> [SERVER] 탈퇴 시도 유저 ID:", user.id);
-
   // RPC 함수(delete_user) 호출
-  const { data: result, error: rpcError } = await supabase.rpc("delete_user");
+  const { error: rpcError } = await supabase.rpc("delete_user");
 
   if (rpcError) {
     console.error(">>> [SERVER] RPC 탈퇴 오류 상세:", rpcError);
     return { error: `탈퇴 실패: ${rpcError.message} (${rpcError.code})` };
   }
 
-  console.log(">>> [SERVER] RPC 결과:", result);
-
   // 세션 정리 및 로그아웃
-  console.log(">>> [SERVER] 로그아웃 시도...");
   await supabase.auth.signOut();
-  
-  console.log(">>> [SERVER] 리다이렉트 실행");
   redirect("/login");
 }
-
-/** 비밀번호 재설정 이메일 발송 */
-export async function resetPasswordAction(email: string) {
-  const supabase = await createClient();
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/update-password`,
-  });
-
-  if (error) {
-    return { error: error.message };
-  }
-  return { success: true };
-}
-
-/** 비밀번호 최종 업데이트 */
-export async function updatePasswordAction(password: string) {
-  const supabase = await createClient();
-  const { error } = await supabase.auth.updateUser({
-    password: password,
-  });
-
-  if (error) {
-    return { error: error.message };
-  }
-  return { success: true };
-}
-
-
-
-

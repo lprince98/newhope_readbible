@@ -59,7 +59,6 @@ export default async function TeamDetailPage({
   const teamCounts = await repo.getTeamChapterCounts(FEATURES.seasonStartDate);
   const teamData = teamCounts.find((t) => t.teamId === teamId);
   const totalChapters = teamData?.totalChapters ?? 0;
-  const TOTAL_BIBLE_CHAPTERS = 1189; // 성경 전체 1,189장
   
   // 4. 팀원별 개별 진행 현황 조회 (중요!)
   // RPC 함수인 'get_member_chapter_counts'를 호출하여 각 멤버의 읽은 장 수를 가져옵니다.

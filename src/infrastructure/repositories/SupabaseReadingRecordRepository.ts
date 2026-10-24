@@ -19,6 +19,35 @@ function toKstDateString(date: Date): string {
 }
 
 
+/** reading_records 테이블 행 */
+interface ReadingRecordRow {
+  id: string;
+  user_id: string;
+  book_id: BibleBookId;
+  start_chapter: number;
+  end_chapter: number;
+  memo: string | null;
+  read_at: string;
+  created_at: string | null;
+}
+
+/** get_team_chapter_counts RPC 결과 행 */
+interface TeamChapterCountRow {
+  team_id: string;
+  team_name: string;
+  total_chapters: number | string;
+}
+
+/** get_individual_ranking / get_member_chapter_counts RPC 결과 행 (bigint는 문자열로 올 수 있음) */
+interface MemberChapterCountRow {
+  user_id: string;
+  user_name: string;
+  team_name?: string | null;
+  total_chapters: number | string;
+  full_read_count: number | null;
+  current_chapters: number | null;
+}
+
 /**
  * Supabase를 사용하여 성경 읽기 기록을 관리하는 저장소 구현체
  */
@@ -120,7 +149,7 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
       return [];
     }
 
-    return (data || []).map((d: any) => ({
+    return ((data ?? []) as TeamChapterCountRow[]).map((d) => ({
       teamId: d.team_id,
       teamName: d.team_name,
       totalChapters: Number(d.total_chapters),
@@ -138,10 +167,10 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
       return [];
     }
 
-    return (data || []).map((d: any) => ({
+    return ((data ?? []) as MemberChapterCountRow[]).map((d) => ({
       userId: d.user_id,
       userName: d.user_name,
-      teamName: d.team_name,
+      teamName: d.team_name ?? null,
       totalChapters: Number(d.total_chapters),
       fullReadCount: Number(d.full_read_count || 0),
       currentChapters: Number(d.current_chapters || 0),
@@ -173,7 +202,7 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
       return [];
     }
 
-    return (data ?? []).map((d: any) => ({
+    return ((data ?? []) as MemberChapterCountRow[]).map((d) => ({
       userId: d.user_id,
       userName: d.user_name,
       totalChapters: Number(d.total_chapters),
@@ -201,7 +230,7 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
   /**
    * 데이터베이스 결과 객체를 도메인 엔티티(ReadingRecord)로 변환합니다.
    */
-  private mapToEntity(data: any): ReadingRecord {
+  private mapToEntity(data: ReadingRecordRow): ReadingRecord {
     return new ReadingRecord(
       data.id,
       data.user_id,

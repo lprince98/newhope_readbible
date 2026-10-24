@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { FEATURES } from "@/lib/constants/features";
 import { needsNameSetup } from "@/src/shared/utils/auth";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(

@@ -3,7 +3,6 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { createClient } from "@/src/infrastructure/supabase/server";
 import { ProfileActions } from "@/src/presentation/components/profile/ProfileActions";
-import { PasswordChangeSection } from "@/src/presentation/components/profile/PasswordChangeSection";
 import { PageHeader } from "@/src/presentation/components/common/PageHeader";
 import { isSocialUser } from "@/src/shared/utils/auth";
 
@@ -44,9 +43,6 @@ export default async function ProfilePage() {
       teamName = teamData.name;
     }
   }
-
-  // 디버깅용 로그 (서버 콘솔에서 확인 가능)
-  console.log(`>>> [PROFILE DEBUG] User: ${user.id}, TeamID: ${profile?.team_id}, TeamName: ${teamName}`);
 
   return (
     <div className="mx-auto flex max-w-md flex-col gap-5 px-4 py-6 md:px-6">
@@ -90,8 +86,6 @@ export default async function ProfilePage() {
       </section>
 
       {/* 비밀번호 변경 (이메일 서비스 중단 대비 대안) */}
-      {/* 카카오 가입자는 비밀번호가 없으므로 숨김 */}
-      {!isSocialUser(user) && <PasswordChangeSection />}
 
       {/* 액션 버튼 (클라이언트 컴포넌트) */}
       <ProfileActions />

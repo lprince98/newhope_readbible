@@ -28,6 +28,10 @@ export default async function RecordPage({ searchParams }: { searchParams: Promi
   const isClosed = FEATURES.uploadDeadline
     ? new Date() >= new Date(FEATURES.uploadDeadline)
     : false;
+  // 마감 안내 문구용 날짜 (예: "7월 1일")
+  const deadlineLabel = FEATURES.uploadDeadline
+    ? new Intl.DateTimeFormat("ko-KR", { month: "long", day: "numeric", timeZone: "Asia/Seoul" }).format(new Date(FEATURES.uploadDeadline))
+    : "";
 
   if (user) {
     // 목표 정보 조회
@@ -72,7 +76,7 @@ export default async function RecordPage({ searchParams }: { searchParams: Promi
               성경 읽기 기록 업로드 종료 안내
             </h3>
             <p className="text-[14px] leading-relaxed text-muted">
-              성경 읽기 기록 업로드 및 편집 기간이 마감되었습니다. (7월 1일 자정 마감)<br />
+              성경 읽기 기록 업로드 및 편집 기간이 마감되었습니다. ({deadlineLabel} 마감)<br />
               그동안 말씀 통독 여정에 함께해 주신 모든 성도님들께 진심으로 감사드립니다.<br />
               늘 말씀 안에서 주님의 은혜와 평강이 넘쳐나시기를 기도합니다.
             </p>
@@ -84,7 +88,7 @@ export default async function RecordPage({ searchParams }: { searchParams: Promi
           <DailyGoalEditor initialGoal={dailyGoal} />
 
           {/* 기록 폼 */}
-          <RecordForm editRecord={editRecord} />
+          <RecordForm key={editRecord?.id ?? "new"} editRecord={editRecord} />
         </>
       )}
 

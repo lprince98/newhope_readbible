@@ -1,15 +1,25 @@
 "use client";
 
 import { BIBLE_BOOKS } from "@/lib/constants/bible-books";
-import { useEffect, useState, useActionState } from "react";
+import { useState, useActionState } from "react";
 import { useRouter } from "next/navigation";
 import { addReadingRecord, updateReadingRecord } from "@/src/presentation/actions/recordActions";
 
 
 const initialState = { error: undefined as string | undefined, success: false };
 
+/** 수정할 기존 기록 (reading_records 행) */
+export interface EditableRecord {
+  id: string;
+  book_id: string;
+  start_chapter: number;
+  end_chapter: number;
+  memo: string | null;
+}
+
 interface Props {
-  editRecord?: any;
+  /** 수정 대상이 바뀌면 부모가 key를 바꿔 폼을 새로 그립니다. */
+  editRecord?: EditableRecord | null;
 }
 
 export function RecordForm({ editRecord }: Props) {
@@ -33,21 +43,6 @@ export function RecordForm({ editRecord }: Props) {
   const [startChapter, setStartChapter] = useState(editRecord?.start_chapter?.toString() ?? "");
   const [endChapter, setEndChapter] = useState(editRecord?.end_chapter?.toString() ?? "");
   const [memo, setMemo] = useState(editRecord?.memo ?? "");
-
-  // 수정 대상이 바뀌면 폼 값 업데이트
-  useEffect(() => {
-    if (editRecord) {
-      setSelectedBook(editRecord.book_id);
-      setStartChapter(editRecord.start_chapter.toString());
-      setEndChapter(editRecord.end_chapter.toString());
-      setMemo(editRecord.memo ?? "");
-    } else {
-      setSelectedBook("");
-      setStartChapter("");
-      setEndChapter("");
-      setMemo("");
-    }
-  }, [editRecord]);
 
   const maxChapters =
     BIBLE_BOOKS.find((b) => b.id === selectedBook)?.chapters ?? 999;

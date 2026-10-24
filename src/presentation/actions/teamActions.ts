@@ -39,56 +39,6 @@ export async function updateTeamName(teamId: string, name: string) {
 }
 
 
-// ── 팀원 초대 (이메일) ────────────────────────────────────────────────
-export async function inviteMember(formData: FormData) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "로그인이 필요합니다." };
-
-  const email = (formData.get("email") as string)?.trim().toLowerCase();
-  if (!email) return { error: "이메일을 입력해주세요." };
-
-  // 내 팀 및 팀장 권한 조회
-  const { data: myProfile } = await supabase
-    .from("profiles")
-    .select("team_id")
-    .eq("id", user.id)
-    .single();
-  
-  if (!myProfile?.team_id) return { error: "팀에 소속되어 있지 않습니다." };
-  const teamId = myProfile.team_id as string;
-
-  const { data: team } = await supabase
-    .from("teams")
-    .select("leader_id")
-    .eq("id", teamId)
-    .single();
-  
-  if (team?.leader_id !== user.id) return { error: "팀장만 새로운 팀원을 초대할 수 있습니다." };
-
-  // 이미 가입된 사용자라면 바로 팀 배정
-  // (참고: admin 기능은 서비스 롤에서만 가능하므로, 실제 운영 시에는 profiles 조회를 통해 처리 권장)
-  const { data: existingProfiles } = await supabase
-    .from("profiles")
-    .select("id")
-    .eq("id", user.id); // 실제로는 이메일로 검색해야 하나 profiles RLS로 인해 타인 검색 제한됨
-
-  // 미가입자 초대 저장 (DB RLS가 중복 체크함)
-  const { error } = await supabase.from("team_invitations").insert({
-    team_id: teamId,
-    invited_email: email,
-    invited_by: user.id,
-  });
-
-  if (error) {
-    if (error.code === "23505") return { error: "이미 초대된 이메일입니다." };
-    return { error: error.message };
-  }
-
-  revalidatePath("/team/manage");
-  return { success: true, message: "초대장을 저장했습니다. 해당 이메일로 가입하면 자동으로 팀에 합류합니다." };
-}
-
 // ── 팀원 제거 ─────────────────────────────────────────────────────────
 export async function removeMember(memberId: string) {
   const supabase = await createClient();
@@ -122,25 +72,6 @@ export async function removeMember(memberId: string) {
   revalidatePath("/profile");
   revalidatePath("/home");
   revalidatePath("/dashboard");
-  return { success: true };
-}
-
-
-// ── 초대 취소 ─────────────────────────────────────────────────────────
-export async function cancelInvitation(invitationId: string) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return { error: "로그인이 필요합니다." };
-
-  // 내가 초대했거나 팀장인 경우에만 삭제 가능 (RLS가 처리)
-  const { error } = await supabase
-    .from("team_invitations")
-    .delete()
-    .eq("id", invitationId);
-
-  if (error) return { error: error.message };
-
-  revalidatePath("/team/manage");
   return { success: true };
 }
 

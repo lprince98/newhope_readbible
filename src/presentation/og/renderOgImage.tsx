@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element -- ImageResponse(Satori)는 next/image를 지원하지 않아 <img>를 사용 */
 import { ImageResponse } from "next/og";
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";

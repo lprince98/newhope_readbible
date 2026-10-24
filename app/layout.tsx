@@ -49,6 +49,8 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ko">
+      {/* 루트 레이아웃의 <head>라 모든 페이지에 적용됨 (pages/_document 대상 규칙의 오탐) */}
+      {/* eslint-disable @next/next/no-page-custom-font */}
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

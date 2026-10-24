@@ -25,14 +25,11 @@ export class GetIndividualRankingUseCase {
 
     let currentRank = 1;
     let previousChapters = -1;
-    let sameRankCount = 0;
 
     return rawData.map((data, index) => {
-      if (previousChapters === data.totalChapters) {
-        sameRankCount++;
-      } else {
+      // 장 수가 같으면 같은 순위 (공동 순위)
+      if (previousChapters !== data.totalChapters) {
         currentRank = index + 1;
-        sameRankCount = 0;
       }
       previousChapters = data.totalChapters;
 

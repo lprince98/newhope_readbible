@@ -1,11 +1,15 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/src/infrastructure/supabase/server";
 import { CreateTeamForm } from "@/src/presentation/components/team/CreateTeamForm";
 import { JoinTeamList } from "@/src/presentation/components/team/JoinTeamList";
 
+export const metadata: Metadata = {
+  title: "팀",
+  description: "팀을 만들거나 가입해 함께 성경을 읽어요.",
+};
+
 export const dynamic = "force-dynamic";
-
-
 
 /** /team → 내 팀 상세 페이지로 리다이렉트 (switch=true 파라미터가 없으면) */
 export default async function TeamRootPage({ 

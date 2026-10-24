@@ -56,7 +56,7 @@ export async function RecentRecords({ isClosed = false }: { isClosed?: boolean }
                 </div>
                 <p className="truncate text-[12px] text-subtle">
                   {(() => {
-                    const [_, m, d] = record.read_at.split("-");
+                    const [, m, d] = record.read_at.split("-");
                     return `${parseInt(m)}월 ${parseInt(d)}일`;
                   })()}
                   {record.memo && (

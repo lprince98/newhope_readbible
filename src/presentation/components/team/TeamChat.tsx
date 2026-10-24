@@ -81,7 +81,7 @@ export function TeamChat({ teamId, myUserId, myName, initialMessages }: Props) {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [teamId, supabase]);
+  }, [teamId, supabase, myUserId, myName]);
 
   // ── 스크롤 자동 이동 ────────────────────────────────────────────
   useEffect(() => {
