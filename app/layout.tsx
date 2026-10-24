@@ -1,33 +1,31 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+const SITE_URL = "https://newhope-readbible.vercel.app";
+const SHARE_TITLE = "새소망 성경 통독";
+const SHARE_DESCRIPTION =
+  "새소망교회 팀별 성경 통독 — 매일 읽은 말씀을 기록하고, 팀과 함께 1,189장을 완주해요.";
+
+// 공유 미리보기 이미지는 app/opengraph-image.tsx · app/twitter-image.tsx 에서 자동 생성됩니다.
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "새소망 성경 통독",
+    default: SHARE_TITLE,
     template: "%s — 새소망 성경 통독",
   },
-  description: "새소망교회 성경 통독 기록 앱 — 매일의 말씀 여정을 기록하세요.",
+  description: SHARE_DESCRIPTION,
   openGraph: {
-    title: "새소망 성경 통독",
-    description: "매일의 성경 통독 여정을 기록하고 팀원들과 함께 응원하세요.",
-    url: "https://newhope-readbible.vercel.app", // 배포 후 실제 주소로 변경 권장
-    siteName: "새소망 성경 통독",
-    images: [
-      {
-        url: "/nhc_readbible_og.png",
-        width: 1200,
-        height: 630,
-        alt: "새소망 성경 통독 대표 이미지",
-      },
-    ],
+    title: SHARE_TITLE,
+    description: SHARE_DESCRIPTION,
+    url: "/",
+    siteName: "새소망교회 성경 통독",
     locale: "ko_KR",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "새소망 성경 통독",
-    description: "매일의 성경 통독 여정을 기록하고 팀원들과 함께 응원하세요.",
-    images: ["/nhc_readbible_og.png"],
+    title: SHARE_TITLE,
+    description: SHARE_DESCRIPTION,
   },
   appleWebApp: {
     capable: true,
