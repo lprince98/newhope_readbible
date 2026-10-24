@@ -1,6 +1,7 @@
 import type { IReadingRecordRepository } from "@/src/domain/repositories/IReadingRecordRepository";
 import type { DashboardDto } from "../dto/DashboardDto";
 import { GetUnreadChaptersUseCase } from "./GetUnreadChaptersUseCase";
+import { FEATURES } from "@/lib/constants/features";
 
 function parseDateString(dateStr: string | Date): string {
   if (dateStr instanceof Date) {
@@ -47,7 +48,7 @@ export class GetDashboardUseCase {
 
     // 3. 주간 요일별 읽은 장 수 집계 (월~일, 7개 요소)
     const weeklyChapters = Array(7).fill(0);
-    const allRecords = await this.repo.findByUserId(userId);
+    const allRecords = await this.repo.findByUserId(userId, FEATURES.seasonStartDate);
 
     for (const r of allRecords) {
       const readDateStr = parseDateString(r.readAt);
@@ -63,7 +64,7 @@ export class GetDashboardUseCase {
     }
 
     // 4. 팀 랭킹 정보 조회 (전체 팀 중 현재 팀의 순위)
-    const teamCounts = await this.repo.getTeamChapterCounts();
+    const teamCounts = await this.repo.getTeamChapterCounts(FEATURES.seasonStartDate);
     const teamRank = teamName
       ? teamCounts.findIndex((t) => t.teamName === teamName) + 1 || null
       : null;

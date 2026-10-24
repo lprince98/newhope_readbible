@@ -26,27 +26,28 @@ export function RecordItemAction({ recordId }: Props) {
   };
 
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center">
       {/* 수정 버튼: URL 파라미터를 통해 폼으로 전달 */}
       <Link
         href={`?id=${recordId}`}
-        className="p-2 text-[#75777e] hover:text-[#775a19] hover:bg-[#f5f3ef] rounded-lg transition-colors"
+        className="flex h-11 w-11 items-center justify-center rounded-xl text-subtle transition-colors hover:bg-brand-tint hover:text-brand"
         title="수정"
+        aria-label="수정"
       >
-        <span className="material-symbols-outlined text-[18px]">edit_note</span>
+        <span className="material-symbols-outlined text-[20px]">edit_note</span>
       </Link>
 
       <button
         onClick={handleDelete}
         disabled={isPending}
-        className="p-2 text-[#75777e] hover:text-[#ba1a1a] hover:bg-[#fdf2f2] rounded-lg transition-colors disabled:opacity-50"
+        className="flex h-11 w-11 items-center justify-center rounded-xl text-subtle transition-colors hover:bg-danger-soft hover:text-danger disabled:opacity-50"
         title="삭제"
+        aria-label="삭제"
       >
-        <span className="material-symbols-outlined text-[18px]">
+        <span className={`material-symbols-outlined text-[20px] ${isPending ? "animate-spin" : ""}`}>
           {isPending ? "progress_activity" : "delete"}
         </span>
       </button>
     </div>
   );
 }
-

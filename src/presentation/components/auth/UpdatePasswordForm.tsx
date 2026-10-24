@@ -38,48 +38,46 @@ export function UpdatePasswordForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <div className="flex flex-col gap-2">
-        <label className="text-[#1b1c1a] ml-1 text-sm font-medium" htmlFor="password">
+      <div>
+        <label className="field-label" htmlFor="password">
           새로운 비밀번호
         </label>
         <input
           id="password"
           type="password"
+          autoComplete="new-password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="6자 이상 입력"
           required
-          className="w-full bg-[#efeeea] border border-[#c5c6ce] rounded-lg px-4 py-3 text-[#1b1c1a] focus:outline-none focus:ring-2 focus:ring-[#775a19]/50 focus:border-[#775a19] transition-all"
+          className="field"
         />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-[#1b1c1a] ml-1 text-sm font-medium" htmlFor="confirmPassword">
+      <div>
+        <label className="field-label" htmlFor="confirmPassword">
           비밀번호 확인
         </label>
         <input
           id="confirmPassword"
           type="password"
+          autoComplete="new-password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
           placeholder="비밀번호 다시 입력"
           required
-          className="w-full bg-[#efeeea] border border-[#c5c6ce] rounded-lg px-4 py-3 text-[#1b1c1a] focus:outline-none focus:ring-2 focus:ring-[#775a19]/50 focus:border-[#775a19] transition-all"
+          className="field"
         />
       </div>
 
       {error && (
-        <div className="bg-[#ffdad6] text-[#93000a] rounded-lg px-4 py-3 text-sm flex items-start gap-2">
-          <span className="material-symbols-outlined text-[18px] mt-0.5">error</span>
+        <div role="alert" className="flex items-start gap-2 rounded-xl bg-danger-soft px-4 py-3 text-[14px] text-danger">
+          <span className="material-symbols-outlined mt-0.5 shrink-0 text-[18px]">error</span>
           <span>{error}</span>
         </div>
       )}
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="w-full min-h-[48px] bg-[#041129] text-white py-3 rounded-lg mt-2 hover:bg-[#041129]/90 active:scale-[0.98] transition-all flex justify-center items-center font-medium disabled:opacity-50"
-      >
+      <button type="submit" disabled={isPending} className="btn btn-primary mt-1 w-full">
         {isPending ? "변경 중..." : "비밀번호 변경 완료"}
       </button>
     </form>

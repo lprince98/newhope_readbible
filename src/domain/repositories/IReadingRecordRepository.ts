@@ -11,8 +11,8 @@ export interface NewReadingRecord {
 }
 
 export interface IReadingRecordRepository {
-  /** 사용자의 전체 읽기 기록 조회 */
-  findByUserId(userId: string): Promise<ReadingRecord[]>;
+  /** 사용자의 읽기 기록 조회 (since: "YYYY-MM-DD" 시즌 시작일, 지정 시 그 이후만) */
+  findByUserId(userId: string, since?: string | null): Promise<ReadingRecord[]>;
 
   /** 특정 날짜의 읽기 기록 조회 */
   findByUserIdAndDate(userId: string, date: Date): Promise<ReadingRecord[]>;
@@ -30,18 +30,19 @@ export interface IReadingRecordRepository {
   deleteById(id: string, userId: string): Promise<void>;
 
   /** 팀별 총 읽은 장 수 집계 */
-  getTeamChapterCounts(): Promise<
+  getTeamChapterCounts(since?: string | null): Promise<
     { teamId: string; teamName: string; totalChapters: number }[]
   >;
 
   /** 개인별 총 읽은 장 수 집계 (Top 10) */
-  getIndividualRanking(): Promise<
+  getIndividualRanking(since?: string | null): Promise<
     { userId: string; userName: string; teamName: string | null; totalChapters: number; fullReadCount: number; currentChapters: number }[]
   >;
 
   /** 특정 팀 내 개별 팀원들의 통독 진행 현황 조회 */
   getMemberChapterCounts(
     teamId: string,
+    since?: string | null,
   ): Promise<
     {
       userId: string;

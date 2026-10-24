@@ -31,38 +31,35 @@ export function JoinTeamList({ teams, isInTeam }: { teams: Team[], isInTeam?: bo
 
 
   return (
-    <div className="w-full max-w-md flex flex-col gap-4">
-      <h3 className="text-[#041129] font-bold text-lg px-2" style={{ fontFamily: "Manrope, sans-serif" }}>
-        기존 팀 가입하기
-      </h3>
-      <div className="grid gap-3">
+    <section className="flex w-full flex-col gap-3">
+      <h3 className="text-[17px] font-bold text-ink">기존 팀 가입하기</h3>
+      <div className="grid gap-2.5">
         {teams.length === 0 ? (
-          <p className="text-center py-8 text-[#75777e] bg-white rounded-xl border border-dashed border-[#c5c6ce]">
+          <p className="rounded-[1.25rem] border border-dashed border-silver bg-card py-8 text-center text-[14px] text-muted">
             현재 가입 가능한 팀이 없습니다.
           </p>
         ) : (
           teams.map((team) => (
             <button
               key={team.id}
+              type="button"
               onClick={() => handleJoin(team.id, team.name)}
               disabled={isPending}
-              className="flex items-center justify-between p-4 bg-white rounded-xl border border-[#e4e2de] hover:border-[#775a19] hover:bg-[#fffbeb] transition-all group shadow-sm disabled:opacity-50"
+              className="card group flex min-h-16 items-center justify-between gap-3 p-4 text-left transition-colors hover:border-brand/40 hover:bg-brand-tint active:scale-[0.99] disabled:opacity-50"
             >
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#f5f3ef] flex items-center justify-center text-[#775a19] group-hover:bg-white transition-colors">
-                  <span className="material-symbols-outlined text-xl">group</span>
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
+                  <span className="material-symbols-outlined text-[22px]">group</span>
                 </div>
-                <span className="font-semibold text-[#041129]" style={{ fontFamily: "Manrope, sans-serif" }}>
-                  {team.name}
-                </span>
+                <span className="truncate text-[15px] font-semibold text-ink">{team.name}</span>
               </div>
-              <span className="material-symbols-outlined text-[#c5c6ce] group-hover:text-[#775a19] transition-colors">
+              <span className="material-symbols-outlined shrink-0 text-silver transition-colors group-hover:text-brand">
                 chevron_right
               </span>
             </button>
           ))
         )}
       </div>
-    </div>
+    </section>
   );
 }

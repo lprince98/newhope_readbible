@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "공동체와 함께하는 성경 통독 여정",
     start_url: "/",
     display: "standalone",
-    background_color: "#faf9f6",
-    theme_color: "#041129",
+    background_color: "#f8f6f3",
+    theme_color: "#8d255c",
     icons: [
       {
         src: "/icon-512.png",

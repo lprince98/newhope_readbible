@@ -6,16 +6,17 @@ import { GetDashboardUseCase } from "@/src/application/use-cases/GetDashboardUse
 import { CircularProgress } from "@/src/presentation/components/dashboard/CircularProgress";
 import { WeeklyBarChart } from "@/src/presentation/components/dashboard/WeeklyBarChart";
 import { UnreadChaptersList } from "@/src/presentation/components/dashboard/UnreadChaptersList";
+import { PageHeader } from "@/src/presentation/components/common/PageHeader";
 import { FEATURES } from "@/lib/constants/features";
 
 export const metadata: Metadata = {
-  title: "대시보드 — 새소망 성경 통독",
+  title: "대시보드",
   description: "나의 성경 통독 진도 현황을 한눈에 확인하세요.",
 };
 
-/** 
- * 페이지 렌더링 옵션: 
- * 항상 최신 데이터를 보여주기 위해 캐시를 사용하지 않고(force-dynamic) 
+/**
+ * 페이지 렌더링 옵션:
+ * 항상 최신 데이터를 보여주기 위해 캐시를 사용하지 않고(force-dynamic)
  * 갱신 주기를 0초(revalidate = 0)로 설정합니다.
  */
 export const dynamic = "force-dynamic";
@@ -29,14 +30,16 @@ export default async function DashboardPage() {
   // 1. 비로그인 처리
   if (!user) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <span className="material-symbols-outlined text-[#775a19] text-5xl" style={{ fontVariationSettings: "'FILL' 1" }}>
-          lock
-        </span>
-        <p className="text-[#45474d]" style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px" }}>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 px-4 text-center">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-soft text-brand">
+          <span className="material-symbols-outlined text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+            lock
+          </span>
+        </div>
+        <p className="text-[15px] text-muted">
           로그인이 필요합니다.
         </p>
-        <Link href="/login" className="bg-[#041129] text-white px-6 py-3 rounded-full text-sm font-medium hover:bg-[#1a263f] transition-colors">
+        <Link href="/login" className="btn btn-primary px-8">
           로그인하기
         </Link>
       </div>
@@ -47,7 +50,7 @@ export default async function DashboardPage() {
   const { data: profile, error: profileError } = await supabase
     .from("profiles")
     .select(`
-      name, 
+      name,
       daily_goal,
       teams:team_id (
         name
@@ -77,41 +80,45 @@ export default async function DashboardPage() {
   const kstToday = new Date(today.toLocaleString("en-US", { timeZone: "Asia/Seoul" }));
   const todayDayIndex = kstToday.getDay() === 0 ? 6 : kstToday.getDay() - 1;
 
+  // 시즌 집계 시작일 안내 문구 (예: "11월 1일")
+  const seasonStart = FEATURES.seasonStartDate;
+  const seasonLabel = seasonStart
+    ? `${Number(seasonStart.slice(5, 7))}월 ${Number(seasonStart.slice(8, 10))}일`
+    : null;
+
   return (
-    <div className="px-6 py-8 max-w-7xl mx-auto">
+    <div className="mx-auto flex max-w-7xl flex-col gap-5 px-4 py-6 md:px-6">
       {/* 페이지 상단: 제목 및 기록하기 버튼 */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
-        <div>
-          <h2
-            className="text-[#041129]"
-            style={{ fontFamily: "Manrope, sans-serif", fontSize: "28px", fontWeight: 700, lineHeight: "36px" }}
-          >
-            오늘의 대시보드
-          </h2>
-          <p className="text-[#45474d] mt-2" style={{ fontFamily: "Noto Serif KR, serif", fontSize: "15px" }}>
+      <PageHeader
+        eyebrow="나의 통독 현황"
+        title="오늘의 대시보드"
+        description={
+          <span className="font-serif">
             &ldquo;주의 말씀은 내 발에 등이요 내 길에 빛이니이다&rdquo; — 시편 119:105
-          </p>
-        </div>
-        <Link
-          href="/record"
-          className="bg-[#041129] text-white px-6 py-3 rounded-full shadow-[0_4px_12px_rgba(26,38,63,0.05)] hover:bg-[#525e7a] active:scale-95 transition-all flex items-center gap-2"
-          style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}
-        >
-          <span className="material-symbols-outlined text-[20px]">edit_document</span>
-          기록 입력
-        </Link>
-      </div>
+          </span>
+        }
+        action={
+          <Link href="/record" className="btn btn-primary w-full md:w-auto">
+            <span className="material-symbols-outlined text-[20px]">edit_document</span>
+            기록 입력
+          </Link>
+        }
+      />
+
+      {seasonLabel && (
+        <p className="flex items-center gap-1.5 text-[12px] text-muted">
+          <span className="material-symbols-outlined text-[16px] text-teal">info</span>
+          {seasonLabel} 시즌부터 읽은 기록이 집계됩니다.
+        </p>
+      )}
 
       {/* 메인 대시보드 그리드 (Bento Grid 스타일) */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
-        
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-12">
+
         {/* 왼쪽 섹션: 오늘 나의 읽기 진도 (원형 프로그레스) */}
-        <div className={`${FEATURES.enableTeamFeatures ? "md:col-span-5 lg:col-span-4" : "md:col-span-6 lg:col-span-5"} bg-white rounded-xl p-6 shadow-[0_4px_12px_rgba(26,38,63,0.05)] relative overflow-hidden`}>
-          <div className="absolute top-0 right-0 w-32 h-32 bg-[#fed488]/20 rounded-bl-full -mr-16 -mt-16 pointer-events-none" />
-          <h3
-            className="text-[#041129] mb-6"
-            style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}
-          >
+        <section className={`${FEATURES.enableTeamFeatures ? "md:col-span-5 lg:col-span-4" : "md:col-span-6 lg:col-span-5"} card relative overflow-hidden p-6`}>
+          <span className="pointer-events-none absolute -top-16 -right-16 h-32 w-32 rounded-full bg-teal-soft" />
+          <h3 className="relative mb-6 text-[17px] font-bold text-ink">
             나의 진행 현황
           </h3>
           <CircularProgress
@@ -121,21 +128,15 @@ export default async function DashboardPage() {
             totalFullReads={dashboard.totalFullReads}
             currentCycleChapters={dashboard.currentCycleChapters}
           />
-        </div>
+        </section>
 
         {/* 중앙 섹션: 주간 요일별 막대 차트 */}
-        <div className={`${FEATURES.enableTeamFeatures ? "md:col-span-7 lg:col-span-5" : "md:col-span-6 lg:col-span-7"} bg-white rounded-xl p-6 shadow-[0_4px_12px_rgba(26,38,63,0.05)] flex flex-col`}>
-          <div className="flex justify-between items-center mb-6">
-            <h3
-              className="text-[#041129]"
-              style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}
-            >
+        <section className={`${FEATURES.enableTeamFeatures ? "md:col-span-7 lg:col-span-5" : "md:col-span-6 lg:col-span-7"} card flex flex-col p-6`}>
+          <div className="mb-6 flex items-center justify-between">
+            <h3 className="text-[17px] font-bold text-ink">
               주간 요약
             </h3>
-            <span
-              className="text-[#775a19] bg-[#ffdea5] px-3 py-1 rounded-full"
-              style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px" }}
-            >
+            <span className="chip bg-teal-soft text-teal-deep">
               읽은 장 수
             </span>
           </div>
@@ -143,80 +144,68 @@ export default async function DashboardPage() {
             weeklyChapters={dashboard.weeklyChapters}
             todayDayIndex={todayDayIndex}
           />
-        </div>
+        </section>
 
         {/* 오른쪽 섹션: 팀 순위 및 요약 정보 */}
         {FEATURES.enableTeamFeatures && (
-          <div className="md:col-span-12 lg:col-span-3 flex flex-col gap-4">
+          <div className="flex flex-col gap-4 md:col-span-12 lg:col-span-3">
             {/* 팀 순위 카드 */}
-            <div className="bg-[#041129] text-white rounded-xl p-6 shadow-[0_4px_12px_rgba(26,38,63,0.05)] flex-1 flex flex-col justify-between relative overflow-hidden">
-              <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/5 rounded-full blur-2xl" />
-              <div className="absolute -left-10 -top-10 w-32 h-32 bg-[#775a19]/20 rounded-full blur-xl" />
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <span className="material-symbols-outlined text-[#e9c176]">emoji_events</span>
-                  <h3
-                    className="text-[#bac6e7] uppercase tracking-wider"
-                    style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}
-                  >
+            <section className="relative flex flex-1 flex-col justify-between overflow-hidden rounded-[1.25rem] bg-brand p-6 text-white shadow-brand">
+              <span className="hope-arc -right-14 -bottom-24 h-60 w-60 text-white/15" />
+              <span className="hope-arc -right-4 -bottom-12 h-36 w-36 text-white/10" />
+              <span className="absolute -top-10 -left-10 h-32 w-32 rounded-full bg-teal/30 blur-3xl" />
+              <div className="relative">
+                <div className="mb-1.5 flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[20px] text-white/90" style={{ fontVariationSettings: "'FILL' 1" }}>
+                    emoji_events
+                  </span>
+                  <h3 className="text-[13px] font-semibold tracking-[0.08em] text-white/80">
                     우리 팀 순위
                   </h3>
                 </div>
-                <p className="text-[#e4e2de] opacity-80 mb-4" style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px" }}>
+                <p className="mb-4 text-[13px] text-white/70">
                   {teamName ?? "팀 미배정"}
                 </p>
               </div>
-              <div className="flex items-baseline gap-2 z-10">
-                <span
-                  className="text-[#ffdea5]"
-                  style={{ fontFamily: "Manrope, sans-serif", fontSize: "48px", fontWeight: 900 }}
-                >
+              <div className="relative flex items-baseline gap-2">
+                <span className="text-[44px] leading-none font-extrabold tracking-tight">
                   {dashboard.teamRank ? `${dashboard.teamRank}위` : "-"}
                 </span>
               </div>
-              <div className="mt-4 pt-4 border-t border-white/10 z-10 flex justify-between items-center">
+              <div className="relative mt-5 flex items-center justify-between border-t border-white/15 pt-4">
                 <div>
-                  <p className="text-[#e4e2de] opacity-80 uppercase tracking-widest" style={{ fontSize: "10px" }}>
+                  <p className="text-[11px] text-white/70">
                     {userName}
                   </p>
-                  <p
-                    className="font-bold text-white"
-                    style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}
-                  >
+                  <p className="text-[14px] font-semibold">
                     오늘 {dashboard.todayChapters}장
                   </p>
                 </div>
                 <Link
                   href="/ranking"
-                  className="text-right text-[#e9c176] hover:text-[#ffdea5] transition-colors"
-                  style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px" }}
+                  className="-mr-2 flex min-h-11 items-center gap-0.5 rounded-xl px-2 text-[13px] font-semibold text-white/90 transition-colors hover:bg-white/10 hover:text-white"
                 >
-                  전체 순위 →
+                  전체 순위
+                  <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                 </Link>
               </div>
-            </div>
+            </section>
 
             {/* 간편 기록 바로가기 */}
             <Link
               href="/record"
-              className="bg-white rounded-xl p-4 shadow-[0_4px_12px_rgba(26,38,63,0.05)] border-l-4 border-[#775a19] flex items-center justify-between cursor-pointer hover:bg-[#f5f3ef] transition-colors"
+              className="card group flex items-center justify-between p-4 transition-colors hover:bg-sunken"
             >
               <div>
-                <p
-                  className="text-[#45474d] uppercase tracking-widest mb-1"
-                  style={{ fontFamily: "Manrope, sans-serif", fontSize: "10px" }}
-                >
+                <p className="eyebrow mb-0.5">
                   오늘 읽기 기록
                 </p>
-                <h4
-                  className="font-bold text-[#041129]"
-                  style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 700 }}
-                >
-                  + 새 기록 추가
+                <h4 className="text-[15px] font-bold text-ink">
+                  새 기록 추가
                 </h4>
               </div>
-              <div className="w-8 h-8 rounded-full bg-[#fed488] flex items-center justify-center text-[#785a1a]">
-                <span className="material-symbols-outlined text-[18px]">add</span>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-soft text-brand transition-transform group-hover:scale-105">
+                <span className="material-symbols-outlined text-[20px]">add</span>
               </div>
             </Link>
           </div>
@@ -224,12 +213,10 @@ export default async function DashboardPage() {
       </div>
 
       {/* 미독/누락된 장 목록 섹션 */}
-      <div className="mt-6">
-        <UnreadChaptersList
-          unreadBooks={dashboard.unreadBooks}
-          totalUnreadChaptersCount={dashboard.totalUnreadChaptersCount}
-        />
-      </div>
+      <UnreadChaptersList
+        unreadBooks={dashboard.unreadBooks}
+        totalUnreadChaptersCount={dashboard.totalUnreadChaptersCount}
+      />
     </div>
   );
 }

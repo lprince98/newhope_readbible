@@ -31,9 +31,9 @@ export default async function MainLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <div className="min-h-dvh bg-[#fbf9f5] text-[#1b1c1a]">
+    <div className="min-h-dvh bg-canvas text-ink">
       <Header profile={profileData} />
-      <main className="pt-16 pb-24">{children}</main>
+      <main className="pt-16 pb-28">{children}</main>
       <BottomNav />
     </div>
   );

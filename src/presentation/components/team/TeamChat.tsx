@@ -125,17 +125,14 @@ export function TeamChat({ teamId, myUserId, myName, initialMessages }: Props) {
   }
 
   return (
-    <div
-      className="bg-white rounded-xl border border-[#e4e2de] shadow-[0_4px_24px_rgba(4,17,41,0.04)] flex flex-col"
-      style={{ height: "360px" }}
-    >
+    <div className="card flex h-[420px] flex-col overflow-hidden">
       {/* 메시지 목록 */}
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-3">
+      <div className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
         {messages.length === 0 && (
-          <p className="text-center text-[#75777e] my-auto"
-            style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px" }}>
+          <div className="my-auto flex flex-col items-center gap-2 text-center text-[14px] text-muted">
+            <span className="material-symbols-outlined text-[28px] text-silver">forum</span>
             첫 번째 응원 메시지를 보내보세요! 🙏
-          </p>
+          </div>
         )}
         {messages.map((msg) => {
           const isMe = msg.user_id === myUserId;
@@ -146,37 +143,28 @@ export function TeamChat({ teamId, myUserId, myName, initialMessages }: Props) {
           });
 
           return (
-            <div key={msg.id} className={`flex gap-2 items-end ${isMe ? "justify-end" : "justify-start"}`}>
+            <div key={msg.id} className={`flex items-end gap-2 ${isMe ? "justify-end" : "justify-start"}`}>
               {/* 상대방 아바타 */}
               {!isMe && (
-                <div className="w-8 h-8 rounded-full bg-[#efeeea] flex items-center justify-center flex-shrink-0 border border-[#c5c6ce]">
-                  <span className="text-[#1b1c1a]"
-                    style={{ fontFamily: "Manrope, sans-serif", fontSize: "13px", fontWeight: 600 }}>
-                    {initials}
-                  </span>
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-teal-soft text-[13px] font-bold text-teal-deep">
+                  {initials}
                 </div>
               )}
 
-              <div className={`flex flex-col ${isMe ? "items-end" : "items-start"} max-w-[75%]`}>
+              <div className={`flex max-w-[75%] flex-col ${isMe ? "items-end" : "items-start"}`}>
                 {!isMe && (
-                  <span className="text-[#45474d] mb-1 ml-1"
-                    style={{ fontFamily: "Manrope, sans-serif", fontSize: "11px" }}>
-                    {senderName}
-                  </span>
+                  <span className="mb-1 ml-1 text-[12px] font-medium text-muted">{senderName}</span>
                 )}
-                <div className={`px-3 py-2 rounded-2xl ${
-                  isMe
-                    ? "bg-[#fed488] text-[#785a1a] rounded-br-none shadow-[0_2px_8px_rgba(119,90,25,0.15)]"
-                    : "bg-[#f5f3ef] text-[#1b1c1a] rounded-bl-none border border-[#e4e2de]"
-                }`}>
-                  <p style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", lineHeight: "20px" }}>
-                    {msg.content}
-                  </p>
+                <div
+                  className={`rounded-2xl px-3.5 py-2 ${
+                    isMe
+                      ? "rounded-br-md bg-brand text-white shadow-brand"
+                      : "rounded-bl-md bg-sunken text-ink"
+                  }`}
+                >
+                  <p className="text-[14px] leading-5 break-words whitespace-pre-wrap">{msg.content}</p>
                 </div>
-                <span className="text-[#75777e] mt-1 mx-1"
-                  style={{ fontFamily: "Manrope, sans-serif", fontSize: "10px" }}>
-                  {timeStr}
-                </span>
+                <span className="mx-1 mt-1 text-[11px] text-subtle">{timeStr}</span>
               </div>
             </div>
           );
@@ -185,7 +173,7 @@ export function TeamChat({ teamId, myUserId, myName, initialMessages }: Props) {
       </div>
 
       {/* 입력창 */}
-      <div className="border-t border-[#e4e2de] p-3 flex items-center gap-2">
+      <div className="flex items-center gap-2 border-t border-line bg-card p-3">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -193,16 +181,17 @@ export function TeamChat({ teamId, myUserId, myName, initialMessages }: Props) {
           placeholder="응원 메시지를 보내세요..."
           maxLength={500}
           disabled={isPending}
-          className="flex-1 bg-[#efeeea] rounded-full px-4 py-2 outline-none border border-transparent focus:border-[#c5c6ce] transition-colors text-[#1b1c1a] disabled:opacity-60"
-          style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px" }}
+          aria-label="응원 메시지"
+          className="field min-h-11 flex-1 rounded-full bg-sunken disabled:opacity-60"
         />
         <button
+          type="button"
           onClick={handleSend}
           disabled={isPending || !input.trim()}
-          className="w-10 h-10 rounded-full bg-[#041129] text-white flex items-center justify-center flex-shrink-0 shadow-md hover:bg-[#041129]/90 active:scale-95 transition-all disabled:opacity-40"
+          aria-label="메시지 보내기"
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand text-white shadow-brand transition-all hover:bg-brand-deep active:scale-95 disabled:opacity-40 disabled:shadow-none"
         >
-          <span className="material-symbols-outlined text-[20px]"
-            style={{ fontVariationSettings: "'FILL' 1" }}>
+          <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
             send
           </span>
         </button>

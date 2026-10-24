@@ -34,43 +34,69 @@ export function UnreadChaptersList({
       .join(", ");
   };
 
+  // 책별 미독 카드 목록
+  const renderBookGrid = (books: UnreadBookInfo[]) => (
+    <div className="grid max-h-[350px] grid-cols-1 gap-2.5 overflow-y-auto pr-1 sm:grid-cols-2">
+      {books.map((book) => (
+        <div
+          key={book.bookId}
+          className="flex flex-col gap-1 rounded-xl border border-line bg-card p-3.5"
+        >
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-[14px] font-bold text-ink">
+              {book.bookName}
+            </span>
+            <span className="chip bg-brand-soft text-brand">
+              {book.totalUnreadCount}장 남음
+            </span>
+          </div>
+          <p className="mt-1 text-[13px] leading-relaxed break-all text-muted">
+            {renderRanges(book)}
+          </p>
+        </div>
+      ))}
+    </div>
+  );
+
+  const tabClass = (tab: "old" | "new") =>
+    `flex min-h-11 flex-1 items-center justify-center rounded-lg text-[14px] font-semibold transition-colors ${
+      activeTab === tab
+        ? "bg-card text-brand shadow-card"
+        : "text-muted hover:text-ink"
+    }`;
+
   return (
-    <div className="bg-white rounded-xl shadow-[0_4px_12px_rgba(26,38,63,0.05)] border border-[#e4e2de] overflow-hidden transition-all duration-300">
+    <section className="card overflow-hidden">
       {/* 헤더 버튼 (클릭 시 아코디언 토글) */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-5 hover:bg-[#fdfbf7] active:bg-[#f5f3ef] transition-colors focus:outline-none"
+        aria-expanded={isOpen}
+        className="flex w-full items-center justify-between gap-3 p-5 text-left transition-colors hover:bg-brand-tint active:bg-sunken"
       >
-        <div className="flex items-center gap-3 text-left">
-          <div className="w-10 h-10 rounded-full bg-[#ffdea5]/50 flex items-center justify-center text-[#785a1a]">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand-soft text-brand">
             <span className="material-symbols-outlined text-[22px]">find_in_page</span>
           </div>
           <div>
-            <h4
-              className="text-[#041129] font-bold"
-              style={{ fontFamily: "Manrope, sans-serif", fontSize: "16px", fontWeight: 700 }}
-            >
+            <h4 className="text-[15px] font-bold text-ink">
               읽어야 할 장 확인하기
             </h4>
-            <p className="text-[#45474d] mt-0.5" style={{ fontFamily: "Noto Serif KR, serif", fontSize: "13px" }}>
+            <p className="mt-0.5 text-[13px] text-muted">
               {totalUnreadChaptersCount === 0 ? (
-                <span className="text-[#15803d] font-semibold">이번 완독 회차의 모든 장을 읽으셨습니다! 🎉</span>
+                <span className="font-semibold text-teal-deep">이번 완독 회차의 모든 장을 읽으셨습니다! 🎉</span>
               ) : (
-                <span>전체 1,189장 중 <strong className="text-[#775a19]">{totalUnreadChaptersCount}장</strong>을 더 읽어야 합니다.</span>
+                <span>전체 1,189장 중 <strong className="text-brand">{totalUnreadChaptersCount}장</strong>을 더 읽어야 합니다.</span>
               )}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           {totalUnreadChaptersCount > 0 && (
-            <span
-              className="bg-[#775a19] text-white px-2.5 py-1 rounded-full text-xs font-semibold"
-              style={{ fontFamily: "Manrope, sans-serif" }}
-            >
+            <span className="chip hidden bg-brand text-white sm:inline-flex">
               {totalUnreadChaptersCount}장 남음
             </span>
           )}
-          <span className={`material-symbols-outlined text-[#775a19] transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}>
+          <span className={`material-symbols-outlined text-subtle transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`}>
             keyboard_arrow_down
           </span>
         </div>
@@ -78,40 +104,36 @@ export function UnreadChaptersList({
 
       {/* 펼쳐지는 상세 영역 */}
       {isOpen && (
-        <div className="border-t border-[#e4e2de] bg-[#fdfbf7] p-5">
+        <div className="border-t border-line bg-canvas p-4 md:p-5">
           {totalUnreadChaptersCount === 0 ? (
-            <div className="text-center py-8 flex flex-col items-center gap-2">
-              <span className="material-symbols-outlined text-5xl text-[#15803d]">check_circle</span>
-              <p className="text-[#1b1c1a] font-bold mt-2" style={{ fontFamily: "Manrope, sans-serif" }}>
+            <div className="flex flex-col items-center gap-2 py-8 text-center">
+              <span className="material-symbols-outlined text-[48px] text-teal" style={{ fontVariationSettings: "'FILL' 1" }}>
+                check_circle
+              </span>
+              <p className="mt-2 text-[15px] font-bold text-ink">
                 읽어야 할 성경 장이 없습니다!
               </p>
-              <p className="text-[#45474d] text-sm" style={{ fontFamily: "Noto Serif KR, serif" }}>
+              <p className="text-[14px] text-muted">
                 훌륭하게 하나님의 말씀을 읽어 가고 계십니다.
               </p>
             </div>
           ) : (
             <div>
               {/* 구약/신약 탭 스위처 */}
-              <div className="flex border-b border-[#e4e2de] mb-4">
+              <div className="mb-4 flex gap-1 rounded-xl bg-sunken p-1" role="tablist">
                 <button
+                  role="tab"
+                  aria-selected={activeTab === "old"}
                   onClick={() => setActiveTab("old")}
-                  className={`flex-1 py-2 text-center font-bold text-sm transition-all focus:outline-none border-b-2 ${
-                    activeTab === "old"
-                      ? "border-[#775a19] text-[#775a19]"
-                      : "border-transparent text-[#a1a1aa] hover:text-[#45474d]"
-                  }`}
-                  style={{ fontFamily: "Manrope, sans-serif" }}
+                  className={tabClass("old")}
                 >
                   구약 성경 ({oldUnreadCount}장)
                 </button>
                 <button
+                  role="tab"
+                  aria-selected={activeTab === "new"}
                   onClick={() => setActiveTab("new")}
-                  className={`flex-1 py-2 text-center font-bold text-sm transition-all focus:outline-none border-b-2 ${
-                    activeTab === "new"
-                      ? "border-[#775a19] text-[#775a19]"
-                      : "border-transparent text-[#a1a1aa] hover:text-[#45474d]"
-                  }`}
-                  style={{ fontFamily: "Manrope, sans-serif" }}
+                  className={tabClass("new")}
                 >
                   신약 성경 ({newUnreadCount}장)
                 </button>
@@ -121,62 +143,24 @@ export function UnreadChaptersList({
               <div>
                 {activeTab === "old" ? (
                   oldUnreadCount === 0 ? (
-                    <div className="text-center py-6 text-[#45474d]" style={{ fontFamily: "Noto Serif KR, serif" }}>
+                    <div className="py-6 text-center text-[14px] text-teal-deep">
                       구약 성경을 모두 읽으셨습니다! 🌳
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[350px] overflow-y-auto pr-1">
-                      {oldTestamentBooks.map((book) => (
-                        <div
-                          key={book.bookId}
-                          className="bg-white rounded-lg p-3 border border-[#e4e2de] flex flex-col gap-1 shadow-[0_2px_4px_rgba(0,0,0,0.02)]"
-                        >
-                          <div className="flex justify-between items-center">
-                            <span className="font-bold text-[#041129]" style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px" }}>
-                              {book.bookName}
-                            </span>
-                            <span className="text-xs bg-[#ffdea5] text-[#775a19] px-2 py-0.5 rounded-full font-medium">
-                              {book.totalUnreadCount}장 남음
-                            </span>
-                          </div>
-                          <p className="text-[#78350f] text-sm break-all font-medium mt-1" style={{ fontFamily: "Noto Serif KR, serif" }}>
-                            {renderRanges(book)}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
+                    renderBookGrid(oldTestamentBooks)
                   )
                 ) : newUnreadCount === 0 ? (
-                  <div className="text-center py-6 text-[#45474d]" style={{ fontFamily: "Noto Serif KR, serif" }}>
+                  <div className="py-6 text-center text-[14px] text-teal-deep">
                     신약 성경을 모두 읽으셨습니다! 🕊️
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[350px] overflow-y-auto pr-1">
-                    {newTestamentBooks.map((book) => (
-                      <div
-                        key={book.bookId}
-                        className="bg-white rounded-lg p-3 border border-[#e4e2de] flex flex-col gap-1 shadow-[0_2px_4px_rgba(0,0,0,0.02)]"
-                      >
-                        <div className="flex justify-between items-center">
-                          <span className="font-bold text-[#041129]" style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px" }}>
-                            {book.bookName}
-                          </span>
-                          <span className="text-xs bg-[#ffdea5] text-[#775a19] px-2 py-0.5 rounded-full font-medium">
-                            {book.totalUnreadCount}장 남음
-                          </span>
-                        </div>
-                        <p className="text-[#78350f] text-sm break-all font-medium mt-1" style={{ fontFamily: "Noto Serif KR, serif" }}>
-                          {renderRanges(book)}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
+                  renderBookGrid(newTestamentBooks)
                 )}
               </div>
             </div>
           )}
         </div>
       )}
-    </div>
+    </section>
   );
 }

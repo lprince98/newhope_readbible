@@ -26,22 +26,22 @@ export function ProfileActions() {
   };
 
   return (
-    <section className="flex flex-col gap-6 items-center w-full">
+    <section className="mt-2 flex w-full flex-col items-center gap-3 pb-10">
       <button
+        type="button"
         onClick={handleSignOut}
         disabled={isPending}
-        className="w-full bg-[#fdf2f2] text-[#ba1a1a] h-14 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[#ffe5e5] transition-colors border border-[#ffdad6] disabled:opacity-50"
-        style={{ fontFamily: "Manrope, sans-serif" }}
+        className="btn btn-secondary w-full"
       >
-        <span className="material-symbols-outlined">logout</span>
+        <span className="material-symbols-outlined text-[20px] text-muted">logout</span>
         {isPending ? "처리 중..." : "로그아웃"}
       </button>
 
       <button
+        type="button"
         onClick={handleWithdraw}
         disabled={isPending}
-        className="text-[#75777e] text-xs underline hover:text-[#ba1a1a] transition-colors cursor-pointer p-2 disabled:opacity-50 mb-10"
-        style={{ fontFamily: "Manrope, sans-serif" }}
+        className="min-h-11 cursor-pointer px-3 text-[13px] text-subtle underline underline-offset-2 transition-colors hover:text-danger disabled:opacity-50"
       >
         {isPending ? "탈퇴 처리 중..." : "회원 탈퇴하기"}
       </button>

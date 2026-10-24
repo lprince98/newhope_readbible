@@ -24,45 +24,48 @@ export function ForgotPasswordForm() {
   };
 
   return (
-    <div className="flex flex-col gap-6 w-full">
+    <div className="flex w-full flex-col gap-6">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <div className="flex flex-col gap-2">
-          <label className="text-[#1b1c1a] ml-1 text-sm font-medium" htmlFor="email">
+        <div>
+          <label className="field-label" htmlFor="email">
             가입한 이메일 주소
           </label>
           <input
             id="email"
             type="email"
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="example@email.com"
             required
-            className="w-full bg-[#efeeea] border border-[#c5c6ce] rounded-lg px-4 py-3 text-[#1b1c1a] focus:outline-none focus:ring-2 focus:ring-[#775a19]/50 focus:border-[#775a19] transition-all"
+            className="field"
           />
         </div>
 
         {message && (
-          <div className={`rounded-lg px-4 py-3 text-sm flex items-start gap-2 ${
-            message.type === "success" ? "bg-[#dcfce7] text-[#166534]" : "bg-[#ffdad6] text-[#93000a]"
-          }`}>
-            <span className="material-symbols-outlined text-[18px] mt-0.5">
+          <div
+            role={message.type === "error" ? "alert" : "status"}
+            className={`flex items-start gap-2 rounded-xl px-4 py-3 text-[14px] ${
+              message.type === "success" ? "bg-teal-soft text-teal-deep" : "bg-danger-soft text-danger"
+            }`}
+          >
+            <span className="material-symbols-outlined mt-0.5 shrink-0 text-[18px]">
               {message.type === "success" ? "check_circle" : "error"}
             </span>
             <span>{message.text}</span>
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={isPending}
-          className="w-full min-h-[48px] bg-[#041129] text-white py-3 rounded-lg mt-2 hover:bg-[#041129]/90 active:scale-[0.98] transition-all flex justify-center items-center font-medium disabled:opacity-50"
-        >
+        <button type="submit" disabled={isPending} className="btn btn-primary mt-1 w-full">
           {isPending ? "발송 중..." : "재설정 링크 보내기"}
         </button>
       </form>
 
-      <div className="text-center pt-4 border-t border-[#c5c6ce]/30">
-        <Link href="/login" className="text-[#775a19] hover:text-[#041129] transition-colors text-sm font-medium">
+      <div className="border-t border-line pt-5 text-center">
+        <Link
+          href="/login"
+          className="inline-flex min-h-11 items-center text-[14px] font-semibold text-brand transition-colors hover:text-brand-deep"
+        >
           로그인 화면으로 돌아가기
         </Link>
       </div>

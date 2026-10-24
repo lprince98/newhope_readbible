@@ -25,28 +25,31 @@ export function CreateTeamForm() {
   }
 
   return (
-    <div className="w-full max-w-sm mt-4">
+    <div className="card w-full p-5">
       <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <label htmlFor="new-team-name" className="field-label mb-0">
+          팀 이름
+        </label>
         <input
+          id="new-team-name"
           type="text"
           value={teamName}
           onChange={(e) => setTeamName(e.target.value)}
           placeholder="새로운 팀 이름 입력"
-          className="w-full bg-[#f5f3ef] border border-[#c5c6ce] rounded-xl px-4 py-3 text-[#1b1c1a] outline-none focus:border-[#775a19] transition-all"
-          style={{ fontFamily: "Manrope, sans-serif", fontSize: "15px" }}
+          className="field"
           required
         />
         <button
           type="submit"
           disabled={isPending || !teamName.trim()}
-          className="w-full bg-[#041129] text-white h-12 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg hover:bg-[#041129]/90 active:scale-95 transition-all disabled:opacity-60"
-          style={{ fontFamily: "Manrope, sans-serif", fontSize: "15px" }}
+          className="btn btn-primary w-full"
         >
           <span className="material-symbols-outlined text-[20px]">add_circle</span>
           {isPending ? "생성 중..." : "새로운 팀 만들기"}
         </button>
         {error && (
-          <p className="text-[#ba1a1a] text-center mt-2" style={{ fontSize: "13px" }}>
+          <p className="flex items-center justify-center gap-1.5 rounded-xl bg-danger-soft px-3 py-2.5 text-center text-[13px] font-medium text-danger">
+            <span className="material-symbols-outlined text-[18px]">error</span>
             {error}
           </p>
         )}

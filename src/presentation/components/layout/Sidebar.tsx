@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import { FEATURES } from "@/lib/constants/features";
+import { BrandLogo } from "../common/BrandLogo";
 
 interface Props {
   isOpen: boolean;
@@ -26,10 +27,10 @@ export function Sidebar({ isOpen, onClose, profile }: Props) {
 
   const MENU_ITEMS = [
     { href: "/home",      icon: "home",         label: "홈" },
-    { href: "/dashboard", icon: "bar_chart",    label: "나의 현황 (대시보드)" },
+    { href: "/dashboard", icon: "insights",     label: "나의 통독 현황" },
     { href: "/record",    icon: "menu_book",    label: "성경 읽기 기록" },
-    ...(FEATURES.enableRanking ? [{ href: "/ranking",   icon: "leaderboard",  label: FEATURES.enableTeamFeatures ? "팀 랭킹" : "통독 랭킹" }] : []),
-    ...(FEATURES.enableTeamFeatures ? [{ href: "/team",      icon: "groups",       label: "나의 팀 상세" }] : []),
+    ...(FEATURES.enableRanking ? [{ href: "/ranking",   icon: "trophy",  label: FEATURES.enableTeamFeatures ? "팀 · 개인 랭킹" : "통독 랭킹" }] : []),
+    ...(FEATURES.enableTeamFeatures ? [{ href: "/team",      icon: "groups",       label: "우리 팀" }] : []),
     { href: "/profile",   icon: "person",       label: "마이 프로필" },
   ];
 
@@ -37,56 +38,61 @@ export function Sidebar({ isOpen, onClose, profile }: Props) {
     <>
       {/* Backdrop */}
       <div
-        className={`fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm transition-opacity duration-300 ${
-          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        className={`fixed inset-0 z-[60] bg-ink/40 backdrop-blur-sm transition-opacity duration-300 ${
+          isOpen ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
         onClick={onClose}
       />
 
       {/* Drawer */}
       <aside
-        className={`fixed top-0 left-0 bottom-0 z-[70] w-72 bg-white shadow-2xl transition-transform duration-300 ease-out ${
+        className={`fixed top-0 bottom-0 left-0 z-[70] flex w-[300px] max-w-[85vw] flex-col bg-card shadow-2xl transition-transform duration-300 ease-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
-        } flex flex-col`}
+        }`}
       >
-        {/* Header */}
-        <div className="p-6 bg-[#041129] text-white">
-          <div className="flex justify-between items-start mb-6">
-            <div className="w-12 h-12 rounded-full bg-[#fed488] text-[#785a1a] flex items-center justify-center text-xl font-bold">
+        {/* Brand */}
+        <div className="flex items-center justify-between px-5 pt-5 pb-4">
+          <BrandLogo variant="lockup" size={34} />
+          <button
+            onClick={onClose}
+            aria-label="메뉴 닫기"
+            className="flex h-9 w-9 items-center justify-center rounded-full text-muted hover:bg-sunken hover:text-ink"
+          >
+            <span className="material-symbols-outlined">close</span>
+          </button>
+        </div>
+
+        {/* Profile */}
+        <div className="relative mx-4 overflow-hidden rounded-2xl bg-brand p-5 text-white">
+          <span className="hope-arc -right-10 -bottom-16 h-40 w-40 text-white/15" />
+          <span className="hope-arc -right-4 -bottom-10 h-28 w-28 text-white/10" />
+          <div className="relative flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/15 text-lg font-bold">
               {profile?.name?.charAt(0) ?? "성"}
             </div>
-            <button onClick={onClose} className="text-white/60 hover:text-white">
-              <span className="material-symbols-outlined">close</span>
-            </button>
+            <div className="min-w-0">
+              <p className="truncate text-[16px] font-bold">{profile?.name ?? "사용자"} 성도님</p>
+              {FEATURES.enableTeamFeatures && (
+                <p className="mt-0.5 truncate text-[13px] text-white/70">{profile?.teamName ?? "팀 미배정"}</p>
+              )}
+            </div>
           </div>
-          <h2 className="text-lg font-bold" style={{ fontFamily: "Manrope, sans-serif" }}>
-            {profile?.name ?? "사용자"} &nbsp;성도님
-          </h2>
-          {FEATURES.enableTeamFeatures && (
-            <p className="text-sm text-white/60" style={{ fontFamily: "Manrope, sans-serif" }}>
-              {profile?.teamName ?? "소속 팀 정보를 불러오는 중..."}
-            </p>
-          )}
         </div>
 
         {/* Menu */}
-        <nav className="flex-1 overflow-y-auto py-4">
-          <div className="px-4 mb-2 text-[10px] text-slate-400 font-bold uppercase tracking-widest">
-            Main Menu
-          </div>
+        <nav className="mt-4 flex-1 overflow-y-auto px-3">
           {MENU_ITEMS.map((item) => {
-            const isActive = pathname === item.href;
+            const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
             return (
               <Link
                 key={item.href}
                 href={item.href}
                 onClick={onClose}
-                className={`flex items-center gap-3 px-6 py-3.5 transition-colors ${
+                className={`mb-0.5 flex items-center gap-3 rounded-xl px-4 py-3 text-[15px] transition-colors ${
                   isActive
-                    ? "bg-[#f5f3ef] text-[#775a19] font-bold"
-                    : "text-[#45474d] hover:bg-slate-50"
+                    ? "bg-brand-soft font-bold text-brand"
+                    : "font-medium text-ink-soft hover:bg-sunken"
                 }`}
-                style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px" }}
               >
                 <span
                   className="material-symbols-outlined text-[22px]"
@@ -101,10 +107,9 @@ export function Sidebar({ isOpen, onClose, profile }: Props) {
         </nav>
 
         {/* Footer */}
-        <div className="p-6 border-t border-slate-100">
-          <p className="text-[10px] text-slate-400 text-center" style={{ fontFamily: "Manrope, sans-serif" }}>
-            © 2026 새소망교회 성경 통독<br />v1.0.0
-          </p>
+        <div className="border-t border-line px-5 py-4">
+          <BrandLogo variant="wordmark" size={28} className="opacity-70" />
+          <p className="mt-2 text-[11px] text-subtle">© 2026 새소망교회 성경 통독</p>
         </div>
       </aside>
     </>

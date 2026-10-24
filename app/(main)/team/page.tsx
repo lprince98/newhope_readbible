@@ -38,52 +38,47 @@ export default async function TeamRootPage({
 
   // 팀 미배정 상태
   return (
-    <div className="flex flex-col items-center py-10 gap-10 px-6 max-w-screen-md mx-auto">
-      <div className="text-center flex flex-col items-center gap-4">
-        <div className="w-20 h-20 rounded-full bg-[#efeeea] flex items-center justify-center shadow-inner">
-          <span className="material-symbols-outlined text-[#775a19] text-4xl"
-            style={{ fontVariationSettings: "'FILL' 1" }}>
-            groups
+    <div className="mx-auto flex w-full max-w-screen-md flex-col gap-8 px-4 py-6 md:px-6">
+      <section className="relative overflow-hidden rounded-[1.5rem] bg-brand p-7 text-white shadow-brand">
+        <span className="hope-arc -right-16 -bottom-28 h-72 w-72 text-white/15" />
+        <span className="hope-arc -right-6 -bottom-16 h-48 w-48 text-white/10" />
+        <span className="absolute -top-10 -left-10 h-40 w-40 rounded-full bg-teal/30 blur-3xl" />
+        <div className="relative flex flex-col gap-4">
+          <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 ring-1 ring-white/20">
+            <span className="material-symbols-outlined text-[26px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+              groups
+            </span>
           </span>
+          <div className="flex flex-col gap-1.5">
+            <h2 className="text-[24px] font-bold tracking-tight">
+              {isSwitching && profile?.team_id ? "다른 팀으로 옮기기" : "소속된 팀이 없습니다"}
+            </h2>
+            <p className="text-[14px] leading-relaxed text-white/80">
+              아래 목록에서 팀을 선택하여 가입하거나,
+              <br />
+              직접 새로운 팀을 만들어 성경 통독을 시작해보세요!
+            </p>
+          </div>
         </div>
-        <div>
-          <h2 className="text-[#041129] mb-2"
-            style={{ fontFamily: "Manrope, sans-serif", fontSize: "24px", fontWeight: 700 }}>
-            소속된 팀이 없습니다
-          </h2>
-          <p className="text-[#45474d]"
-            style={{ fontFamily: "Noto Serif KR, serif", fontSize: "15px", lineHeight: "26px" }}>
-            아래 목록에서 팀을 선택하여 가입하거나,<br />
-            직접 새로운 팀을 만들어 성경 통독을 시작해보세요!
-          </p>
-        </div>
-      </div>
+      </section>
 
-      <div className="w-full flex flex-col gap-12">
+      <div className="flex w-full flex-col gap-8">
         {/* 기존 팀 목록 */}
         <JoinTeamList teams={teams ?? []} isInTeam={!!profile?.team_id} />
 
-
         {/* 구분선 */}
-        <div className="relative">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-[#e4e2de]"></div>
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-[#faf9f6] px-4 text-[#75777e] font-bold">또는</span>
-          </div>
+        <div className="flex items-center gap-4" role="separator">
+          <span className="h-px flex-1 bg-line" />
+          <span className="text-[12px] font-semibold text-subtle">또는</span>
+          <span className="h-px flex-1 bg-line" />
         </div>
 
         {/* 새 팀 만들기 */}
-        <div className="flex flex-col gap-4">
-          <h3 className="text-[#041129] font-bold text-lg px-2" style={{ fontFamily: "Manrope, sans-serif" }}>
-            새로운 팀 만들기
-          </h3>
+        <section className="flex flex-col gap-3">
+          <h3 className="text-[17px] font-bold text-ink">새로운 팀 만들기</h3>
           <CreateTeamForm />
-        </div>
+        </section>
       </div>
     </div>
   );
 }
-
-

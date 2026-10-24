@@ -84,13 +84,15 @@ export function TeamManageForm({ teamId, currentName, members, isLeader = false 
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       {/* 1. 피드백 메시지 노출 (성공/에러) */}
       {msg && (
-        <div className={`rounded-lg px-4 py-3 flex items-center gap-2 ${
-          msg.type === "success" ? "bg-[#ffdea5] text-[#261900]" : "bg-[#ffdad6] text-[#93000a]"
-        }`}
-          style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px" }}>
+        <div
+          role="status"
+          className={`flex items-center gap-2 rounded-xl px-4 py-3 text-[14px] font-medium ${
+            msg.type === "success" ? "bg-teal-soft text-teal-deep" : "bg-danger-soft text-danger"
+          }`}
+        >
           <span className="material-symbols-outlined text-[18px]">
             {msg.type === "success" ? "check_circle" : "error"}
           </span>
@@ -99,10 +101,8 @@ export function TeamManageForm({ teamId, currentName, members, isLeader = false 
       )}
 
       {/* 2. 팀 이름 수정 섹션 */}
-      <section className="bg-white rounded-xl p-6 shadow-[0_4px_12px_rgba(4,17,41,0.03)] border border-[#e4e2de]">
-        <label className="block text-[#1b1c1a] mb-2"
-          style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}
-          htmlFor="team-name">
+      <section className="card p-5">
+        <label className="field-label" htmlFor="team-name">
           팀 이름
         </label>
         <div className="flex gap-2">
@@ -111,59 +111,51 @@ export function TeamManageForm({ teamId, currentName, members, isLeader = false 
             value={teamName}
             disabled={!isLeader} // 팀장만 수정 가능
             onChange={(e) => setTeamName(e.target.value)}
-            className="flex-1 bg-[#f5f3ef] border border-[#c5c6ce] rounded-lg px-4 py-3 text-[#1b1c1a] outline-none focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] transition-all disabled:opacity-70"
-            style={{ fontFamily: "Manrope, sans-serif", fontSize: "16px", fontWeight: 500 }}
+            className="field flex-1 disabled:bg-sunken disabled:text-muted"
             placeholder="팀 이름 입력"
           />
           {isLeader && (
-             <button onClick={handleSaveName} disabled={isPending}
-             className="bg-[#041129] text-white px-4 py-3 rounded-lg hover:bg-[#041129]/90 active:scale-95 transition-all disabled:opacity-60">
-             저장
-           </button>
+            <button type="button" onClick={handleSaveName} disabled={isPending} className="btn btn-primary shrink-0">
+              저장
+            </button>
           )}
         </div>
       </section>
 
       {/* 3. 현재 팀원 목록 섹션 */}
-      <section className="bg-white rounded-xl p-6 shadow-[0_4px_12px_rgba(4,17,41,0.03)] border border-[#e4e2de] flex flex-col gap-4">
-        <div className="flex justify-between items-center">
-          <h3 className="text-[#041129]"
-            style={{ fontFamily: "Manrope, sans-serif", fontSize: "18px", fontWeight: 600 }}>
-            현재 팀원
-          </h3>
-          <span className="bg-[#ffdea5] text-[#261900] px-3 py-1 rounded-full"
-            style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px" }}>
-            {members.length}명
-          </span>
+      <section className="card flex flex-col gap-3 p-5">
+        <div className="flex items-center justify-between">
+          <h3 className="text-[16px] font-bold text-ink">현재 팀원</h3>
+          <span className="chip bg-brand-soft text-brand">{members.length}명</span>
         </div>
         <ul className="flex flex-col">
           {members.map((member, i) => (
-            <li key={member.id}
-              className={`flex items-center justify-between py-3 ${i > 0 ? "border-t border-[#f5f3ef]" : ""}`}>
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-full bg-[#eae8e4] flex items-center justify-center border border-[#c5c6ce] shadow-sm">
-                  <span className="text-[#1b1c1a]"
-                    style={{ fontFamily: "Manrope, sans-serif", fontSize: "18px", fontWeight: 700 }}>
-                    {member.name.charAt(0)}
-                  </span>
+            <li
+              key={member.id}
+              className={`flex min-h-14 items-center justify-between gap-3 py-2.5 ${i > 0 ? "border-t border-line" : ""}`}
+            >
+              <div className="flex min-w-0 items-center gap-3">
+                <div
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[15px] font-bold ${
+                    member.isMe ? "bg-brand text-white" : "bg-sunken text-ink-soft"
+                  }`}
+                >
+                  {member.name.charAt(0)}
                 </div>
-                <div>
-                  <p className="text-[#1b1c1a] flex items-center gap-1.5"
-                    style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}>
-                    {member.name}
-                    {member.isMe && (
-                      <span className="text-[#775a19]"
-                        style={{ fontFamily: "Manrope, sans-serif", fontSize: "10px" }}>
-                        (나)
-                      </span>
-                    )}
-                  </p>
-                </div>
+                <p className="flex min-w-0 items-center gap-1.5 text-[15px] font-medium text-ink">
+                  <span className="truncate">{member.name}</span>
+                  {member.isMe && <span className="shrink-0 text-[12px] font-semibold text-brand">(나)</span>}
+                </p>
               </div>
               {/* 팀장인 경우 본인을 제외한 팀원 제거 버튼 노출 */}
               {isLeader && !member.isMe && (
-                <button onClick={() => handleRemove(member.id)} disabled={isPending}
-                  className="text-[#75777e] hover:text-[#ba1a1a] p-2 rounded-full hover:bg-[#ffdad6] transition-colors active:scale-95 duration-150">
+                <button
+                  type="button"
+                  onClick={() => handleRemove(member.id)}
+                  disabled={isPending}
+                  aria-label={`${member.name} 팀에서 제거`}
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-subtle transition-colors hover:bg-danger-soft hover:text-danger active:scale-95 disabled:opacity-50"
+                >
                   <span className="material-symbols-outlined text-[20px]">person_remove</span>
                 </button>
               )}
@@ -174,22 +166,21 @@ export function TeamManageForm({ teamId, currentName, members, isLeader = false 
 
       {/* 4. 위험 구역 (팀 삭제/해체, 팀장 전용) */}
       {isLeader && (
-        <section className="mt-4 bg-[#fff1f0] rounded-xl p-6 border border-[#ffccc7] flex flex-col gap-4">
+        <section className="mt-2 flex flex-col gap-4 rounded-[1.25rem] border border-danger/20 bg-danger-soft p-5">
           <div>
-            <h3 className="text-[#cf1322]"
-              style={{ fontFamily: "Manrope, sans-serif", fontSize: "18px", fontWeight: 600 }}>
+            <h3 className="flex items-center gap-1.5 text-[16px] font-bold text-danger">
+              <span className="material-symbols-outlined text-[20px]">warning</span>
               위험 구역
             </h3>
-            <p className="text-[#45474d] mt-1"
-              style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px" }}>
+            <p className="mt-1 text-[13px] text-ink-soft">
               팀을 해체하면 복구할 수 없습니다. 신중히 결정해 주세요.
             </p>
           </div>
-          <button 
+          <button
+            type="button"
             onClick={handleDeleteTeam}
             disabled={isPending}
-            className="w-full bg-[#ff4d4f] text-white font-bold py-3.5 rounded-lg hover:bg-[#cf1322] active:scale-[0.98] transition-all shadow-md disabled:opacity-50"
-            style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px" }}
+            className="btn w-full bg-danger text-white hover:bg-danger/90"
           >
             팀 삭제하기
           </button>

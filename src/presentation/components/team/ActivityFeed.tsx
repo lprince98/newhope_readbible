@@ -26,15 +26,15 @@ function timeAgo(dateStr: string): string {
 export function ActivityFeed({ activities }: Props) {
   if (activities.length === 0) {
     return (
-      <div className="bg-white rounded-xl border border-[#e4e2de] p-8 text-center text-[#75777e]"
-        style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px" }}>
+      <div className="card flex flex-col items-center gap-2 p-8 text-center text-[14px] text-muted">
+        <span className="material-symbols-outlined text-[28px] text-silver">menu_book</span>
         아직 읽기 기록이 없습니다.
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2.5">
       {activities.map((item) => {
         const book = BIBLE_BOOKS.find((b) => b.id === item.book_id);
         const chapterCount = item.end_chapter - item.start_chapter + 1;
@@ -44,39 +44,29 @@ export function ActivityFeed({ activities }: Props) {
         const initials = item.user_name.charAt(0);
 
         return (
-          <div
-            key={item.id}
-            className="bg-white rounded-xl px-4 py-3 shadow-[0_2px_12px_rgba(4,17,41,0.03)] flex gap-3 items-start border border-[#e4e2de] hover:border-[#c5c6ce] transition-colors"
-          >
+          <div key={item.id} className="card flex items-start gap-3 px-4 py-3.5">
             {/* 아바타 */}
-            <div className="w-10 h-10 rounded-full bg-[#eae8e4] flex items-center justify-center flex-shrink-0 border border-[#c5c6ce]">
-              <span className="text-[#1b1c1a]"
-                style={{ fontFamily: "Manrope, sans-serif", fontSize: "16px", fontWeight: 700 }}>
-                {initials}
-              </span>
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-soft text-[15px] font-bold text-teal-deep">
+              {initials}
             </div>
             {/* 내용 */}
-            <div className="flex-1 min-w-0">
-              <p style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}
-                className="text-[#1b1c1a]">
-                {item.user_name}
-              </p>
-              <p className="text-[#45474d] mt-0.5"
-                style={{ fontFamily: "Noto Serif KR, serif", fontSize: "15px", lineHeight: "24px" }}>
-                <strong className="text-[#041129] font-medium">{book?.name ?? item.book_id}</strong>{" "}
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center justify-between gap-2">
+                <p className="truncate text-[14px] font-semibold text-ink">{item.user_name}</p>
+                <span className="flex shrink-0 items-center gap-0.5 text-[12px] text-subtle">
+                  <span className="material-symbols-outlined text-[14px]">schedule</span>
+                  {timeAgo(item.created_at)}
+                </span>
+              </div>
+              <p className="mt-0.5 text-[14px] leading-relaxed text-ink-soft">
+                <strong className="font-semibold text-ink">{book?.name ?? item.book_id}</strong>{" "}
                 {chapterText}을 읽었습니다
                 {chapterCount > 1 && (
-                  <span className="ml-1.5 text-[#775a19] font-medium"
-                    style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px" }}>
+                  <span className="chip ml-1.5 bg-teal-soft px-2 py-0.5 align-middle text-[11px] text-teal-deep">
                     +{chapterCount}장
                   </span>
                 )}
               </p>
-              <div className="flex items-center gap-1 mt-1 text-[#75777e]"
-                style={{ fontFamily: "Manrope, sans-serif", fontSize: "11px" }}>
-                <span className="material-symbols-outlined text-[14px]">schedule</span>
-                {timeAgo(item.created_at)}
-              </div>
             </div>
           </div>
         );

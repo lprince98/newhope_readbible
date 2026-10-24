@@ -16,10 +16,10 @@ export function RecordForm({ editRecord }: Props) {
   const router = useRouter();
   const [state, formAction, isPending] = useActionState(
     async (_prev: typeof initialState, formData: FormData) => {
-      const result = editRecord 
+      const result = editRecord
         ? await updateReadingRecord(editRecord.id, formData)
         : await addReadingRecord(formData);
-      
+
       if (result.success && editRecord) {
         // 수정 완료 후 URL 파라미터 제거 (기본 모드로 복구)
         router.push("/record");
@@ -28,7 +28,7 @@ export function RecordForm({ editRecord }: Props) {
     },
     initialState,
   );
-  
+
   const [selectedBook, setSelectedBook] = useState(editRecord?.book_id ?? "");
   const [startChapter, setStartChapter] = useState(editRecord?.start_chapter?.toString() ?? "");
   const [endChapter, setEndChapter] = useState(editRecord?.end_chapter?.toString() ?? "");
@@ -54,14 +54,20 @@ export function RecordForm({ editRecord }: Props) {
 
 
   return (
-    <form action={formAction} className="grid grid-cols-1 md:grid-cols-12 gap-6">
+    <form
+      action={formAction}
+      className={`card flex flex-col gap-5 p-5 md:p-6 ${editRecord ? "ring-2 ring-brand/30" : ""}`}
+    >
+      {editRecord && (
+        <div className="flex items-center gap-2 rounded-xl bg-brand-tint px-3 py-2 text-[13px] font-semibold text-brand">
+          <span className="material-symbols-outlined text-[18px]">edit_square</span>
+          기존 기록을 수정하고 있습니다
+        </div>
+      )}
+
       {/* 성경 선택 */}
-      <div className="md:col-span-12 bg-[#efeeea] rounded-xl p-6 border border-[#e4e2de]">
-        <label
-          className="block mb-2 text-[#041129]"
-          style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}
-          htmlFor="bookId"
-        >
+      <div>
+        <label className="field-label" htmlFor="bookId">
           성경
         </label>
         <div className="relative">
@@ -71,8 +77,7 @@ export function RecordForm({ editRecord }: Props) {
             required
             value={selectedBook}
             onChange={(e) => setSelectedBook(e.target.value)}
-            className="w-full appearance-none bg-[#fbf9f5] text-[#1b1c1a] border border-[#c5c6ce] rounded-lg px-4 py-4 focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] outline-none transition-all cursor-pointer shadow-sm"
-            style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}
+            className="field h-14 cursor-pointer appearance-none pr-12 text-[17px] font-semibold"
           >
             <option value="">성경 선택</option>
             <optgroup label="── 구약 ──">
@@ -90,110 +95,107 @@ export function RecordForm({ editRecord }: Props) {
               ))}
             </optgroup>
           </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[#75777e]">
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-subtle">
             <span className="material-symbols-outlined">expand_more</span>
           </div>
         </div>
       </div>
 
       {/* 장 범위 */}
-      <div className="md:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-[#efeeea] rounded-xl p-6 border border-[#e4e2de] flex flex-col gap-4">
-          <h3
-            className="text-[#041129] border-b border-[#c5c6ce] pb-2"
-            style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}
-          >
-            장
-          </h3>
-          <div className="flex items-center gap-4">
-            <div className="flex-1">
-              <label className="sr-only" htmlFor="startChapter">시작 장</label>
-              <input
-                id="startChapter"
-                name="startChapter"
-                type="number"
-                min={1}
-                max={maxChapters}
-                placeholder="시작"
-                required
-                value={startChapter}
-                onChange={(e) => setStartChapter(e.target.value)}
-                className="w-full bg-[#fbf9f5] text-center text-[#1b1c1a] border border-[#c5c6ce] rounded-lg py-3 focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] outline-none transition-all shadow-inner"
-                style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}
-              />
-            </div>
-            <span className="text-[#c5c6ce]" style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}>—</span>
-            <div className="flex-1">
-              <label className="sr-only" htmlFor="endChapter">종료 장</label>
-              <input
-                id="endChapter"
-                name="endChapter"
-                type="number"
-                min={1}
-                max={maxChapters}
-                placeholder="종료"
-                required
-                value={endChapter}
-                onChange={(e) => setEndChapter(e.target.value)}
-                className="w-full bg-[#fbf9f5] text-center text-[#1b1c1a] border border-[#c5c6ce] rounded-lg py-3 focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] outline-none transition-all shadow-inner"
-                style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}
-              />
-            </div>
+      <div>
+        <span className="field-label">장</span>
+        <div className="flex items-center gap-3">
+          <div className="flex-1">
+            <label className="sr-only" htmlFor="startChapter">시작 장</label>
+            <input
+              id="startChapter"
+              name="startChapter"
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={maxChapters}
+              placeholder="시작"
+              required
+              value={startChapter}
+              onChange={(e) => setStartChapter(e.target.value)}
+              className="field h-14 text-center text-[20px] font-semibold"
+            />
+          </div>
+          <span className="text-[15px] font-medium text-silver">—</span>
+          <div className="flex-1">
+            <label className="sr-only" htmlFor="endChapter">종료 장</label>
+            <input
+              id="endChapter"
+              name="endChapter"
+              type="number"
+              inputMode="numeric"
+              min={1}
+              max={maxChapters}
+              placeholder="종료"
+              required
+              value={endChapter}
+              onChange={(e) => setEndChapter(e.target.value)}
+              className="field h-14 text-center text-[20px] font-semibold"
+            />
           </div>
         </div>
+        {selectedBook && maxChapters !== 999 && (
+          <p className="mt-2 text-[12px] text-subtle">이 책은 총 {maxChapters}장입니다.</p>
+        )}
+      </div>
 
-        {/* 메모 */}
-        <div className="bg-[#efeeea] rounded-xl p-6 border border-[#e4e2de] flex flex-col gap-4">
-          <h3
-            className="text-[#041129] border-b border-[#c5c6ce] pb-2"
-            style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}
-          >
-            묵상 메모 <span className="text-[#45474d] font-normal">(선택)</span>
-          </h3>
-          <textarea
-            id="memo"
-            name="memo"
-            placeholder="이 말씀에서 무엇을 깨달았나요?"
-            rows={3}
-            value={memo}
-            onChange={(e) => setMemo(e.target.value)}
-            className="w-full bg-[#fbf9f5] text-[#1b1c1a] border border-[#c5c6ce] rounded-lg px-4 py-3 focus:border-[#775a19] focus:ring-1 focus:ring-[#775a19] outline-none transition-all resize-y shadow-inner"
-            style={{ fontFamily: "Noto Serif KR, serif", fontSize: "15px" }}
-          />
-        </div>
+      {/* 메모 */}
+      <div>
+        <label className="field-label" htmlFor="memo">
+          묵상 메모 <span className="font-normal text-subtle">(선택)</span>
+        </label>
+        <textarea
+          id="memo"
+          name="memo"
+          placeholder="이 말씀에서 무엇을 깨달았나요?"
+          rows={3}
+          value={memo}
+          onChange={(e) => setMemo(e.target.value)}
+          className="field resize-y leading-relaxed"
+        />
       </div>
 
       {/* 오류 메시지 */}
       {state?.error && (
-        <div className="md:col-span-12 bg-[#ffdad6] text-[#93000a] rounded-lg px-4 py-3 text-sm">
+        <div className="flex items-start gap-2 rounded-xl bg-danger-soft px-4 py-3 text-[14px] text-danger">
+          <span className="material-symbols-outlined text-[18px]">error</span>
           {state.error}
         </div>
       )}
 
       {/* 성공 메시지 */}
       {state?.success && (
-        <div className="md:col-span-12 bg-[#ffdea5] text-[#261900] rounded-lg px-4 py-3 text-sm">
-          ✓ 읽기 기록이 {editRecord ? "수정" : "저장"}되었습니다!
+        <div className="flex items-center gap-2 rounded-xl bg-teal-soft px-4 py-3 text-[14px] font-medium text-teal-deep">
+          <span className="material-symbols-outlined text-[18px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+            check_circle
+          </span>
+          읽기 기록이 {editRecord ? "수정" : "저장"}되었습니다!
         </div>
       )}
 
       {/* 저장 버튼 */}
-      <div className="md:col-span-12 mt-4 flex flex-col gap-2">
+      <div className="flex flex-col gap-2 pt-1">
         <button
           type="submit"
           disabled={isPending}
-          className={`w-full ${editRecord ? 'bg-[#041129]' : 'bg-[#775a19]'} text-white py-4 px-8 rounded-full flex items-center justify-center gap-2 shadow-lg hover:translate-y-[1px] active:translate-y-[2px] transition-all duration-200 disabled:opacity-60`}
-          style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}
+          className="btn btn-primary h-14 w-full text-[16px]"
         >
-          <span className="material-symbols-outlined">{editRecord ? "edit_square" : "bookmark_add"}</span>
+          <span className="material-symbols-outlined">
+            {isPending ? "progress_activity" : editRecord ? "edit_square" : "bookmark_add"}
+          </span>
           {isPending ? "처리 중..." : editRecord ? "읽기 기록 수정" : "읽기 기록 저장"}
         </button>
-        
+
         {editRecord && (
           <button
             type="button"
             onClick={() => router.push("/record")}
-            className="w-full bg-white text-[#75777e] py-3 rounded-full border border-[#c5c6ce] text-sm font-bold"
+            className="btn btn-secondary w-full"
           >
             수정 취소
           </button>

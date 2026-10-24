@@ -3,68 +3,49 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Sidebar } from "./Sidebar";
+import { BrandLogo } from "../common/BrandLogo";
 
 interface UserProfile {
   name: string;
   teamName: string;
 }
 
-export function Header({ 
-  title = "새소망교회", 
-  profile 
-}: { 
-  title?: string;
-  profile: UserProfile | null;
-}) {
-
+export function Header({ profile }: { profile: UserProfile | null }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
     <>
-      {/* Google Fonts + Material Symbols */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link
-        rel="preconnect"
-        href="https://fonts.gstatic.com"
-        crossOrigin="anonymous"
-      />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Noto+Serif+KR:wght@400;500;700&display=swap"
-        rel="stylesheet"
-      />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet"
-      />
+      <header className="fixed top-0 left-0 z-50 w-full border-b border-line/80 bg-canvas/85 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4">
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            aria-label="메뉴"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-ink-soft transition hover:bg-sunken active:scale-95"
+          >
+            <span className="material-symbols-outlined">menu</span>
+          </button>
 
-      <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-white border-b border-slate-100 shadow-[0_4px_12px_rgba(26,38,63,0.05)]">
-        <button
-          onClick={() => setIsSidebarOpen(true)}
-          aria-label="메뉴"
-          className="text-[#1A263F] hover:bg-slate-50 active:scale-95 transition-transform duration-200 p-2 -ml-2 rounded-full flex items-center justify-center"
-        >
-          <span className="material-symbols-outlined">menu</span>
-        </button>
-        <h1 className="text-lg font-bold text-[#1A263F] uppercase tracking-widest"
-          style={{ fontFamily: "Manrope, sans-serif" }}
-        >
-          {title}
-        </h1>
-        <Link
-          href="/profile"
-          aria-label="프로필"
-          className="w-9 h-9 rounded-full bg-[#efeeea] overflow-hidden flex items-center justify-center hover:opacity-80 transition-opacity active:scale-95 duration-200"
-        >
-          <span className="material-symbols-outlined text-[#45474d] text-xl">person</span>
-        </Link>
+          <Link href="/home" aria-label="홈으로" className="transition-opacity hover:opacity-80">
+            <BrandLogo variant="lockup" size={32} />
+          </Link>
+
+          <Link
+            href="/profile"
+            aria-label="프로필"
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-soft text-[15px] font-bold text-brand transition hover:bg-brand hover:text-white active:scale-95"
+          >
+            {profile?.name?.charAt(0) ?? (
+              <span className="material-symbols-outlined text-[20px]">person</span>
+            )}
+          </Link>
+        </div>
       </header>
 
-      <Sidebar 
-        isOpen={isSidebarOpen} 
-        onClose={() => setIsSidebarOpen(false)} 
+      <Sidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
         profile={profile}
       />
-
     </>
   );
 }

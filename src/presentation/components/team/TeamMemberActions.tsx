@@ -25,30 +25,33 @@ export function TeamMemberActions() {
   };
 
   return (
-    <div className="mt-12 pt-8 border-t border-[#e4e2de]">
-      <div className="bg-[#fdf2f2] rounded-2xl p-6 border border-[#ffdad6]">
-        <h3 className="text-[#ba1a1a] font-bold mb-2" style={{ fontFamily: "Manrope, sans-serif" }}>
-          나의 소속 관리
-        </h3>
-        <p className="text-[#75777e] text-sm mb-6 leading-relaxed">
-          현재 소속된 팀에서 나가고 싶으신가요? <br />
-          다른 팀으로 옮기려면 먼저 현재 팀에서 탈퇴한 후 새로운 팀에 가입해 주세요.
-        </p>
-        
-        <div className="flex flex-col sm:flex-row gap-3">
-          <button
-            onClick={handleLeaveTeam}
-            disabled={isPending}
-            className="px-6 py-3 bg-[#ba1a1a] text-white rounded-xl font-bold hover:bg-[#93000a] transition-colors disabled:opacity-50 active:scale-[0.98]"
-          >
-            {isPending ? "탈퇴 처리 중..." : "팀 탈퇴하기"}
-          </button>
+    <section className="mt-4 border-t border-line pt-6">
+      <div className="card flex flex-col gap-4 p-5">
+        <div>
+          <h3 className="flex items-center gap-1.5 text-[16px] font-bold text-ink">
+            <span className="material-symbols-outlined text-[20px] text-muted">logout</span>
+            나의 소속 관리
+          </h3>
+          <p className="mt-1.5 text-[13px] leading-relaxed text-muted">
+            현재 소속된 팀에서 나가고 싶으신가요?
+            <br />
+            다른 팀으로 옮기려면 먼저 현재 팀에서 탈퇴한 후 새로운 팀에 가입해 주세요.
+          </p>
         </div>
-        
-        <p className="mt-4 text-[11px] text-[#75777e]">
+
+        <button
+          type="button"
+          onClick={handleLeaveTeam}
+          disabled={isPending}
+          className="btn btn-danger w-full sm:w-auto sm:self-start"
+        >
+          {isPending ? "탈퇴 처리 중..." : "팀 탈퇴하기"}
+        </button>
+
+        <p className="text-[12px] text-subtle">
           ※ 팀장님은 팀을 해체하거나 팀장을 위임한 후에만 탈퇴가 가능합니다.
         </p>
       </div>
-    </div>
+    </section>
   );
 }

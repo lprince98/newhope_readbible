@@ -1,4 +1,5 @@
 import type { IReadingRecordRepository } from "@/src/domain/repositories/IReadingRecordRepository";
+import { FEATURES } from "@/lib/constants/features";
 
 export interface RankingItem {
   rank: number;
@@ -12,8 +13,8 @@ export class GetRankingUseCase {
   constructor(private repo: IReadingRecordRepository) {}
 
   async execute(myTeamName: string | null): Promise<RankingItem[]> {
-    const counts = await this.repo.getTeamChapterCounts();
-    const max = counts[0]?.totalChapters ?? 1;
+    const counts = await this.repo.getTeamChapterCounts(FEATURES.seasonStartDate);
+    const max = counts[0]?.totalChapters || 1;
 
     return counts.map((item, idx) => ({
       rank: idx + 1,

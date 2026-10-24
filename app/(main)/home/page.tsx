@@ -6,7 +6,7 @@ import { FEATURES } from "@/lib/constants/features";
 
 
 export const metadata: Metadata = {
-  title: "홈 — 새소망 성경 통독",
+  title: "홈",
   description: "오늘의 성경 읽기 현황을 확인하세요.",
 };
 
@@ -44,10 +44,12 @@ export default async function HomePage() {
     const d = kstParts.find(p => p.type === "day")?.value;
     const todayStr = `${y}-${m}-${d}`;
 
-    const { data: allRecords } = await supabase
+    let recordsQuery = supabase
       .from("reading_records")
       .select("start_chapter, end_chapter, read_at")
       .eq("user_id", user.id);
+    if (FEATURES.seasonStartDate) recordsQuery = recordsQuery.gte("read_at", FEATURES.seasonStartDate);
+    const { data: allRecords } = await recordsQuery;
     
     const totalChapters = (allRecords ?? []).reduce(
       (s: number, r: { start_chapter: number; end_chapter: number }) =>
@@ -83,146 +85,151 @@ export default async function HomePage() {
 
   const dailyVerse = getDailyVerse();
 
+  // 새 시즌 안내 (시즌 시작 전이면 D-day, 시작 후 7일간은 시작 안내)
+  const seasonStart = FEATURES.seasonStartDate;
+  const todayKst = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul" }).format(new Date());
+  const seasonDday = seasonStart
+    ? Math.round((Date.parse(seasonStart) - Date.parse(todayKst)) / 86_400_000)
+    : null;
+  const seasonLabel = seasonStart
+    ? `${Number(seasonStart.slice(5, 7))}월 ${Number(seasonStart.slice(8, 10))}일`
+    : "";
+
   return (
-    <div className="max-w-screen-md mx-auto px-6 py-8 flex flex-col gap-6">
+    <div className="mx-auto flex max-w-screen-md flex-col gap-5 px-4 py-6 md:px-6">
       {/* 환영 섹션 */}
       {user ? (
-        <section className="relative overflow-hidden rounded-2xl bg-[#041129] text-white shadow-xl">
-          <div
-            className="absolute inset-0 opacity-20 bg-cover bg-center"
-            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&q=80')" }}
-          />
-          <div className="relative p-8 z-10 flex justify-between items-center">
-            <div className="flex flex-col gap-1">
-              <p className="text-white/60" style={{ fontFamily: "Manrope, sans-serif", fontSize: "13px", fontWeight: 500 }}>
-                {greeting}
-              </p>
-              <h2 style={{ fontFamily: "Manrope, sans-serif", fontSize: "28px", fontWeight: 800 }}>
-                환영합니다!
-              </h2>
+        <section className="relative overflow-hidden rounded-[1.5rem] bg-brand p-7 text-white shadow-brand">
+          <span className="hope-arc -right-16 -bottom-28 h-72 w-72 text-white/15" />
+          <span className="hope-arc -right-6 -bottom-16 h-48 w-48 text-white/10" />
+          <span className="absolute -top-10 -left-10 h-40 w-40 rounded-full bg-teal/30 blur-3xl" />
+          <div className="relative flex items-center justify-between gap-4">
+            <div className="flex flex-col gap-1.5">
+              <p className="text-[13px] font-medium text-white/70">{greeting}</p>
+              <h2 className="text-[26px] font-bold tracking-tight">환영합니다!</h2>
             </div>
-            {fullReadCount >= 0 && (
-              <div className="bg-[#ffdea5] text-[#775a19] px-4 py-2 rounded-xl flex flex-col items-center shadow-lg transform rotate-3">
-                <span style={{ fontFamily: "Manrope, sans-serif", fontSize: "10px", fontWeight: 700, letterSpacing: "1px" }}>BIBLE READ</span>
-                <span style={{ fontFamily: "Manrope, sans-serif", fontSize: "20px", fontWeight: 900 }}>{fullReadCount}독</span>
-              </div>
-            )}
+            <div className="flex shrink-0 flex-col items-center rounded-2xl bg-white/10 px-4 py-2.5 ring-1 ring-white/20 backdrop-blur-sm">
+              <span className="text-[10px] font-semibold tracking-[0.14em] text-white/70">이번 시즌</span>
+              <span className="text-[22px] font-extrabold">{fullReadCount}독</span>
+            </div>
           </div>
         </section>
       ) : (
-        <Link 
+        <Link
           href="/login"
-          className="relative overflow-hidden rounded-2xl bg-[#041129] text-white shadow-xl group transition-transform active:scale-[0.98]"
+          className="group relative overflow-hidden rounded-[1.5rem] bg-brand p-7 text-white shadow-brand transition-transform active:scale-[0.99]"
         >
-          <div
-            className="absolute inset-0 opacity-30 bg-cover bg-center group-hover:scale-110 transition-transform duration-700"
-            style={{ backgroundImage: "url('https://images.unsplash.com/photo-1507608616759-54f48f0af0ee?auto=format&fit=crop&q=80')" }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#041129] to-transparent opacity-60" />
-          <div className="relative p-8 z-10 flex flex-col gap-1">
-            <p className="text-white/60" style={{ fontFamily: "Manrope, sans-serif", fontSize: "13px", fontWeight: 500 }}>
-              새소망 성경 통독
-            </p>
-            <h2 className="flex items-center gap-2" style={{ fontFamily: "Manrope, sans-serif", fontSize: "28px", fontWeight: 800 }}>
+          <span className="hope-arc -right-16 -bottom-28 h-72 w-72 text-white/15" />
+          <div className="relative flex flex-col gap-1.5">
+            <p className="text-[13px] font-medium text-white/70">새소망 성경 통독</p>
+            <h2 className="flex items-center gap-2 text-[26px] font-bold tracking-tight">
               로그인하고 시작하세요
-              <span className="material-symbols-outlined group-hover:translate-x-1 transition-transform">arrow_forward</span>
+              <span className="material-symbols-outlined transition-transform group-hover:translate-x-1">arrow_forward</span>
             </h2>
           </div>
         </Link>
       )}
 
+      {/* 새 시즌 안내 */}
+      {seasonDday !== null && seasonDday > -7 && (
+        <section className="flex items-center gap-4 rounded-[1.25rem] border border-teal/20 bg-teal-tint p-5">
+          <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-2xl bg-teal text-white">
+            <span className="text-[10px] font-semibold leading-none opacity-80">D</span>
+            <span className="text-[17px] font-extrabold leading-tight">
+              {seasonDday > 0 ? `-${seasonDday}` : "Day"}
+            </span>
+          </div>
+          <div>
+            <h3 className="text-[15px] font-bold text-teal-deep">
+              {seasonDday > 0 ? `${seasonLabel}, 팀별 통독이 새롭게 시작됩니다` : "팀별 통독 새 시즌이 시작되었습니다"}
+            </h3>
+            <p className="mt-0.5 text-[13px] text-muted">
+              {seasonLabel}부터 읽은 기록이 진도와 랭킹에 반영됩니다.
+            </p>
+          </div>
+        </section>
+      )}
 
       {/* 팀 가입 안내 (팀이 없는 경우) */}
       {FEATURES.enableTeamFeatures && user && !teamId && (
-        <section className="bg-[#fffbeb] rounded-xl p-6 border-2 border-[#fcd34d] shadow-sm flex flex-col gap-4 animate-pulse-subtle">
+        <section className="card flex flex-col gap-4 p-6">
           <div className="flex items-center gap-3">
-            <span className="material-symbols-outlined text-[#775a19] text-3xl">group_add</span>
+            <div className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-soft text-brand">
+              <span className="material-symbols-outlined">group_add</span>
+            </div>
             <div>
-              <h3 className="text-[#775a19] font-bold" style={{ fontFamily: "Manrope, sans-serif" }}>아직 소속된 팀이 없네요!</h3>
-              <p className="text-[#78350f] text-sm" style={{ fontFamily: "Noto Serif KR, serif" }}>함께 읽으면 더 끝까지 완주할 수 있습니다.</p>
+              <h3 className="text-[15px] font-bold text-ink">아직 소속된 팀이 없네요</h3>
+              <p className="text-[13px] text-muted">함께 읽으면 끝까지 완주할 수 있습니다.</p>
             </div>
           </div>
-          <Link 
-            href="/team"
-            className="bg-[#775a19] text-white py-3 rounded-lg font-bold text-center hover:bg-[#5d4614] transition-colors shadow-md"
-            style={{ fontFamily: "Manrope, sans-serif" }}
-          >
+          <Link href="/team" className="btn btn-primary w-full">
             팀 만들기 또는 가입하기
           </Link>
         </section>
       )}
 
       {/* 오늘의 말씀 */}
-
-      <section className="bg-white rounded-xl p-6 shadow-[0_4px_12px_rgba(26,38,63,0.05)] border border-[#e4e2de]">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="material-symbols-outlined text-[#775a19]" style={{ fontVariationSettings: "'FILL' 1" }}>
-            auto_awesome
+      <section className="card relative overflow-hidden p-6">
+        <span className="absolute top-0 left-0 h-full w-1 bg-gradient-to-b from-brand to-teal" />
+        <div className="mb-4 flex items-center gap-2">
+          <span className="material-symbols-outlined text-[20px] text-brand" style={{ fontVariationSettings: "'FILL' 1" }}>
+            auto_stories
           </span>
-          <span className="text-[#775a19]" style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}>
-            오늘의 말씀
-          </span>
+          <span className="eyebrow text-brand">오늘의 말씀</span>
         </div>
-        <blockquote
-          className="text-[#1b1c1a] mb-4 italic"
-          style={{ fontFamily: "Noto Serif KR, serif", fontSize: "18px", lineHeight: "32px" }}
-        >
+        <blockquote className="verse text-[18px]">
           &ldquo;{dailyVerse.text}&rdquo;
         </blockquote>
-        <p
-          className="text-[#45474d] text-right"
-          style={{ fontFamily: "Noto Serif KR, serif", fontSize: "15px" }}
-        >
+        <p className="mt-3 text-right font-serif text-[14px] text-muted">
           {dailyVerse.ref}
         </p>
       </section>
 
-
       {/* 오늘 목표 진도 */}
       {user && (
-        <section className="bg-[#f5f3ef] rounded-xl p-6 shadow-[0_4px_12px_rgba(26,38,63,0.05)] flex flex-col gap-4">
-          <div className="flex justify-between items-end">
+        <section className="card flex flex-col gap-4 p-6">
+          <div className="flex items-end justify-between">
             <div>
-              <h3 className="text-[#1b1c1a] mb-1" style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}>
-                오늘의 목표
-              </h3>
-              <p className="text-[#45474d]" style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px" }}>
-                {dailyGoal}장 중 {todayChapters}장 읽음
+              <h3 className="text-[15px] font-bold text-ink">오늘의 목표</h3>
+              <p className="mt-0.5 text-[13px] text-muted">
+                {dailyGoal}장 중 <span className="font-semibold text-teal-deep">{todayChapters}장</span> 읽음
               </p>
-
             </div>
-            <span className="text-[#041129]" style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}>
-              {percent}%
+            <span className="text-[28px] font-extrabold tracking-tight text-teal">
+              {percent}<span className="text-[16px] font-bold">%</span>
             </span>
           </div>
-          <div className="w-full bg-[#e4e2de] h-2 rounded-full overflow-hidden">
-            <div
-              className="bg-[#775a19] h-full rounded-full transition-all duration-700"
-              style={{ width: `${percent}%` }}
-            />
+          <div className="progress-track">
+            <div className="progress-fill" style={{ width: `${percent}%` }} />
           </div>
         </section>
       )}
 
       {/* 빠른 액션 */}
-      <section className={`grid ${FEATURES.enableRanking ? "grid-cols-2" : "grid-cols-1"} gap-4`}>
+      <section className={`grid ${FEATURES.enableRanking ? "grid-cols-2" : "grid-cols-1"} gap-3`}>
         <Link
           href="/record"
-          className="bg-[#041129] text-white rounded-xl p-5 shadow-[0_4px_12px_rgba(26,38,63,0.05)] border border-slate-100 flex flex-col justify-between h-28 cursor-pointer hover:bg-[#1a263f] transition-colors"
+          className="group flex h-32 flex-col justify-between rounded-[1.25rem] bg-ink p-5 text-white shadow-lift transition-colors hover:bg-ink-soft"
         >
-          <span className="material-symbols-outlined">menu_book</span>
-          <span style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}>
+          <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
+            <span className="material-symbols-outlined text-[22px]">edit_note</span>
+          </span>
+          <span className="flex items-center justify-between text-[15px] font-semibold">
             성경 기록하기
+            <span className="material-symbols-outlined text-[18px] opacity-60 transition-transform group-hover:translate-x-0.5">arrow_forward</span>
           </span>
         </Link>
         {FEATURES.enableRanking && (
           <Link
             href="/ranking"
-            className="bg-white text-[#1b1c1a] rounded-xl p-5 shadow-[0_4px_12px_rgba(26,38,63,0.05)] border border-[#c5c6ce]/10 flex flex-col justify-between h-28 cursor-pointer hover:bg-[#f5f3ef] transition-colors"
+            className="card group flex h-32 flex-col justify-between p-5 transition-colors hover:bg-sunken"
           >
-            <span className="material-symbols-outlined">leaderboard</span>
-            <span style={{ fontFamily: "Manrope, sans-serif", fontSize: "14px", fontWeight: 500 }}>
+            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-soft text-teal-deep">
+              <span className="material-symbols-outlined text-[22px]">trophy</span>
+            </span>
+            <span className="flex items-center justify-between text-[15px] font-semibold text-ink">
               {FEATURES.enableTeamFeatures ? "팀 랭킹 확인" : "통독 랭킹 확인"}
+              <span className="material-symbols-outlined text-[18px] text-subtle transition-transform group-hover:translate-x-0.5">arrow_forward</span>
             </span>
           </Link>
         )}

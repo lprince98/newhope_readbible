@@ -40,20 +40,36 @@ export function PasswordChangeSection() {
   if (!isExpanded) {
     return (
       <button
+        type="button"
         onClick={() => setIsExpanded(true)}
-        className="w-full flex justify-between items-center px-6 py-4 bg-white rounded-2xl border border-[#e4e2de] shadow-sm hover:bg-[#fbf9f5] transition-all"
+        className="card flex min-h-14 w-full items-center justify-between gap-3 px-5 py-4 text-left transition-colors hover:bg-sunken"
       >
-        <span className="text-[#041129] font-semibold" style={{ fontFamily: "Manrope, sans-serif" }}>비밀번호 변경</span>
-        <span className="material-symbols-outlined text-[#75777e]">lock</span>
+        <span className="flex items-center gap-3">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-soft text-brand">
+            <span className="material-symbols-outlined text-[20px]">lock</span>
+          </span>
+          <span className="text-[15px] font-semibold text-ink">비밀번호 변경</span>
+        </span>
+        <span className="material-symbols-outlined text-[20px] text-subtle">chevron_right</span>
       </button>
     );
   }
 
   return (
-    <div className="bg-white rounded-2xl p-6 border border-[#e4e2de] shadow-md flex flex-col gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="text-[#041129] font-bold" style={{ fontFamily: "Manrope, sans-serif" }}>비밀번호 변경</h3>
-        <button onClick={() => setIsExpanded(false)} className="text-[#75777e] hover:text-[#041129]">
+    <div className="card flex flex-col gap-4 p-5 shadow-lift animate-in fade-in slide-in-from-top-4 duration-300">
+      <div className="flex items-center justify-between">
+        <h3 className="flex items-center gap-3 text-[16px] font-bold text-ink">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-soft text-brand">
+            <span className="material-symbols-outlined text-[20px]">lock</span>
+          </span>
+          비밀번호 변경
+        </h3>
+        <button
+          type="button"
+          onClick={() => setIsExpanded(false)}
+          aria-label="닫기"
+          className="flex h-11 w-11 items-center justify-center rounded-full text-muted transition-colors hover:bg-sunken hover:text-ink"
+        >
           <span className="material-symbols-outlined">close</span>
         </button>
       </div>
@@ -61,35 +77,40 @@ export function PasswordChangeSection() {
       <form onSubmit={handleUpdate} className="flex flex-col gap-3">
         <input
           type="password"
+          autoComplete="new-password"
+          aria-label="새 비밀번호"
           placeholder="새 비밀번호 (6자 이상)"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full bg-[#efeeea] border border-[#c5c6ce] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#775a19]/50"
+          className="field"
           required
         />
         <input
           type="password"
+          autoComplete="new-password"
+          aria-label="비밀번호 확인"
           placeholder="비밀번호 확인"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
-          className="w-full bg-[#efeeea] border border-[#c5c6ce] rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#775a19]/50"
+          className="field"
           required
         />
 
         {message && (
-          <div className={`px-4 py-2 rounded-lg text-xs font-medium flex items-center gap-2 ${
-            message.type === "success" ? "bg-green-50 text-green-700 border border-green-200" : "bg-red-50 text-red-700 border border-red-200"
-          }`}>
-            <span className="material-symbols-outlined text-sm">{message.type === "success" ? "check_circle" : "error"}</span>
+          <div
+            role={message.type === "error" ? "alert" : "status"}
+            className={`flex items-center gap-2 rounded-xl px-4 py-3 text-[13px] font-medium ${
+              message.type === "success" ? "bg-teal-soft text-teal-deep" : "bg-danger-soft text-danger"
+            }`}
+          >
+            <span className="material-symbols-outlined shrink-0 text-[18px]">
+              {message.type === "success" ? "check_circle" : "error"}
+            </span>
             {message.text}
           </div>
         )}
 
-        <button
-          type="submit"
-          disabled={isPending}
-          className="w-full bg-[#041129] text-white py-3 rounded-xl font-bold mt-2 hover:bg-black active:scale-[0.98] transition-all disabled:opacity-50"
-        >
+        <button type="submit" disabled={isPending} className="btn btn-primary mt-1 w-full">
           {isPending ? "변경 중..." : "새 비밀번호 저장"}
         </button>
       </form>

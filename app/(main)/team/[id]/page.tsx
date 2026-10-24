@@ -5,6 +5,7 @@ import { createClient } from "@/src/infrastructure/supabase/server";
 import { TeamChat } from "@/src/presentation/components/team/TeamChat";
 import { ActivityFeed } from "@/src/presentation/components/team/ActivityFeed";
 import { SupabaseReadingRecordRepository } from "@/src/infrastructure/repositories/SupabaseReadingRecordRepository";
+import { FEATURES } from "@/lib/constants/features";
 
 /**
  * 팀 이름을 기반으로 동적 메타데이터를 생성합니다.
@@ -18,7 +19,7 @@ export async function generateMetadata({
   const supabase = await createClient();
   const { data: team } = await supabase.from("teams").select("name").eq("id", id).single();
   return {
-    title: `${team?.name ?? "팀"} — 새소망 성경 통독`,
+    title: team?.name ?? "팀",
     description: `${team?.name} 팀의 최근 읽기 현황과 응원 채팅`,
   };
 }
@@ -55,14 +56,14 @@ export default async function TeamDetailPage({
 
   // 3. 팀 전체 진행 통계 계산 (저장소 활용)
   const repo = new SupabaseReadingRecordRepository(supabase);
-  const teamCounts = await repo.getTeamChapterCounts();
+  const teamCounts = await repo.getTeamChapterCounts(FEATURES.seasonStartDate);
   const teamData = teamCounts.find((t) => t.teamId === teamId);
   const totalChapters = teamData?.totalChapters ?? 0;
   const TOTAL_BIBLE_CHAPTERS = 1189; // 성경 전체 1,189장
   
   // 4. 팀원별 개별 진행 현황 조회 (중요!)
   // RPC 함수인 'get_member_chapter_counts'를 호출하여 각 멤버의 읽은 장 수를 가져옵니다.
-  let memberProgress = await repo.getMemberChapterCounts(teamId);
+  let memberProgress = await repo.getMemberChapterCounts(teamId, FEATURES.seasonStartDate);
 
   // [백업 로직] RPC 함수가 아직 설치되지 않았거나 오류가 난 경우를 대비해 
   // 프로필 테이블에서 직접 팀원 목록이라도 가져오도록 설계했습니다.
@@ -98,10 +99,12 @@ export default async function TeamDetailPage({
 
   if (memberIds.length > 0) {
     // 팀원들의 기록을 최신순으로 20개 가져옴
-    const { data: records } = await supabase
+    let recordsQuery = supabase
       .from("reading_records")
       .select("id, user_id, book_id, start_chapter, end_chapter, read_at, created_at")
-      .in("user_id", memberIds)
+      .in("user_id", memberIds);
+    if (FEATURES.seasonStartDate) recordsQuery = recordsQuery.gte("read_at", FEATURES.seasonStartDate);
+    const { data: records } = await recordsQuery
       .order("created_at", { ascending: false })
       .limit(20);
 
@@ -134,102 +137,104 @@ export default async function TeamDetailPage({
   }));
 
   return (
-    <div className="max-w-md mx-auto px-6 py-8 flex flex-col gap-10">
-      {/* 팀 상단 정보 섹션 */}
-      <section className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <h2 className="text-[#041129]"
-            style={{ fontFamily: "Manrope, sans-serif", fontSize: "28px", fontWeight: 700, lineHeight: "36px" }}>
-            {team.name}
-          </h2>
-          {/* 팀장 또는 팀 멤버인 경우에만 관리 버튼 노출 */}
-          {isMyTeam && (
-            <Link
-              href="/team/manage"
-              className="flex items-center gap-1 text-[#775a19] hover:text-[#041129] transition-colors mb-2"
-              style={{ fontFamily: "Manrope, sans-serif", fontSize: "12px", fontWeight: 500 }}
-            >
-              <span className="material-symbols-outlined text-[18px]">settings</span>
-              팀 관리
-            </Link>
-          )}
+    <div className="mx-auto flex w-full max-w-screen-md flex-col gap-8 px-4 py-6 md:px-6">
+      {/* 팀 상단 정보 섹션 (히어로) */}
+      <section className="relative overflow-hidden rounded-[1.5rem] bg-brand p-6 text-white shadow-brand">
+        <span className="hope-arc -right-16 -bottom-28 h-72 w-72 text-white/15" />
+        <span className="hope-arc -right-6 -bottom-16 h-48 w-48 text-white/10" />
+        <span className="absolute -top-10 -left-10 h-40 w-40 rounded-full bg-teal/30 blur-3xl" />
+        <div className="relative flex flex-col gap-5">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex min-w-0 flex-col gap-1">
+              <span className="text-[12px] font-semibold tracking-[0.08em] text-white/70">
+                {isMyTeam ? "우리 팀" : "팀"}
+              </span>
+              <h2 className="break-words text-[26px] font-bold leading-tight tracking-tight">{team.name}</h2>
+              <p className="text-[13px] text-white/70">말씀 안에서 함께 성장합니다.</p>
+            </div>
+            {/* 팀 멤버인 경우에만 관리 버튼 노출 */}
+            {isMyTeam && (
+              <Link
+                href="/team/manage"
+                className="flex min-h-11 shrink-0 items-center gap-1 rounded-xl bg-white/10 px-3 text-[13px] font-semibold ring-1 ring-white/20 transition-colors hover:bg-white/20"
+              >
+                <span className="material-symbols-outlined text-[18px]">settings</span>
+                팀 관리
+              </Link>
+            )}
+          </div>
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <span className="text-[12px] font-medium text-white/70">
+                {FEATURES.seasonStartDate ? "이번 시즌 팀 누적" : "팀 누적"}
+              </span>
+              <p className="text-[32px] font-extrabold leading-none tracking-tight">
+                {totalChapters.toLocaleString()}
+                <span className="ml-1 text-[16px] font-bold text-white/80">장</span>
+              </p>
+            </div>
+            <div className="flex shrink-0 flex-col items-center rounded-2xl bg-white/10 px-4 py-2.5 ring-1 ring-white/20">
+              <span className="text-[10px] font-semibold tracking-[0.14em] text-white/70">팀원</span>
+              <span className="text-[20px] font-extrabold">{memberProgress.length}명</span>
+            </div>
+          </div>
         </div>
-        <p className="text-[#45474d]"
-          style={{ fontFamily: "Noto Serif KR, serif", fontSize: "15px" }}>
-          말씀 안에서 함께 성장합니다.
-        </p>
       </section>
 
-
       {/* 핵심 섹션: 팀원별 개인별 진행율 게이지 */}
-      <section className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-[#041129]"
-            style={{ fontFamily: "Manrope, sans-serif", fontSize: "20px", fontWeight: 600 }}>
-            팀원별 현황
-          </h3>
-          <span className="text-[#75777e] text-xs" style={{ fontFamily: "Manrope, sans-serif" }}>
-            {memberProgress.length}명 활동 중
-          </span>
+      <section className="flex flex-col gap-3">
+        <div className="flex items-end justify-between">
+          <h3 className="text-[18px] font-bold text-ink">팀원별 현황</h3>
+          <span className="text-[13px] text-muted">{memberProgress.length}명 활동 중</span>
         </div>
-        
-        <div className="flex flex-col gap-4">
+
+        <div className="flex flex-col gap-2.5">
           {memberProgress.map((m) => {
             // 개인별 진척도 계산 (현재 독 진행 장수 기준)
             const memberPct = Math.min(100, Math.round((m.currentChapters / 1189) * 100));
             const isMe = m.userId === user.id;
 
             return (
-              <div key={m.userId} className={`p-4 rounded-2xl border transition-all ${
-                isMe ? "bg-[#fffbeb] border-[#fed488] shadow-sm" : "bg-white border-[#e4e2de]"
-              }`}>
+              <div
+                key={m.userId}
+                className={`rounded-[1.25rem] border p-4 ${
+                  isMe ? "border-brand/40 bg-brand-soft shadow-card" : "card"
+                }`}
+              >
                 {/* 팀원 이름 및 퍼센트 */}
-                <div className="flex justify-between items-center mb-2">
-                  <div className="flex items-center gap-2">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-                      isMe ? "bg-[#775a19] text-white" : "bg-[#efeeea] text-[#75777e]"
-                    }`}>
+                <div className="mb-3 flex items-center justify-between gap-2">
+                  <div className="flex min-w-0 items-center gap-2.5">
+                    <div
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-[14px] font-bold ${
+                        isMe ? "bg-brand text-white" : "bg-sunken text-ink-soft"
+                      }`}
+                    >
                       {m.userName.charAt(0)}
                     </div>
-                    <span className={`font-bold ${isMe ? "text-[#775a19]" : "text-[#041129]"}`}
-                      style={{ fontFamily: "Manrope, sans-serif", fontSize: "15px" }}>
-                      {m.userName} {isMe && "(나)"}
+                    <span className={`truncate text-[15px] font-bold ${isMe ? "text-brand-ink" : "text-ink"}`}>
+                      {m.userName} {isMe && <span className="font-semibold text-brand">(나)</span>}
                     </span>
                     {m.fullReadCount >= 0 && (
-                      <span
-                        className="bg-[#775a19]/10 text-[#775a19] px-2 py-0.5 rounded-full leading-tight font-bold border border-[#775a19]/20"
-                        style={{ fontFamily: "Manrope, sans-serif", fontSize: "10px" }}
-                      >
+                      <span className="chip shrink-0 bg-teal-soft px-2 py-0.5 text-[11px] text-teal-deep">
                         {m.fullReadCount}독
                       </span>
                     )}
                   </div>
-                  <div className="text-right">
-                    <span className="text-[#775a19] font-bold text-lg" style={{ fontFamily: "Manrope, sans-serif" }}>
-                      {memberPct}%
-                    </span>
-                  </div>
+                  <span className="shrink-0 text-[18px] font-extrabold text-teal">{memberPct}%</span>
                 </div>
-                
+
                 {/* 진행율 바 */}
-                <div className="h-1.5 w-full bg-[#efeeea] rounded-full overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all duration-1000 ${
-                      isMe ? "bg-[#775a19]" : "bg-[#1a263f]/60"
-                    }`}
-                    style={{ width: `${memberPct}%` }}
-                  />
+                <div className="progress-track">
+                  <div className="progress-fill" style={{ width: `${memberPct}%` }} />
                 </div>
-                
+
                 {/* 남은 분량 수치 */}
-                <div className="flex justify-between items-center mt-2">
-                  <span className="text-[11px] text-[#75777e]" style={{ fontFamily: "Manrope, sans-serif" }}>
-                    완독까지 {1189 - m.currentChapters}장 남음
+                <div className="mt-2 flex items-center justify-between gap-2 text-[12px]">
+                  <span className="text-muted">완독까지 {1189 - m.currentChapters}장 남음</span>
+                  <span className="font-medium text-ink-soft">
+                    {m.currentChapters} / 1,189장
+                    <span className="ml-1 font-normal text-subtle">(총 {m.totalChapters}장)</span>
                   </span>
-                  <div className="flex items-center gap-1 text-[11px] font-medium text-[#45474d]" style={{ fontFamily: "Manrope, sans-serif" }}>
-                    <span>{m.currentChapters} / 1,189장</span>
-                    <span className="text-[#75777e] text-[10px]">(총 {m.totalChapters}장)</span>
-                  </div>
                 </div>
               </div>
             );
@@ -237,22 +242,15 @@ export default async function TeamDetailPage({
         </div>
       </section>
 
-
       {/* 최근 읽기 활동 피드 섹션 */}
       <section className="flex flex-col gap-3">
-        <h3 className="text-[#041129]"
-          style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}>
-          최근 읽기
-        </h3>
+        <h3 className="text-[18px] font-bold text-ink">최근 읽기</h3>
         <ActivityFeed activities={activities} />
       </section>
 
       {/* 팀원 응원 실시간 채팅 섹션 */}
       <section className="flex flex-col gap-3">
-        <h3 className="text-[#041129]"
-          style={{ fontFamily: "Manrope, sans-serif", fontSize: "22px", fontWeight: 600 }}>
-          응원하기
-        </h3>
+        <h3 className="text-[18px] font-bold text-ink">응원하기</h3>
         {isMyTeam ? (
           <TeamChat
             teamId={teamId}
@@ -261,8 +259,8 @@ export default async function TeamDetailPage({
             initialMessages={initialMessages as Parameters<typeof TeamChat>[0]["initialMessages"]}
           />
         ) : (
-          <div className="bg-[#efeeea] rounded-xl p-4 text-center text-[#45474d]"
-            style={{ fontFamily: "Noto Serif KR, serif", fontSize: "15px" }}>
+          <div className="flex items-center justify-center gap-2 rounded-[1.25rem] bg-sunken p-5 text-center text-[14px] text-muted">
+            <span className="material-symbols-outlined text-[20px]">lock</span>
             이 팀의 멤버만 채팅에 참여할 수 있습니다.
           </div>
         )}

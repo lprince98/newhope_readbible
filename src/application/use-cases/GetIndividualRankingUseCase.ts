@@ -1,4 +1,5 @@
 import type { IReadingRecordRepository } from "@/src/domain/repositories/IReadingRecordRepository";
+import { FEATURES } from "@/lib/constants/features";
 
 export interface IndividualRankingItem {
   userId: string;
@@ -20,7 +21,7 @@ export class GetIndividualRankingUseCase {
    * @param currentUserId 현재 로그인한 사용자의 ID
    */
   async execute(currentUserId: string | null): Promise<IndividualRankingItem[]> {
-    const rawData = await this.readingRecordRepository.getIndividualRanking();
+    const rawData = await this.readingRecordRepository.getIndividualRanking(FEATURES.seasonStartDate);
 
     let currentRank = 1;
     let previousChapters = -1;

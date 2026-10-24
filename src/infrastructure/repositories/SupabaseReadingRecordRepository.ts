@@ -50,13 +50,16 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
 
   /**
    * 특정 사용자의 모든 읽기 기록을 조회합니다.
+   * @param since "YYYY-MM-DD" 형식의 시즌 시작일. 지정하면 그 날짜 이후 기록만 조회합니다.
    */
-  async findByUserId(userId: string): Promise<ReadingRecord[]> {
-    const { data, error } = await this.client
+  async findByUserId(userId: string, since?: string | null): Promise<ReadingRecord[]> {
+    let query = this.client
       .from("reading_records")
       .select("*")
-      .eq("user_id", userId)
-      .order("read_at", { ascending: false });
+      .eq("user_id", userId);
+    if (since) query = query.gte("read_at", since);
+
+    const { data, error } = await query.order("read_at", { ascending: false });
 
     if (error) throw new Error(error.message);
     return data.map(this.mapToEntity);
@@ -109,8 +112,8 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
   /**
    * 모든 팀별 통독 합계를 조회합니다. (랭킹용)
    */
-  async getTeamChapterCounts(): Promise<{ teamId: string; teamName: string; totalChapters: number }[]> {
-    const { data, error } = await this.client.rpc("get_team_chapter_counts");
+  async getTeamChapterCounts(since?: string | null): Promise<{ teamId: string; teamName: string; totalChapters: number }[]> {
+    const { data, error } = await this.callRpc("get_team_chapter_counts", {}, since);
 
     if (error) {
       console.error(">>> [REPO ERROR] getTeamChapterCounts:", error);
@@ -127,8 +130,8 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
   /**
    * [신규] 모든 유저의 개인별 통독 합계를 조회합니다. (Top 10 랭킹용)
    */
-  async getIndividualRanking(): Promise<{ userId: string; userName: string; teamName: string | null; totalChapters: number; fullReadCount: number; currentChapters: number }[]> {
-    const { data, error } = await this.client.rpc("get_individual_ranking");
+  async getIndividualRanking(since?: string | null): Promise<{ userId: string; userName: string; teamName: string | null; totalChapters: number; fullReadCount: number; currentChapters: number }[]> {
+    const { data, error } = await this.callRpc("get_individual_ranking", {}, since);
 
     if (error) {
       console.error(">>> [REPO ERROR] getIndividualRanking:", error);
@@ -149,7 +152,7 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
    * [신규] 특정 팀 내 개별 팀원들의 통독 진행 현황을 조회합니다.
    * 데이터베이스에 설치된 'get_member_chapter_counts' RPC 함수를 호출합니다.
    */
-  async getMemberChapterCounts(teamId: string): Promise<
+  async getMemberChapterCounts(teamId: string, since?: string | null): Promise<
     {
       userId: string;
       userName: string;
@@ -158,9 +161,11 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
       currentChapters: number;
     }[]
   > {
-    const { data, error } = await this.client.rpc("get_member_chapter_counts", {
-      target_team_id: teamId,
-    });
+    const { data, error } = await this.callRpc(
+      "get_member_chapter_counts",
+      { target_team_id: teamId },
+      since,
+    );
 
     if (error) {
       console.error(">>> [REPO ERROR] getMemberChapterCounts:", error);
@@ -175,6 +180,22 @@ export class SupabaseReadingRecordRepository implements IReadingRecordRepository
       fullReadCount: Number(d.full_read_count || 0),
       currentChapters: Number(d.current_chapters || 0),
     }));
+  }
+
+  /**
+   * 집계 RPC를 시즌 시작일(since_date)과 함께 호출합니다.
+   * 시즌 마이그레이션(20261024000000)이 아직 DB에 적용되지 않아 함수 시그니처를 찾지 못하면
+   * since_date 없이 다시 호출하여 페이지가 비지 않도록 합니다.
+   */
+  private async callRpc(fn: string, args: Record<string, unknown>, since?: string | null) {
+    if (!since) return this.client.rpc(fn, args);
+
+    const result = await this.client.rpc(fn, { ...args, since_date: since });
+    if (result.error?.code === "PGRST202") {
+      console.error(`>>> [REPO WARN] ${fn}(since_date) 미설치 — 시즌 마이그레이션을 적용하세요. 전체 기간으로 대체합니다.`);
+      return this.client.rpc(fn, args);
+    }
+    return result;
   }
 
   /**
