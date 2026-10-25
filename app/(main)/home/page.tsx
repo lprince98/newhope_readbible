@@ -3,6 +3,8 @@ import Link from "next/link";
 import { createClient } from "@/src/infrastructure/supabase/server";
 import { getDailyVerse } from "@/src/shared/utils/dailyVerse";
 import { FEATURES } from "@/lib/constants/features";
+import { getCurrentUploadWindow } from "@/lib/utils/uploadWindow";
+import { UploadNotice } from "@/src/presentation/components/common/UploadNotice";
 
 
 export const metadata: Metadata = {
@@ -85,15 +87,8 @@ export default async function HomePage() {
 
   const dailyVerse = getDailyVerse();
 
-  // 새 시즌 안내 (시즌 시작 전이면 D-day, 시작 후 7일간은 시작 안내)
-  const seasonStart = FEATURES.seasonStartDate;
-  const todayKst = new Intl.DateTimeFormat("sv-SE", { timeZone: "Asia/Seoul" }).format(new Date());
-  const seasonDday = seasonStart
-    ? Math.round((Date.parse(seasonStart) - Date.parse(todayKst)) / 86_400_000)
-    : null;
-  const seasonLabel = seasonStart
-    ? `${Number(seasonStart.slice(5, 7))}월 ${Number(seasonStart.slice(8, 10))}일`
-    : "";
+  // 기록 입력 기간 공지 (시작 전 D-day, 시작일·마감일 당일 공지)
+  const uploadWindow = getCurrentUploadWindow();
 
   return (
     <div className="mx-auto flex max-w-screen-md flex-col gap-5 px-4 py-6 md:px-6">
@@ -130,25 +125,8 @@ export default async function HomePage() {
         </Link>
       )}
 
-      {/* 새 시즌 안내 */}
-      {seasonDday !== null && seasonDday > -7 && (
-        <section className="flex items-center gap-4 rounded-[1.25rem] border border-teal/20 bg-teal-tint p-5">
-          <div className="flex h-12 w-12 shrink-0 flex-col items-center justify-center rounded-2xl bg-teal text-white">
-            <span className="text-[10px] font-semibold leading-none opacity-80">D</span>
-            <span className="text-[17px] font-extrabold leading-tight">
-              {seasonDday > 0 ? `-${seasonDday}` : "Day"}
-            </span>
-          </div>
-          <div>
-            <h3 className="text-[15px] font-bold text-teal-deep">
-              {seasonDday > 0 ? `${seasonLabel}, 팀별 통독이 새롭게 시작됩니다` : "팀별 통독 새 시즌이 시작되었습니다"}
-            </h3>
-            <p className="mt-0.5 text-[13px] text-muted">
-              {seasonLabel}부터 읽은 기록이 진도와 랭킹에 반영됩니다.
-            </p>
-          </div>
-        </section>
-      )}
+      {/* 기록 입력 기간 공지 */}
+      <UploadNotice window={uploadWindow} showCountdown showRecordLink={!!user} />
 
       {/* 팀 가입 안내 (팀이 없는 경우) */}
       {FEATURES.enableTeamFeatures && user && !teamId && (

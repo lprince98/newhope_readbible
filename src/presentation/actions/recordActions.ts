@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/src/infrastructure/supabase/server";
-import { FEATURES } from "@/lib/constants/features";
+import { getCurrentUploadWindow, getUploadBlockMessage } from "@/lib/utils/uploadWindow";
 import { SupabaseReadingRecordRepository } from "@/src/infrastructure/repositories/SupabaseReadingRecordRepository";
 import { AddReadingRecordUseCase } from "@/src/application/use-cases/AddReadingRecordUseCase";
 import type { BibleBookId } from "@/lib/constants/bible-books";
@@ -12,9 +12,9 @@ import type { BibleBookId } from "@/lib/constants/bible-books";
  * @param formData 성경(bookId), 시작 장, 종료 장, 메모 등을 포함한 폼 데이터
  */
 export async function addReadingRecord(formData: FormData) {
-  if (FEATURES.uploadDeadline && new Date() >= new Date(FEATURES.uploadDeadline)) {
-    return { error: "성경 읽기 기록 업로드 및 편집 기간이 마감되었습니다." };
-  }
+  // 입력 기간(시작 전·마감 후)에는 입력·수정·삭제를 막음
+  const blocked = getUploadBlockMessage(getCurrentUploadWindow());
+  if (blocked) return { error: blocked };
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -75,9 +75,9 @@ export async function addReadingRecord(formData: FormData) {
  * @param id 삭제할 기록의 고유 ID
  */
 export async function deleteReadingRecord(id: string) {
-  if (FEATURES.uploadDeadline && new Date() >= new Date(FEATURES.uploadDeadline)) {
-    return { error: "성경 읽기 기록 업로드 및 편집 기간이 마감되었습니다." };
-  }
+  // 입력 기간(시작 전·마감 후)에는 입력·수정·삭제를 막음
+  const blocked = getUploadBlockMessage(getCurrentUploadWindow());
+  if (blocked) return { error: blocked };
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -108,9 +108,9 @@ export async function deleteReadingRecord(id: string) {
  * @param formData 수정된 폼 데이터
  */
 export async function updateReadingRecord(id: string, formData: FormData) {
-  if (FEATURES.uploadDeadline && new Date() >= new Date(FEATURES.uploadDeadline)) {
-    return { error: "성경 읽기 기록 업로드 및 편집 기간이 마감되었습니다." };
-  }
+  // 입력 기간(시작 전·마감 후)에는 입력·수정·삭제를 막음
+  const blocked = getUploadBlockMessage(getCurrentUploadWindow());
+  if (blocked) return { error: blocked };
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
